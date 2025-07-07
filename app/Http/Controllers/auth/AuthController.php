@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\auth;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class AuthController extends Controller
+{
+    public function LoginPage()
+    {
+        return view('auth.login');
+    }
+
+    public function ChangePasswordPage()
+    {
+        return view('auth.change_password');
+    }
+}
