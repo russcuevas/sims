@@ -21,5 +21,6 @@ class Employee extends Authenticatable
         'pin',
         'status',
         'login_attempts',
+        'is_archived',
     ];
 }

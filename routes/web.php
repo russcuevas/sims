@@ -31,3 +31,4 @@ Route::post('/logout', [AuthController::class, 'LogoutRequest'])->name('logout.r
 // ADMIN ROUTES
 Route::get('/admin/dashboard', [DashboardController::class, 'AdminDashboardPage'])->name('admin.dashboard.page');
 Route::get('/admin/user_management', [UserController::class, 'AdminUserManagementPage'])->name('admin.user.management.page');
+Route::post('/admin/user_management/add', [UserController::class, 'AdminAddUser'])->name('admin.user.add');

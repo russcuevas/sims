@@ -24,6 +24,8 @@ return new class extends Migration
             $table->integer('pin')->nullable();
             $table->string('status', 255)->nullable();
             $table->integer('login_attempts')->default(0);
+            $table->integer('is_archived')->default(0);
+
             $table->timestamps();
             $table->foreign('position_id')->references('id')->on('positions')->onDelete('set null');
             $table->foreign('contract_id')->references('id')->on('contracts')->onDelete('set null');

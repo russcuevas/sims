@@ -9,6 +9,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('partials/images/favicon.png') }}">
     <link href="{{ asset('partials/vendor/datatables/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
     <style>
         form.add_users_validation label {
             color: #000 !important;
@@ -87,7 +89,8 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form class="add_users_validation" action="#" method="post">
+                                                    <form class="add_users_validation" action="{{ route('admin.user.add') }}" method="POST">
+                                                        @csrf
                                                         <div class="container">
                                                             <div class="row">
                                                                 <!-- LEFT COLUMN: Personal Information -->
@@ -132,49 +135,27 @@
 
                                                                     <!-- Role -->
                                                                     <div class="form-group row mb-3">
-                                                                        <label class="col-sm-4 col-form-label text-end"
-                                                                            for="role">Select Role <span
-                                                                                class="text-danger">*</span></label>
+                                                                        <label class="col-sm-4 col-form-label text-end" for="role">Select Role <span class="text-danger">*</span></label>
                                                                         <div class="col-sm-8">
-                                                                            <select class="form-control" id="role"
-                                                                                name="role">
+                                                                            <select class="form-control" id="role" name="role">
                                                                                 <option value="">Please select</option>
-                                                                                <option value="admin">Admin</option>
-                                                                                <option value="manager">Manager</option>
-                                                                                <option value="supervisor">Supervisor
-                                                                                </option>
-                                                                                <option value="delivery">Delivery
-                                                                                </option>
+                                                                                @foreach($positions as $position)
+                                                                                    <option value="{{ $position->id }}">{{ $position->position_name }}</option>
+                                                                                @endforeach
                                                                             </select>
                                                                         </div>
                                                                     </div>
 
                                                                     <!-- Contract -->
                                                                     <div class="form-group row mb-3">
-                                                                        <label class="col-sm-4 col-form-label text-end"
-                                                                            for="contract">Contract <span
-                                                                                class="text-danger">*</span></label>
+                                                                        <label class="col-sm-4 col-form-label text-end" for="contract">Contract <span class="text-danger">*</span></label>
                                                                         <div class="col-sm-8">
-                                                                            <select class="form-control" id="contract"
-                                                                                name="contract">
+                                                                            <select class="form-control" id="contract" name="contract">
                                                                                 <option value="">Please select</option>
-                                                                                <option value="1 year - 5 years">1 year
-                                                                                    - 5 years</option>
-                                                                                <option value="5 year - 10 years">5 year
-                                                                                    - 10 years</option>
+                                                                                @foreach($contracts as $contract)
+                                                                                    <option value="{{ $contract->id }}">{{ $contract->contract }}</option>
+                                                                                @endforeach
                                                                             </select>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <!-- Status -->
-                                                                    <div class="form-group row mb-3">
-                                                                        <label class="col-sm-4 col-form-label text-end"
-                                                                            for="status">Status <span
-                                                                                class="text-danger">*</span></label>
-                                                                        <div class="col-sm-8">
-                                                                            <input type="text" class="form-control"
-                                                                                id="status" name="status"
-                                                                                placeholder="Enter status">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -208,30 +189,29 @@
                                                                         </div>
                                                                     </div>
 
-                                                                    <!-- Password -->
+                                                                    
+                                                                    <!-- Pin -->
                                                                     <div class="form-group row mb-3">
                                                                         <label class="col-sm-4 col-form-label text-end"
-                                                                            for="password">Password <span
+                                                                            for="pin">Pin <span
                                                                                 class="text-danger">*</span></label>
                                                                         <div class="col-sm-8">
-                                                                            <input type="password" class="form-control"
-                                                                                id="password" name="password"
-                                                                                placeholder="Choose a secure one">
+                                                                            <input 
+                                                                            type="text" 
+                                                                            class="form-control" 
+                                                                            id="pin" 
+                                                                            name="pin" 
+                                                                            placeholder="Enter 4-digit pin"
+                                                                            maxlength="4"
+                                                                            pattern="\d{4}" 
+                                                                            title="Please enter exactly 4 digits"
+                                                                            inputmode="numeric" 
+                                                                            required
+                                                                        >
+                                                                        
                                                                         </div>
                                                                     </div>
 
-                                                                    <!-- Confirm Password -->
-                                                                    <div class="form-group row mb-3">
-                                                                        <label class="col-sm-4 col-form-label text-end"
-                                                                            for="confirm_password">Confirm Password
-                                                                            <span class="text-danger">*</span></label>
-                                                                        <div class="col-sm-8">
-                                                                            <input type="password" class="form-control"
-                                                                                id="confirm_password"
-                                                                                name="confirm_password"
-                                                                                placeholder="Re-enter password">
-                                                                        </div>
-                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -262,60 +242,39 @@
                                                 <th style="color: #593bdb;">Image</th>
                                                 <th style="color: #593bdb;">Name</th>
                                                 <th style="color: #593bdb;">Role</th>
-                                                <th style="color: #593bdb;">Contact</th>
+                                                <th style="color: #593bdb;">Contract</th>
                                                 <th style="color: #593bdb;">Email</th>
                                                 <th style="color: #593bdb;">Username</th>
-                                                <th style="color: #593bdb;">Password</th>
                                                 <th style="color: #593bdb;">Pin</th>
                                                 <th style="color: #593bdb;">Attempt</th>
                                                 <th style="color: #593bdb;">Status</th>
                                                 <th style="color: #593bdb;">Action</th>
-
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td>
-                                                    <div class="d-flex gap-2">
-                                                        <button id="filter_button"
-                                                            class="btn btn-outline-primary mr-2">Update</button>
-                                                        <button id="sort_button"
-                                                            class="btn btn-outline-secondary">Archive</button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td style="color: black;">Tiger Nixon</td>
-                                                <td>
-                                                    <div class="d-flex gap-2">
-                                                        <button id="filter_button"
-                                                            class="btn btn-outline-primary mr-2">Update</button>
-                                                        <button id="sort_button"
-                                                            class="btn btn-outline-secondary">Archive</button>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                            @foreach($employees as $employee)
+                                                <tr>
+                                                    <td style="color: black;">
+                                                        <img src="https://images.rawpixel.com/image_png_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvdjkzNy1hZXctMTY1LnBuZw.png?s=b4SEVfKYcskH9PiGnSKmpM9SloVv-yAI_PKnNBsL-3o" alt="Default Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                                                    </td>                                                    
+                                                    <td style="color: black;">{{ $employee->employee_firstname }} {{ $employee->employee_lastname }}</td>
+                                                    <td style="color: black;">{{ $employee->position_name ?? 'N/A' }}</td>
+                                                    <td style="color: black;">{{ $employee->contract ?? 'N/A' }}</td>
+                                                    <td style="color: black;">{{ $employee->email }}</td>
+                                                    <td style="color: black;">{{ $employee->username }}</td>
+                                                    <td style="color: black;">{{ str_repeat('*', strlen($employee->pin)) }}</td>
+                                                    <td style="color: black;">{{ $employee->login_attempts }}</td>
+                                                    <td style="color: black;">{{ $employee->status }}</td>
+                                                    <td>
+                                                        <div class="d-flex gap-2">
+                                                            <button class="btn btn-outline-primary mr-2">Update</button>
+                                                            <button class="btn btn-outline-secondary">Archive</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
-                                    </table>
+                                    </table>                                    
                                 </div>
                             </div>
                         </div>
@@ -430,6 +389,23 @@
                 jQuery(label).remove();
             }
         });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        @if(session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
+
+        @if(session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+    
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                toastr.error("{{ $error }}");
+            @endforeach
+        @endif
     </script>
 
 

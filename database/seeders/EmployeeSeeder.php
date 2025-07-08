@@ -27,6 +27,7 @@ class EmployeeSeeder extends Seeder
             'pin' => 1234,
             'status' => 'Unlocked',
             'login_attempts' => 0,
+            'is_archived' => 0,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
