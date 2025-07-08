@@ -11,10 +11,16 @@
     <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
     <style>
     .col-form-label {
         color: black;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+        cursor: default;
+        padding-left: 2px;
+        padding-right: 5px;
+        color: black !important;
     }
     </style>
 </head>
@@ -291,32 +297,52 @@
                                                 @foreach($batchProductDetails as $detail)
                                                 <tr>
                                                     <td>
-                                                        <input style="border-color: #593bdb;" type="text"
-                                                            class="form-control input-rounded" value="{{ $detail->quantity }}">
+                                                        <input type="number"
+                                                               class="form-control input-rounded update-quantity"
+                                                               value="{{ $detail->quantity }}"
+                                                               data-id="{{ $detail->id }}"               
+                                                               data-price="{{ $detail->price }}"
+                                                               min="0"
+                                                               style="border-color: #593bdb;">
                                                     </td>
+                                                
                                                     <td style="color: black;">{{ $detail->product_name }}</td>
                                                     <td><span class="badge badge-primary">{{ $detail->stock_unit_id }}</span></td>
-                                                    <td style="color: black;">{{ number_format($detail->price, 2) }}</td>
-                                                    <td style="color: black;">{{ number_format($detail->amount, 2) }}</td>
+                                                
                                                     <td>
-                                                        <a class="btn btn-outline-danger" href=""
-                                                            data-toggle="tooltip" data-placement="top" title="Remove">
-                                                            <i class="fa fa-close"></i> Remove
-                                                        </a>
+                                                        <input type="number" 
+                                                               class="form-control input-rounded update-price" 
+                                                               value="{{ number_format($detail->price, 2, '.', '') }}" 
+                                                               data-id="{{ $detail->id }}"                 
+                                                               data-product-id="{{ $detail->product_id }}" 
+                                                               min="0" step="0.01" 
+                                                               style="border-color: #593bdb;">
                                                     </td>
+                                                
+                                                    <td style="color: black;" class="amount-cell" id="amount-{{ $detail->id }}">
+                                                        ₱{{ number_format($detail->amount, 2) }}
+                                                    </td>
+                                                
+                                                    <td>
+                                                        <a href="{{ route('admin.batch.product.remove', $detail->id) }}"
+                                                            onclick="return confirm('Are you sure you want to remove this item?');"
+                                                            class="btn btn-outline-danger" title="Remove">
+                                                            <i class="fa fa-close"></i> Remove
+                                                        </a>                                                         
+                                                    </td>                                                    
                                                 </tr>
-                                            @endforeach
-                                            </tbody>
+                                                @endforeach
+                                                </tbody>
+                                                
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="4" class="text-end fw-bold" style="color: blueviolet;">
                                                     </td>
-                                                    <td colspan="2" id="total_amount" class="fw-bold"
-                                                        style="color: black;">
-                                                        <span style="color: red;">Total Amount: 0</span>
-                                                    </td>
+                                                    <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
+                                                        <span style="color: red;">Total Amount: <span id="total_amount_value">₱{{ number_format($totalAmount, 2) }}</span></span>
+                                                    </td>                                                    
                                                 </tr>
-                                            </tfoot>
+                                            </tfoot>                                            
                                         </table>
 
                                         <!-- SUBMIT STOCKS -->
@@ -328,7 +354,6 @@
 
                             <h5 class="text-center text-primary">History</h5>
 
-                            <!-- Search bar and actions -->
                             <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
                                 <input type="text" class="form-control w-auto" placeholder="Search product here">
                                 <button class="btn btn-primary mr-2">Search</button>
@@ -348,70 +373,217 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>
-                                                <button class="btn btn-outline-primary btn-sm">View</button>
-                                            </td>
-                                            <td>
-                                                <input type="date" class="form-control form-control-sm"
-                                                    value="2025-07-07" readonly>
-                                            </td>
-                                            <td>
-                                                <input type="date" class="form-control form-control-sm"
-                                                    value="2025-07-06" readonly>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control form-control-sm"
-                                                    value="Juan dela Cruz" readonly>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-outline-primary btn-sm">Archive</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                        @foreach ($historyGroups as $transactId => $group)
+                                            @php
+                                                $first = $group->first();
+                                                $totalAmount = $group->sum('amount');
+                                            @endphp
+                                        
+                                            <!-- Table Row -->
+                                            <tr>
+                                                <td>
+                                                    <a href="#" data-toggle="modal" data-target="#viewRawHistory{{ $transactId }}" class="btn btn-outline-primary btn-sm">View</a>
+                                                </td>
+                                                <td>
+                                                    <input type="date" class="form-control form-control-sm" value="{{ \Carbon\Carbon::parse($first->created_at)->toDateString() }}" readonly>
+                                                </td>
+                                                <td>
+                                                    <input type="date" class="form-control form-control-sm" value="{{ \Carbon\Carbon::parse($first->received_date)->toDateString() }}" readonly>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control form-control-sm" value="{{ $first->process_by }}" readonly>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-outline-danger btn-sm">Archive</button>
+                                                </td>
+                                            </tr>
+                                        
+                                            <!-- Modal must be outside the <tr> -->
+                                                <div class="modal fade" id="viewRawHistory{{ $transactId }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                                    <div class="modal-dialog modal-xl">
+                                                        <div class="modal-content">
+                                                
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Transaction Details - {{ $transactId }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                            </div>
+                                                
+                                                            <div class="modal-body">
+                                                                <div class=" p-4 position-relative">
+                                                            
+                                                                    <h5>Details</h5>
+                                                            
+                                                                    <div class="row mt-4">
+                                                                        <div class="col-md-6">
+                                                                            <p style="color: black" class="mb-1"><strong>Supplier:</strong> {{ $first->supplier_name }}</p>
+                                                                            <p style="color: black" class="mb-1"><strong>Contact number:</strong> {{ $first->supplier_contact_num }}</p>
+                                                                            <p style="color: black" class="mb-1"><strong>Email address:</strong> {{ $first->supplier_email_add }}</p>
+                                                                            <p style="color: black" class="mb-1"><strong>Address:</strong> {{ $first->supplier_address }}</p>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <p style="color: black" class="mb-1"><strong>Process Date:</strong> {{ \Carbon\Carbon::parse($first->created_at)->format('F d, Y') }}</p>
+                                                                            <p style="color: black" class="mb-1"><strong>Deliver Date:</strong> {{ \Carbon\Carbon::parse($first->received_date)->format('F d, Y') }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                            
+                                                                    <!-- Products Table -->
+                                                                    <div class="mt-4">
+                                                                        <div class="row fw-bold border-bottom pb-2">
+                                                                            <div style="color: #593bdb; font-weight: 900;" class="col-2">Qty</div>
+                                                                            <div style="color: #593bdb; font-weight: 900;" class="col-4">Product</div>
+                                                                            <div style="color: #593bdb; font-weight: 900;" class="col-2">Unit</div>
+                                                                            <div style="color: #593bdb; font-weight: 900;" class="col-2 text-end">Price</div>
+                                                                            <div style="color: #593bdb; font-weight: 900;" class="col-2 text-end">Amount</div>
+                                                                        </div>
+                                                            
+                                                                        @foreach ($group as $item)
+                                                                            <div class="row py-2 border-bottom">
+                                                                                <div style="color: black" class="col-2">{{ $item->quantity }}</div>
+                                                                                <div style="color: black" class="col-4">{{ $item->product_id }}</div>
+                                                                                <div style="color: black" class="col-2">{{ $item->unit }}</div>
+                                                                                <div style="color: black" class="col-2 text-end">₱{{ number_format($item->price, 2) }}</div>
+                                                                                <div style="color: black" class="col-2 text-end">₱{{ number_format($item->amount, 2) }}</div>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                            
+                                                                    <!-- Total and Received By -->
+                                                                    <div class="row mt-4">
+                                                                        <div class="col-md-6"></div>
+                                                                        <div class="col-md-6 text-end">
+                                                                            <p style="color: black" class="mb-2"><strong>Total amount:</strong> ₱{{ number_format($totalAmount, 2) }}</p>
+                                                                            <p style="color: black" class="mb-0"><strong>Received by:</strong> {{ $first->process_by }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                                            </div>
+                                                
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        @endforeach
+                                        </tbody>                                       
                                 </table>
                             </div>
-
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-    <!--**********************************
-            Content body end
-        ***********************************-->
-
-    <!--**********************************
-           Support ticket button start
-        ***********************************-->
-
-    <!--**********************************
-           Support ticket button end
-        ***********************************-->
 
 
     </div>
-    <!--**********************************
-        Main wrapper end
-    ***********************************-->
-
-    <!--**********************************
-        Scripts
-    ***********************************-->
-
+    <!-- SCRIPT -->
     <!-- REQUIRED VENDORS -->
     <script src="{{ asset('partials/vendor/global/global.min.js') }}"></script>
     <script src="{{ asset('partials/js/quixnav-init.js') }}"></script>
     <script src="{{ asset('partials/js/custom.min.js') }}"></script>
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+        function recalculateTotal() {
+            let total = 0;
+            document.querySelectorAll('.amount-cell').forEach(cell => {
+                const amountText = cell.innerText.replace('₱', '').replace(',', '').trim();
+                total += parseFloat(amountText) || 0;
+            });
+
+            const totalAmountEl = document.getElementById('total_amount_value');
+            if (totalAmountEl) {
+                totalAmountEl.innerText = `₱${total.toFixed(2)}`;
+            }
+        }
+
+        // Quantity Update
+        document.querySelectorAll('.update-quantity').forEach(input => {
+            input.addEventListener('change', function () {
+                const batchDetailId = this.dataset.id;        
+                const newQuantity = parseFloat(this.value) || 0;
+                const unitPrice = parseFloat(this.dataset.price) || 0;
+
+                fetch(`/admin/batch-product-details/${batchDetailId}/quantity`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ quantity: newQuantity })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const amount = newQuantity === 0 ? unitPrice : unitPrice * newQuantity;
+                        const amountCell = document.getElementById(`amount-${batchDetailId}`);
+                        if (amountCell) {
+                            amountCell.innerText = `₱${amount.toFixed(2)}`;
+                        }
+                        recalculateTotal();
+                    } else {
+                        alert('Failed to update quantity.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+
+        // PRICE UPDATE
+        document.querySelectorAll('.update-price').forEach(input => {
+            input.addEventListener('change', function () {
+                const batchDetailId = this.dataset.id;         
+                const productId = this.dataset.productId;       
+                const newPrice = parseFloat(this.value);
+
+                if (isNaN(newPrice) || newPrice < 0) {
+                    alert('Invalid price');
+                    return;
+                }
+
+                fetch(`/admin/products/${productId}/update-price`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ price: newPrice })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.value = newPrice.toFixed(2);
+
+                        const qtyInput = document.querySelector(`input.update-quantity[data-id="${batchDetailId}"]`);
+                        if (qtyInput) {
+                            qtyInput.dataset.price = newPrice;
+                            const quantity = parseFloat(qtyInput.value) || 0;
+                            const amountCell = document.getElementById(`amount-${batchDetailId}`);
+
+                            // Show price if quantity is zero, else price * quantity
+                            const amount = quantity === 0 ? newPrice : newPrice * quantity;
+
+                            if (amountCell) {
+                                amountCell.innerText = `₱${amount.toFixed(2)}`;
+                            }
+                        }
+
+                        recalculateTotal();
+                    } else {
+                        alert('Failed to update price.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+    </script>    
+    
     <!-- ADD USERS VALIDATION -->
     <script>
         $(document).ready(function () {

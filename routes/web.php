@@ -71,4 +71,7 @@ Route::get('/admin/stock_in', [StockInController::class, 'StockInPage'])->name('
 Route::post('/admin/stock_in/add_product', [StockInController::class, 'AdminAddProduct'])->name('admin.stock.in.add.product');
 Route::post('/admin/stock_in/add_supplier', [StockInController::class, 'AdminAddSupplier'])->name('admin.stock.in.add.supplier');
 Route::post('/admin/stock_in/add_batch_product_details', [StockInController::class, 'AdminAddBatchProductDetails'])->name('admin.stock.in.add.batch.product.details');
+Route::post('/admin/batch-product-details/{id}/quantity', [StockInController::class, 'updateQuantity']);
+Route::post('/admin/products/{productId}/update-price', [StockInController::class, 'UpdateProductPrice'])->name('admin.product.update.price');
+Route::get('/admin/batch-product-details/delete/{id}', [StockInController::class, 'AdminRemoveBatchProduct'])->name('admin.batch.product.remove');
 Route::post('/admin/raw-stocks-request', [StockInController::class, 'AdminRawStocksRequest'])->name('admin.raw.stocks.request');

@@ -22,14 +22,43 @@ class StockInController extends Controller
         $suppliers = DB::table('suppliers')->get();
 
         $batchProductDetails = DB::table('batch_product_details')
-            ->select(
-                '*',
-                DB::raw('quantity * price as amount')
-            )
-            ->get();
+            ->select('*')
+            ->get()
+            ->map(function ($item) {
+                $item->amount = ($item->quantity > 0)
+                    ? $item->quantity * $item->price
+                    : $item->price;
+                return $item;
+            });
 
-        return view('admin.stock_in', compact('role', 'user', 'products', 'suppliers', 'batchProductDetails'));
+        $totalAmount = $batchProductDetails->sum('amount');
+
+        $historyGroups = DB::table('history_raw_materials')
+            ->join('suppliers', 'history_raw_materials.supplier_id', '=', 'suppliers.id')
+            ->select(
+                'history_raw_materials.*',
+                'suppliers.supplier_name',
+                'suppliers.supplier_contact_num',
+                'suppliers.supplier_email_add',
+                'suppliers.supplier_address'
+            )
+            ->orderBy('history_raw_materials.created_at', 'desc')
+            ->get()
+            ->groupBy('transact_id');
+
+
+        return view('admin.stock_in', compact(
+            'role',
+            'user',
+            'products',
+            'suppliers',
+            'batchProductDetails',
+            'totalAmount',
+            'historyGroups'
+        ));
     }
+
+
 
 
 
@@ -91,7 +120,10 @@ class StockInController extends Controller
         $request->validate([
             'product_ids' => 'required|array|min:1',
             'product_ids.*' => 'exists:products,id',
+        ], [
+            'product_ids.required' => 'Product is required.',
         ]);
+
 
         $now = now();
         $employee_id = Auth::guard('employees')->user()->id;
@@ -120,6 +152,83 @@ class StockInController extends Controller
         return redirect()->route('admin.stock.in.page')->with('success', 'Product details added successfully.');
     }
 
+    public function updateQuantity(Request $request, $id)
+    {
+        $request->validate([
+            'quantity' => 'required|numeric|min:0'
+        ]);
+
+        $employeeId = Auth::guard('employees')->id();
+
+        $updated = DB::table('batch_product_details')
+            ->where('id', $id)
+            ->where('employee_id', $employeeId)
+            ->update([
+                'quantity' => $request->quantity,
+                'updated_at' => now(),
+            ]);
+
+        return response()->json([
+            'success' => $updated ? true : false
+        ]);
+    }
+
+    public function UpdateProductPrice(Request $request, $productId)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $now = now();
+
+        $updatedProduct = DB::table('products')
+            ->where('id', $productId)
+            ->update([
+                'product_price' => $request->price,
+                'updated_at' => $now
+            ]);
+
+        $updatedBatch = DB::table('batch_product_details')
+            ->where('product_id', $productId)
+            ->update([
+                'price' => $request->price,
+                'updated_at' => $now
+            ]);
+
+        if ($updatedProduct) {
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Failed to update price.']);
+        }
+    }
+
+
+
+    public function AdminRemoveBatchProduct($id)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
+        }
+
+        $employeeId = Auth::guard('employees')->user()->id;
+
+        $deleted = DB::table('batch_product_details')
+            ->where('id', $id)
+            ->where('employee_id', $employeeId)
+            ->delete();
+
+        if ($deleted) {
+            return redirect()->route('admin.stock.in.page')->with('success', 'Batch product removed successfully.');
+        } else {
+            return redirect()->route('admin.stock.in.page')->with('error', 'Failed to remove batch product.');
+        }
+    }
+
+
     public function AdminRawStocksRequest(Request $request)
     {
         if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
@@ -147,9 +256,8 @@ class StockInController extends Controller
         $productDetailsData = [];
 
         foreach ($batchItems as $item) {
-            $amount = $item->price * $item->quantity;
+            $amount = ($item->quantity == 0) ? $item->price : $item->price * $item->quantity;
 
-            // Insert into history_raw_materials
             $historyData[] = [
                 'transact_id'   => $transactId,
                 'supplier_id'   => $request->supplier,
@@ -164,7 +272,6 @@ class StockInController extends Controller
                 'updated_at'    => $now,
             ];
 
-            // Insert into product_details (NO employee_id)
             $productDetailsData[] = [
                 'product_id'     => $item->product_id,
                 'product_name'   => $item->product_name,
@@ -177,7 +284,7 @@ class StockInController extends Controller
             ];
         }
 
-        // Insert to both tables
+
         DB::table('history_raw_materials')->insert($historyData);
         DB::table('product_details')->insert($productDetailsData);
         DB::table('batch_product_details')->where('employee_id', $employee->id)->delete();
