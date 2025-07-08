@@ -8,6 +8,7 @@
     <title>Sales & Inventory Management System </title>
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('partials/images/favicon.png') }}">
     <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
 </head>
 
@@ -26,23 +27,20 @@
                                         <br>
                                         Login
                                     </h4>
-                                    <form action="index.html">
+                                    <form action="{{ route('login.request') }}" method="POST">
+                                        @csrf
                                         <div class="form-group">
                                             <label style="color: blueviolet;"><strong>Email</strong></label>
-                                            <input type="email" class="form-control">
+                                            <input type="email" name="email" class="form-control" required>
                                         </div>
                                         <div class="form-group">
                                             <label style="color: blueviolet;"><strong>Password</strong></label>
-                                            <input type="password" class="form-control">
-                                        </div>
-                                        <div class="form-group">
-                                            <label style="color: blueviolet;"><strong>Captcha</strong></label>
-                                            <input type="password" class="form-control">
+                                            <input type="password" name="password" class="form-control" required>
                                         </div>
                                         <div class="text-center">
                                             <button type="submit" class="btn btn-primary btn-block">Login</button>
                                         </div>
-                                    </form>
+                                    </form>                                    
                                     <div class="new-account mt-3">
                                         <p style="text-align: center;"><a class="text-primary"
                                                 href="{{ route('change.password.page') }}">Change password</a></p>
@@ -60,7 +58,26 @@
     <script src="{{ asset('partials/vendor/global/global.min.js') }}"></script>
     <script src="{{ asset('partials/js/quixnav-init.js') }}"></script>
     <script src="{{ asset('partials/js/custom.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        @if(session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
 
+        @if(session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+    
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                toastr.error("{{ $error }}");
+            @endforeach
+        @endif
+    </script>
+    
+   
+        
 </body>
 
 </html>

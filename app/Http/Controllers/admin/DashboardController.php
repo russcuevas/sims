@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function AdminDashboardPage()
     {
+        if (!Auth::guard('employees')->check()) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in to access the dashboard.');
+        }
+
         return view('admin.dashboard');
     }
 }

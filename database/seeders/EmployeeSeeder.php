@@ -22,6 +22,7 @@ class EmployeeSeeder extends Seeder
             'position_id' => 1,
             'contract_id' => 1,
             'username' => 'johndoe',
+            'email' => 'russelcuevas0@gmail.com',
             'password' => bcrypt($passwordRaw),
             'pin' => 1234,
             'status' => 'Unlocked',

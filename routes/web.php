@@ -16,14 +16,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// DEFAULT ROUTES
+Route::get('/', [AuthController::class, 'LoginPage'])->name('login.page');
 
 
 // AUTH ROUTES
 Route::get('/login', [AuthController::class, 'LoginPage'])->name('login.page');
+Route::post('/login_request', [AuthController::class, 'LoginRequest'])->name('login.request');
 Route::get('/change_password', [AuthController::class, 'ChangePasswordPage'])->name('change.password.page');
+Route::post('/logout', [AuthController::class, 'LogoutRequest'])->name('logout.request');
+
 
 
 // ADMIN ROUTES

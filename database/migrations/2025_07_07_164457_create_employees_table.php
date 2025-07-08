@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('birthday')->nullable();
             $table->unsignedBigInteger('position_id')->nullable();
             $table->unsignedBigInteger('contract_id')->nullable();
+            $table->string('email', 255)->unique()->nullable();
             $table->string('username', 50)->unique()->nullable();
             $table->string('password', 255)->nullable();
             $table->integer('pin')->nullable();
