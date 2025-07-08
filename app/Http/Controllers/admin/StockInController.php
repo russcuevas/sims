@@ -18,12 +18,19 @@ class StockInController extends Controller
         $user = Auth::guard('employees')->user();
         $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
 
-        // Fetch products and suppliers
         $products = DB::table('products')->get();
         $suppliers = DB::table('suppliers')->get();
 
-        return view('admin.stock_in', compact('role', 'user', 'products', 'suppliers'));
+        $batchProductDetails = DB::table('batch_product_details')
+            ->select(
+                '*',
+                DB::raw('quantity * price as amount')
+            )
+            ->get();
+
+        return view('admin.stock_in', compact('role', 'user', 'products', 'suppliers', 'batchProductDetails'));
     }
+
 
 
 
@@ -75,7 +82,7 @@ class StockInController extends Controller
         return redirect()->route('admin.stock.in.page')->with('success', 'Supplier added successfully!');
     }
 
-    public function AdminAddProductDetails(Request $request)
+    public function AdminAddBatchProductDetails(Request $request)
     {
         if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
             return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
@@ -87,28 +94,94 @@ class StockInController extends Controller
         ]);
 
         $now = now();
+        $employee_id = Auth::guard('employees')->user()->id;
 
         $products = DB::table('products')
             ->whereIn('id', $request->product_ids)
             ->get();
 
-        $insertData = [];
+        $insert_data = [];
 
         foreach ($products as $product) {
-            $insertData[] = [
-                'product_id' => $product->id,
-                'product_name' => $product->product_name,
-                'price' => $product->product_price,
-                'quantity' => 0,
+            $insert_data[] = [
+                'product_id'    => $product->id,
+                'product_name'  => $product->product_name,
+                'price'         => $product->product_price,
+                'quantity'      => 0,
                 'stock_unit_id' => $product->stock_unit_id,
-                'category' => null,
-                'created_at' => $now,
-                'updated_at' => $now,
+                'category'      => null,
+                'employee_id'   => $employee_id,
+                'created_at'    => $now,
+                'updated_at'    => $now,
             ];
         }
 
-        DB::table('product_details')->insert($insertData);
-
+        DB::table('batch_product_details')->insert($insert_data);
         return redirect()->route('admin.stock.in.page')->with('success', 'Product details added successfully.');
+    }
+
+    public function AdminRawStocksRequest(Request $request)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
+        }
+
+        $request->validate([
+            'received_date' => 'required|date',
+            'supplier' => 'required|exists:suppliers,id',
+        ]);
+
+        $employee = Auth::guard('employees')->user();
+        $transactId = 'TRX-' . strtoupper(uniqid());
+
+        $batchItems = DB::table('batch_product_details')
+            ->where('employee_id', $employee->id)
+            ->get();
+
+        if ($batchItems->isEmpty()) {
+            return back()->with('error', 'No batch products to process.');
+        }
+
+        $now = now();
+        $historyData = [];
+        $productDetailsData = [];
+
+        foreach ($batchItems as $item) {
+            $amount = $item->price * $item->quantity;
+
+            // Insert into history_raw_materials
+            $historyData[] = [
+                'transact_id'   => $transactId,
+                'supplier_id'   => $request->supplier,
+                'product_id'    => $item->product_id,
+                'quantity'      => $item->quantity,
+                'unit'          => $item->stock_unit_id,
+                'price'         => $item->price,
+                'amount'        => $amount,
+                'process_by'    => $employee->employee_firstname . ' ' . $employee->employee_lastname,
+                'received_date' => $request->received_date,
+                'created_at'    => $now,
+                'updated_at'    => $now,
+            ];
+
+            // Insert into product_details (NO employee_id)
+            $productDetailsData[] = [
+                'product_id'     => $item->product_id,
+                'product_name'   => $item->product_name,
+                'price'          => $item->price,
+                'quantity'       => $item->quantity,
+                'stock_unit_id'  => $item->stock_unit_id,
+                'category'       => 'raw materials',
+                'created_at'     => $now,
+                'updated_at'     => $now,
+            ];
+        }
+
+        // Insert to both tables
+        DB::table('history_raw_materials')->insert($historyData);
+        DB::table('product_details')->insert($productDetailsData);
+        DB::table('batch_product_details')->where('employee_id', $employee->id)->delete();
+
+        return redirect()->route('admin.stock.in.page')->with('success', 'Raw stocks saved successfully!');
     }
 }

@@ -70,4 +70,5 @@ Route::put('/admin/user_management/update/{id}', [UserController::class, 'AdminU
 Route::get('/admin/stock_in', [StockInController::class, 'StockInPage'])->name('admin.stock.in.page');
 Route::post('/admin/stock_in/add_product', [StockInController::class, 'AdminAddProduct'])->name('admin.stock.in.add.product');
 Route::post('/admin/stock_in/add_supplier', [StockInController::class, 'AdminAddSupplier'])->name('admin.stock.in.add.supplier');
-Route::post('/admin/stock_in/add_product_details', [StockInController::class, 'AdminAddProductDetails'])->name('admin.stock.in.add.product.details');
+Route::post('/admin/stock_in/add_batch_product_details', [StockInController::class, 'AdminAddBatchProductDetails'])->name('admin.stock.in.add.batch.product.details');
+Route::post('/admin/raw-stocks-request', [StockInController::class, 'AdminRawStocksRequest'])->name('admin.raw.stocks.request');

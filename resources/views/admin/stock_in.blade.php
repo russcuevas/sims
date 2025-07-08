@@ -222,7 +222,7 @@
                                         </div>
                                     </div>
 
-                                    <form action="" method="POST">
+                                    <form action="{{ route('admin.stock.in.add.batch.product.details') }}" method="POST">
                                         @csrf
                                         <div class="d-flex gap-2 align-items-center">
                                             <select id="product_select" name="product_ids[]" class="form-control mr-2" multiple="multiple" style="flex: 1; color: black !important">
@@ -239,7 +239,8 @@
                                     
                                 </div>
 
-                                <form action="">
+                                <form action="{{ route('admin.raw.stocks.request') }}" method="POST">
+                                    @csrf
                                     <div class="row mb-3">
                                         <div class="col-md-3 text-left">
                                             <label style="color: #593bdb;" for="received_date"
@@ -287,26 +288,24 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @foreach($batchProductDetails as $detail)
                                                 <tr>
-                                                    <th>
-                                                        <input style="border-color: #593bdb;" type="text"
-                                                            class="form-control input-rounded" placeholder="0">
-                                                    </th>
-                                                    <td style="color: black;">Sample Product</td>
-                                                    <td><span class="badge badge-primary">80kg</span>
-                                                    </td>
-                                                    <td style="color: black;">100</td>
-                                                    <td style="color: black;">10000</td>
                                                     <td>
-                                                        <span>
-                                                            <a class="btn btn-outline-danger" href=""
-                                                                data-toggle="tooltip" data-placement="top"
-                                                                title="Close"><i class="fa fa-close"></i>
-                                                                Remove
-                                                            </a>
-                                                        </span>
+                                                        <input style="border-color: #593bdb;" type="text"
+                                                            class="form-control input-rounded" value="{{ $detail->quantity }}">
+                                                    </td>
+                                                    <td style="color: black;">{{ $detail->product_name }}</td>
+                                                    <td><span class="badge badge-primary">{{ $detail->stock_unit_id }}</span></td>
+                                                    <td style="color: black;">{{ number_format($detail->price, 2) }}</td>
+                                                    <td style="color: black;">{{ number_format($detail->amount, 2) }}</td>
+                                                    <td>
+                                                        <a class="btn btn-outline-danger" href=""
+                                                            data-toggle="tooltip" data-placement="top" title="Remove">
+                                                            <i class="fa fa-close"></i> Remove
+                                                        </a>
                                                     </td>
                                                 </tr>
+                                            @endforeach
                                             </tbody>
                                             <tfoot>
                                                 <tr>

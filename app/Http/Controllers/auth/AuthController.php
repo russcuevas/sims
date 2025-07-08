@@ -36,11 +36,11 @@ class AuthController extends Controller
                 case 1:
                     return redirect()->route('admin.dashboard.page');
                 case 2:
-                    return redirect()->route('some.other.page'); // example for position 2
+                    return redirect()->route('some.other.page');
                 case 3:
-                    return redirect()->route('another.page'); // example for position 3
+                    return redirect()->route('another.page');
                 default:
-                    return redirect()->route('default.page'); // fallback route
+                    return redirect()->route('default.page');
             }
         }
 
@@ -79,21 +79,18 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Employee not found']);
         }
 
-        // Generate OTP and token
         $otp = rand(1000, 9999);
         $token = Str::random(64);
         $link = url("/reset-password/{$token}");
 
-        // Store in change_passwords
         DB::table('change_passwords')->insert([
             'employee_id' => $employee->id,
             'otp' => $otp,
-            'link' => $token, // store just the token part
+            'link' => $token,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        // Hardcoded email with OTP
         Mail::raw("Click here to reset your password: {$link}\n\nYour OTP is: {$otp}", function ($message) use ($employee) {
             $message->to($employee->email)
                 ->subject('Password Reset Request');
