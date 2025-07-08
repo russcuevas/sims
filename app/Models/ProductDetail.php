@@ -17,5 +17,6 @@ class ProductDetail extends Model
         'stock_unit_id',
         'product_price',
         'category',
+        'is_archived',
     ];
 }

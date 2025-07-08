@@ -85,13 +85,66 @@
 
 
                                 <div class="table-responsive">
-                                    <!-- Search bar and actions -->
                                     <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
-                                        <input type="text" class="form-control w-auto"
-                                            placeholder="Search product here">
-                                        <button class="btn btn-primary mr-2">Search</button>
-                                        <button class="btn btn-primary mr-2">Filter</button>
-                                        <button class="btn btn-primary mr-2">Sort</button>
+                                        <form method="GET" action="{{ route('admin.stock.management.page') }}" class="d-flex gap-2 align-items-center mb-3">
+
+                                            <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto" placeholder="Search product here">
+                                            <button type="submit" class="btn btn-primary mr-2">Search</button>
+
+                                            {{-- Filter Dropdown --}}
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-primary dropdown-toggle mr-2" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Filter by Category
+                                                    @if(request('category'))
+                                                        : {{ request('category') }}
+                                                    @endif
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                                                    <li><a class="dropdown-item" href="{{ route('admin.stock.management.page', request()->except('category')) }}">All</a></li>
+                                                    @foreach($categories as $category)
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{ route('admin.stock.management.page', array_merge(request()->except('category'), ['category' => $category])) }}">
+                                                                {{ ucfirst($category) }}
+                                                            </a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        
+                                            {{-- Sort Dropdown --}}
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Sort
+                                                    @if(request('sort_by'))
+                                                        : {{ ucfirst(str_replace('_', ' ', request('sort_by'))) }} {{ strtoupper(request('sort_dir', 'desc')) }}
+                                                    @endif
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                                                    @php
+                                                        $sortOptions = [
+                                                            'product_name' => 'Name',
+                                                            'price' => 'Price',
+                                                            'quantity' => 'Quantity',
+                                                            'created_at' => 'Date',
+                                                        ];
+                                                        $directions = ['asc' => 'Ascending', 'desc' => 'Descending'];
+                                                    @endphp
+                                        
+                                                    @foreach($sortOptions as $key => $label)
+                                                        @foreach($directions as $dirKey => $dirLabel)
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('admin.stock.management.page', array_merge(request()->except(['sort_by', 'sort_dir']), ['sort_by' => $key, 'sort_dir' => $dirKey])) }}">
+                                                                    {{ $label }} - {{ $dirLabel }}
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                    
+                                        
+                                        </form>
+                                        
                                     </div>
                                     <table class="table table-bordered table-responsive-sm">
                                         <thead>
@@ -106,30 +159,69 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($productDetails as $product)
-                                                <tr>
-                                                    <td style="color: black;">{{ \Carbon\Carbon::parse($product->created_at)->format('m/d/Y') ?? 'N/A' }}</td>
-                                                    <td>
-                                                        <input style="border-color: #593bdb;" type="text" 
-                                                            class="form-control input-rounded" placeholder="0" value="{{ $product->quantity ?? '' }}">
-                                                    </td>
-                                                    <td style="color: black;">{{ $product->product_name ?? 'N/A' }} - ₱{{ $product->price }}</td>                                    
-                                                    <td><span class="badge badge-primary">{{ $product->stock_unit_id ?? 'unit' }}</span></td>                                    
-                                                    <td style="color: black; text-transform: capitalize">{{ $product->category ?? 'N/A' }}</td>
-                                                    <td>
-                                                        <span>
-                                                            <a class="btn btn-outline-warning" href="#" data-toggle="tooltip" data-placement="top" title="Update">
-                                                                <i class="fa fa-pencil"></i> Update
-                                                            </a>
-                                                            <a class="btn btn-outline-danger" href="#" data-toggle="tooltip" data-placement="top" title="Archive">
-                                                                <i class="fa fa-close"></i> Archive
-                                                            </a>
-                                                        </span>
-                                                    </td>
-                                                </tr>
+                                            <tr>
+                                                <td style="color: black;">{{ \Carbon\Carbon::parse($product->created_at)->format('m/d/Y') }}</td>
+                                                <td>
+                                                    <input style="border-color: #593bdb;" type="number" 
+                                                        class="form-control input-rounded quantity-input"
+                                                        data-id="{{ $product->id }}"
+                                                        value="{{ $product->quantity ?? '' }}">
+                                                </td>                                                <td style="color: black;">{{ $product->product_name }} - ₱{{ $product->price }}</td>
+                                                <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
+                                                <td style="color: black; text-transform: capitalize">{{ $product->category }}</td>
+                                                <td>
+                                                    <button class="btn btn-outline-warning btn-sm" data-toggle="modal" data-target="#updateProductModal{{ $product->id }}">
+                                                        <i class="fa fa-pencil"></i> Update
+                                                    </button>
+                                            
+                                                    <form action="{{ route('admin.stock.archive.product', ['id' => $product->id]) }}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            
+                                            <!-- Update Modal -->
+                                            <div class="modal fade" id="updateProductModal{{ $product->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $product->id }}" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <form action="{{ route('admin.stock.update.product', ['id' => $product->id]) }}" method="POST">
+                                                        @csrf
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Update Product - {{ $product->product_name }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label>Product Name</label>
+                                                                    <input type="text" name="product_name" value="{{ $product->product_name }}" class="form-control" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Quantity</label>
+                                                                    <input type="number" name="quantity" value="{{ $product->quantity }}" min="0" class="form-control" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Price</label>
+                                                                    <input type="number" step="0.01" name="price" value="{{ $product->price }}" class="form-control" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Stock Unit</label>
+                                                                    <input type="text" name="stock_unit_id" value="{{ $product->stock_unit_id }}" class="form-control" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-primary" type="submit">Save</button>
+                                                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                             @endforeach
+                                            
                                         </tbody>
                                     </table>
-                                    
+                                
                                 </div>
                             </div>
                         </div>
@@ -163,8 +255,49 @@
     <script src="{{ asset('partials/vendor/global/global.min.js') }}"></script>
     <script src="{{ asset('partials/js/quixnav-init.js') }}"></script>
     <script src="{{ asset('partials/js/custom.min.js') }}"></script>
+        <!-- Bootstrap 5 JS + Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputs = document.querySelectorAll('.quantity-input');
+    
+            inputs.forEach(input => {
+                input.addEventListener('change', function () {
+                    const productId = this.dataset.id;
+                    const newQuantity = this.value;
+    
+                    fetch(`/admin/stock/update-product-quantity/${productId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            quantity: newQuantity
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Updated:', data.message);
+                        } else {
+                            console.error('Error:', data.message);
+                            alert('Failed to update quantity.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Something went wrong.');
+                    });
+                });
+            });
+        });
+    </script>
+    
     <!-- ADD USERS VALIDATION -->
     <script>
         $(document).ready(function () {
@@ -270,6 +403,23 @@
             const today = new Date().toISOString().split('T')[0];
             $('#process_date').val(today);
         });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        @if(session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
+
+        @if(session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                toastr.error("{{ $error }}");
+            @endforeach
+        @endif
     </script>
 
 

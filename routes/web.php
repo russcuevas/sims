@@ -81,3 +81,6 @@ Route::post('/admin/archive-raw-stock/{transactId}', [StockInController::class, 
 
 // ADMIN STOCK MANAGEMENT
 Route::get('/admin/stock_management', [StockController::class, 'StockManagementPage'])->name('admin.stock.management.page');
+Route::post('/admin/stock/update-product-quantity/{id}', [StockController::class, 'StockUpdateProductQuantity'])->name('admin.stock.update.product.quantity');
+Route::post('/admin/stock/archive-product/{id}', [StockController::class, 'StockArchiveProduct'])->name('admin.stock.archive.product');
+Route::post('/admin/stock/update-product/{id}', [StockController::class, 'StockUpdateProduct'])->name('admin.stock.update.product');

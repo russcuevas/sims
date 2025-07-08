@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('quantity')->default(0)->nullable();
             $table->string('stock_unit_id', 255)->nullable();
             $table->string('category', 255)->nullable();
+            $table->integer('is_archived')->default(0);
 
             $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('set null');

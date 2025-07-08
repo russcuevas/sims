@@ -442,7 +442,7 @@
                                                                         @foreach ($group as $item)
                                                                             <div class="row py-2 border-bottom">
                                                                                 <div style="color: black" class="col-2">{{ $item->quantity }}</div>
-                                                                                <div style="color: black" class="col-4">{{ $item->product_id }}</div>
+                                                                                <div style="color: black" class="col-4">{{ $item->product_name }}</div> <!-- updated -->
                                                                                 <div style="color: black" class="col-2">{{ $item->unit }}</div>
                                                                                 <div style="color: black" class="col-2 text-end">₱{{ number_format($item->price, 2) }}</div>
                                                                                 <div style="color: black" class="col-2 text-end">₱{{ number_format($item->amount, 2) }}</div>
