@@ -42,10 +42,10 @@ class StockInController extends Controller
                 'suppliers.supplier_email_add',
                 'suppliers.supplier_address'
             )
+            ->where('history_raw_materials.is_archived', 0)
             ->orderBy('history_raw_materials.created_at', 'desc')
             ->get()
             ->groupBy('transact_id');
-
 
         return view('admin.stock_in', compact(
             'role',
@@ -57,10 +57,6 @@ class StockInController extends Controller
             'historyGroups'
         ));
     }
-
-
-
-
 
 
     public function AdminAddProduct(Request $request)
@@ -290,5 +286,18 @@ class StockInController extends Controller
         DB::table('batch_product_details')->where('employee_id', $employee->id)->delete();
 
         return redirect()->route('admin.stock.in.page')->with('success', 'Raw stocks saved successfully!');
+    }
+
+    public function ArchiveRawStock($transactId)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
+        }
+
+        DB::table('history_raw_materials')
+            ->where('transact_id', $transactId)
+            ->update(['is_archived' => 1]);
+
+        return back()->with('success', 'Transaction archived successfully.');
     }
 }

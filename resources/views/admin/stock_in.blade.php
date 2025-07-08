@@ -394,7 +394,10 @@
                                                     <input type="text" class="form-control form-control-sm" value="{{ $first->process_by }}" readonly>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-outline-danger btn-sm">Archive</button>
+                                                    <form action="{{ route('admin.archive.raw.stock', ['transactId' => $transactId]) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         

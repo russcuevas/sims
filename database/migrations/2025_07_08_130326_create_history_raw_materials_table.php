@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->string('process_by', 255)->nullable();
             $table->date('received_date')->nullable();
+            $table->integer('is_archived')->default(0);
+
             $table->timestamps();
             $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('set null');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('set null');

@@ -20,7 +20,7 @@
             <li><a href="{{ route('admin.stock.in.page') }}" aria-expanded="false"><i class="icon icon-form"></i><span
                         class="nav-text">Stock In</span></a>
             </li>
-            <li><a href="stock_management.html" aria-expanded="false"><i class="icon icon-layout-25"></i><span
+            <li><a href="{{ route('admin.stock.management.page') }}" aria-expanded="false"><i class="icon icon-layout-25"></i><span
                         class="nav-text">Stock Management</span></a>
             </li>
             <li><a href="process_management.html" aria-expanded="false"><i class="icon icon-app-store"></i><span

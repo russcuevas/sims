@@ -28,9 +28,16 @@ class AuthController extends Controller
         ]);
 
         if (Auth::guard('employees')->attempt($credentials)) {
-            $request->session()->regenerate();
-
             $user = Auth::guard('employees')->user();
+
+            if ($user->is_archived) {
+                Auth::guard('employees')->logout();
+                return back()->withErrors([
+                    'email' => 'Email or password is incorrect',
+                ]);
+            }
+
+            $request->session()->regenerate();
 
             switch ($user->position_id) {
                 case 1:
@@ -48,6 +55,7 @@ class AuthController extends Controller
             'email' => 'Email or password is incorrect',
         ]);
     }
+
 
 
 

@@ -19,5 +19,6 @@ class HistoryRawMaterials extends Model
         'amount',
         'process_by',
         'received_date',
+        'is_archived',
     ];
 }

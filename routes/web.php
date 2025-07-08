@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\admin\StockController;
 use App\Http\Controllers\admin\StockInController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\auth\AuthController;
@@ -75,3 +76,8 @@ Route::post('/admin/batch-product-details/{id}/quantity', [StockInController::cl
 Route::post('/admin/products/{productId}/update-price', [StockInController::class, 'UpdateProductPrice'])->name('admin.product.update.price');
 Route::get('/admin/batch-product-details/delete/{id}', [StockInController::class, 'AdminRemoveBatchProduct'])->name('admin.batch.product.remove');
 Route::post('/admin/raw-stocks-request', [StockInController::class, 'AdminRawStocksRequest'])->name('admin.raw.stocks.request');
+Route::post('/admin/archive-raw-stock/{transactId}', [StockInController::class, 'ArchiveRawStock'])->name('admin.archive.raw.stock');
+
+
+// ADMIN STOCK MANAGEMENT
+Route::get('/admin/stock_management', [StockController::class, 'StockManagementPage'])->name('admin.stock.management.page');
