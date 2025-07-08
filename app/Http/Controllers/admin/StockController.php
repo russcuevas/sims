@@ -15,6 +15,10 @@ class StockController extends Controller
             return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
         }
 
+        // fetching in left sidebar the users
+        $user = Auth::guard('employees')->user();
+        $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
+
         $categories = DB::table('product_details')
             ->where('is_archived', 0)
             ->distinct()
@@ -46,7 +50,7 @@ class StockController extends Controller
 
         $productDetails = $query->orderBy($sortBy, $sortDir)->get();
 
-        return view('admin.stock_management', compact('productDetails', 'categories', 'sortBy', 'sortDir'));
+        return view('admin.stock_management', compact('productDetails', 'categories', 'sortBy', 'sortDir', 'role', 'user'));
     }
 
 
@@ -60,19 +64,29 @@ class StockController extends Controller
             'quantity' => 'required|numeric|min:0',
         ]);
 
-        $updated = DB::table('product_details')
+        // Update product_details
+        $updatedProduct = DB::table('product_details')
             ->where('id', $id)
             ->update([
                 'quantity' => $validated['quantity'],
                 'updated_at' => now(),
             ]);
 
-        if ($updated) {
+        // Update batch_fetch_raw_products where product_id_details matches
+        $updatedBatch = DB::table('batch_fetch_raw_products')
+            ->where('product_id_details', $id)
+            ->update([
+                'quantity' => $validated['quantity'],
+                'updated_at' => now(),
+            ]);
+
+        if ($updatedProduct || $updatedBatch) {
             return response()->json(['success' => true, 'message' => 'Quantity updated successfully.']);
         }
 
         return response()->json(['success' => false, 'message' => 'Update failed.']);
     }
+
 
     public function StockUpdateProduct(Request $request, $id)
     {

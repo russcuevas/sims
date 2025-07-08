@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\admin\ProcessController;
 use App\Http\Controllers\admin\StockController;
 use App\Http\Controllers\admin\StockInController;
 use App\Http\Controllers\admin\UserController;
@@ -84,3 +85,11 @@ Route::get('/admin/stock_management', [StockController::class, 'StockManagementP
 Route::post('/admin/stock/update-product-quantity/{id}', [StockController::class, 'StockUpdateProductQuantity'])->name('admin.stock.update.product.quantity');
 Route::post('/admin/stock/archive-product/{id}', [StockController::class, 'StockArchiveProduct'])->name('admin.stock.archive.product');
 Route::post('/admin/stock/update-product/{id}', [StockController::class, 'StockUpdateProduct'])->name('admin.stock.update.product');
+
+// ADMIN PROCESS MANAGEMENT
+Route::get('/admin/process_management', [ProcessController::class, 'ProcessManagementPage'])->name('admin.process.management.page');
+Route::post('/admin/batch/add-raw-products', [ProcessController::class, 'AdminAddBatchFetchRawProducts'])
+    ->name('admin.batch.add.raw.products');
+Route::post('/admin/batch/raw-product/update', [ProcessController::class, 'AdminUpdateBatchRawProductQuantity'])
+    ->name('admin.batch.raw.product.update');
+Route::get('/admin/batch-product-raw-details/delete/{id}', [ProcessController::class, 'AdminRemoveBatchRawProduct'])->name('admin.batch.raw.product.remove');

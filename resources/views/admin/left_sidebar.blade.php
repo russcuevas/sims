@@ -23,7 +23,7 @@
             <li><a href="{{ route('admin.stock.management.page') }}" aria-expanded="false"><i class="icon icon-layout-25"></i><span
                         class="nav-text">Stock Management</span></a>
             </li>
-            <li><a href="process_management.html" aria-expanded="false"><i class="icon icon-app-store"></i><span
+            <li><a href="{{ route('admin.process.management.page')}}" aria-expanded="false"><i class="icon icon-app-store"></i><span
                         class="nav-text">Process Management</span></a>
             </li>
             <li><a href="delivery_management.html" aria-expanded="false"><i class="icon icon-cart-9"></i><span
