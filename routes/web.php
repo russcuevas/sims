@@ -30,5 +30,9 @@ Route::post('/logout', [AuthController::class, 'LogoutRequest'])->name('logout.r
 
 // ADMIN ROUTES
 Route::get('/admin/dashboard', [DashboardController::class, 'AdminDashboardPage'])->name('admin.dashboard.page');
+
+// ADMIN USER MANAGEMENT
 Route::get('/admin/user_management', [UserController::class, 'AdminUserManagementPage'])->name('admin.user.management.page');
 Route::post('/admin/user_management/add', [UserController::class, 'AdminAddUser'])->name('admin.user.add');
+Route::post('/admin/user_management/archive/{id}', [UserController::class, 'AdminArchiveUser'])->name('admin.user.archive');
+Route::put('/admin/user_management/update/{id}', [UserController::class, 'AdminUpdateUser'])->name('admin.user.update');

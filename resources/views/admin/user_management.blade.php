@@ -12,9 +12,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
     <style>
-        form.add_users_validation label {
-            color: #000 !important;
-        }
+    .col-form-label {
+        color: black;
+    }
     </style>
 </head>
 
@@ -73,8 +73,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title" style="font-size: 20px; color: blueviolet;">User Management</h4>
-                                <div>
-                                    <button id="add_user_button" class="btn btn-outline-primary me-2"
+                                <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+                                    <button id="add_user_button" class="btn btn-outline-primary me-2 mr-2"
                                         data-toggle="modal" data-target=".add-users-modal-lg">+ Add
                                         Users</button>
                                     <!-- ADD MODAL -->
@@ -229,9 +229,32 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <button id="filter_button" class="btn btn-outline-primary me-2">Filter</button>
-                                    <button id="sort_button" class="btn btn-outline-secondary">Sort</button>
+                                    <form method="GET" action="{{ route('admin.user.management.page') }}" class="d-flex gap-2">
+                                        {{-- Filter Dropdown --}}
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-primary dropdown-toggle mr-2" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Filter by Role
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                                                <li><a class="dropdown-item" href="{{ route('admin.user.management.page') }}">All</a></li>
+                                                @foreach($positions as $position)
+                                                    <li><a class="dropdown-item" href="{{ route('admin.user.management.page', ['role' => $position->id]) }}">{{ $position->position_name }}</a></li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    
+                                        {{-- Sort Dropdown --}}
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Sort Alphabetically
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                                                <li><a class="dropdown-item" href="{{ route('admin.user.management.page', ['sort' => 'asc']) }}">A-Z</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('admin.user.management.page', ['sort' => 'desc']) }}">Z-A</a></li>
+                                            </ul>
+                                        </div>
+                                    </form>
+                                    
                                 </div>
                             </div>
                             <div class="card-body">
@@ -253,26 +276,166 @@
                                         </thead>
                                         <tbody>
                                             @foreach($employees as $employee)
-                                                <tr>
-                                                    <td style="color: black;">
-                                                        <img src="https://images.rawpixel.com/image_png_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvdjkzNy1hZXctMTY1LnBuZw.png?s=b4SEVfKYcskH9PiGnSKmpM9SloVv-yAI_PKnNBsL-3o" alt="Default Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
-                                                    </td>                                                    
-                                                    <td style="color: black;">{{ $employee->employee_firstname }} {{ $employee->employee_lastname }}</td>
-                                                    <td style="color: black;">{{ $employee->position_name ?? 'N/A' }}</td>
-                                                    <td style="color: black;">{{ $employee->contract ?? 'N/A' }}</td>
-                                                    <td style="color: black;">{{ $employee->email }}</td>
-                                                    <td style="color: black;">{{ $employee->username }}</td>
-                                                    <td style="color: black;">{{ str_repeat('*', strlen($employee->pin)) }}</td>
-                                                    <td style="color: black;">{{ $employee->login_attempts }}</td>
-                                                    <td style="color: black;">{{ $employee->status }}</td>
-                                                    <td>
-                                                        <div class="d-flex gap-2">
-                                                            <button class="btn btn-outline-primary mr-2">Update</button>
-                                                            <button class="btn btn-outline-secondary">Archive</button>
+                                            <tr>
+                                                <td style="color: black;">
+                                                    <img src="https://images.rawpixel.com/image_png_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvdjkzNy1hZXctMTY1LnBuZw.png?s=b4SEVfKYcskH9PiGnSKmpM9SloVv-yAI_PKnNBsL-3o" alt="Default Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                                                </td>
+                                                <td style="color: black;">{{ $employee->employee_firstname }} {{ $employee->employee_lastname }}</td>
+                                                <td style="color: black;">{{ $employee->position_name ?? 'N/A' }}</td>
+                                                <td style="color: black;">{{ $employee->contract ?? 'N/A' }}</td>
+                                                <td style="color: black;">{{ $employee->email }}</td>
+                                                <td style="color: black;">{{ $employee->username }}</td>
+                                                <td style="color: black;">{{ str_repeat('*', strlen($employee->pin)) }}</td>
+                                                <td style="color: black;">{{ $employee->login_attempts }}</td>
+                                                <td style="color: black;">{{ $employee->status }}</td>
+                                                <td>
+                                                    <div class="d-flex gap-2">
+                                                        <!-- Update button triggers this user's modal -->
+                                                        <button class="btn btn-outline-primary mr-2" data-toggle="modal" data-target="#updateUserModal{{ $employee->id }}">
+                                                            Update
+                                                        </button>
+                                            
+                                                        <form action="{{ route('admin.user.archive', $employee->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to archive this user?');">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-outline-secondary">Archive</button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            
+                                            <!-- Update Modal for this user -->
+                                            <div class="modal fade" id="updateUserModal{{ $employee->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Update User - {{ $employee->employee_firstname }} {{ $employee->employee_lastname }}</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                                                         </div>
-                                                    </td>
-                                                </tr>
+                                                        <div class="modal-body">
+                                                            <form action="{{ route('admin.user.update', $employee->id) }}" method="POST" class="update_users_validation">
+                                                                @csrf
+                                                                @method('PUT')
+                                            
+                                                                <div class="container">
+                                                                    <div class="row">
+                                                                        <!-- LEFT COLUMN: Personal Information -->
+                                                                        <div class="col-md-6">
+                                                                            <h5 class="mb-3 text-primary">Personal Information</h5>
+                                            
+                                                                            <!-- First Name -->
+                                                                            <div class="form-group row mb-3">
+                                                                                <label class="col-sm-4 col-form-label text-end" for="first_name_{{ $employee->id }}">First Name <span class="text-danger">*</span></label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="text" class="form-control" id="first_name_{{ $employee->id }}" name="first_name" value="{{ $employee->employee_firstname }}" required>
+                                                                                </div>
+                                                                            </div>
+                                            
+                                                                            <!-- Last Name -->
+                                                                            <div class="form-group row mb-3">
+                                                                                <label class="col-sm-4 col-form-label text-end" for="last_name_{{ $employee->id }}">Last Name <span class="text-danger">*</span></label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="text" class="form-control" id="last_name_{{ $employee->id }}" name="last_name" value="{{ $employee->employee_lastname }}" required>
+                                                                                </div>
+                                                                            </div>
+                                            
+                                                                            <!-- Role -->
+                                                                            <div class="form-group row mb-3">
+                                                                                <label class="col-sm-4 col-form-label text-end" for="role_{{ $employee->id }}">Select Role <span class="text-danger">*</span></label>
+                                                                                <div class="col-sm-8">
+                                                                                    <select class="form-control" id="role_{{ $employee->id }}" name="role" required>
+                                                                                        <option value="">Please select</option>
+                                                                                        @foreach($positions as $position)
+                                                                                            <option value="{{ $position->id }}" {{ $employee->position_id == $position->id ? 'selected' : '' }}>
+                                                                                                {{ $position->position_name }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                            
+                                                                            <!-- Contract -->
+                                                                            <div class="form-group row mb-3">
+                                                                                <label class="col-sm-4 col-form-label text-end" for="contract_{{ $employee->id }}">Contract <span class="text-danger">*</span></label>
+                                                                                <div class="col-sm-8">
+                                                                                    <select class="form-control" id="contract_{{ $employee->id }}" name="contract" required>
+                                                                                        <option value="">Please select</option>
+                                                                                        @foreach($contracts as $contract)
+                                                                                            <option value="{{ $contract->id }}" {{ $employee->contract_id == $contract->id ? 'selected' : '' }}>
+                                                                                                {{ $contract->contract }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                            
+                                                                        <!-- RIGHT COLUMN: Account Information -->
+                                                                        <div class="col-md-6">
+                                                                            <h5 class="mb-3 text-primary">Account Information</h5>
+                                            
+                                                                            <!-- Email -->
+                                                                            <div class="form-group row mb-3">
+                                                                                <label class="col-sm-4 col-form-label text-end" for="email_{{ $employee->id }}">Email <span class="text-danger">*</span></label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="email_{{ $employee->id }}" name="email" value="{{ $employee->email }}" required>
+                                                                                </div>
+                                                                            </div>
+                                            
+                                                                            <!-- Username -->
+                                                                            <div class="form-group row mb-3">
+                                                                                <label class="col-sm-4 col-form-label text-end" for="username_{{ $employee->id }}">Username <span class="text-danger">*</span></label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="text" class="form-control" id="username_{{ $employee->id }}" name="username" value="{{ $employee->username }}" required>
+                                                                                </div>
+                                                                            </div>
+                                            
+                                                                            <!-- Pin -->
+                                                                            <div class="form-group row mb-3">
+                                                                                <label class="col-sm-4 col-form-label text-end" for="pin_{{ $employee->id }}">Pin <span class="text-danger">*</span></label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input
+                                                                                        type="text"
+                                                                                        class="form-control"
+                                                                                        id="pin_{{ $employee->id }}"
+                                                                                        name="pin"
+                                                                                        value="{{ $employee->pin }}"
+                                                                                        maxlength="4"
+                                                                                        pattern="\d{4}"
+                                                                                        title="Please enter exactly 4 digits"
+                                                                                        inputmode="numeric"
+                                                                                        required
+                                                                                    >
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!-- Status -->
+                                                                            <div class="form-group row mb-3">
+                                                                                <label class="col-sm-4 col-form-label text-end" for="status_{{ $employee->id }}">Status <span class="text-danger">*</span></label>
+                                                                                <div class="col-sm-8">
+                                                                                    <select class="form-control" id="status_{{ $employee->id }}" name="status" required>
+                                                                                        <option value="">Please select</option>
+                                                                                        <option value="Unlocked" {{ $employee->status == 'Unlocked' ? 'selected' : '' }}>Unlocked</option>
+                                                                                        <option value="Locked" {{ $employee->status == 'Locked' ? 'selected' : '' }}>Locked</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                            
+                                                                <!-- Modal Footer -->
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                                </div>
+                                            
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             @endforeach
+                                            
                                         </tbody>
                                     </table>                                    
                                 </div>
@@ -287,6 +450,10 @@
     <!-- SCRIPTS -->
     <!-- REQUIRED VENDORS -->
     <script src="{{ asset('partials/vendor/global/global.min.js') }}"></script>
+    <!-- Bootstrap 5 JS + Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
     <script src="{{ asset('partials/js/quixnav-init.js') }}"></script>
     <script src="{{ asset('partials/js/custom.min.js') }}"></script>
     <!-- DATATABLE PLUGINS -->
@@ -390,7 +557,7 @@
             }
         });
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         @if(session('success'))

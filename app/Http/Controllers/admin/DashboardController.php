@@ -11,10 +11,9 @@ class DashboardController extends Controller
     public function AdminDashboardPage()
     {
         // check set session
-        if (!Auth::guard('employees')->check()) {
-            return redirect()->route('login.page')->with('error', 'You must be logged in to access the dashboard.');
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
         }
-
 
         // fetching in left sidebar the users
         $user = Auth::guard('employees')->user();
