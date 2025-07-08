@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\admin\StockInController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\auth\AuthController;
 use Illuminate\Support\Facades\Route;
@@ -36,3 +37,6 @@ Route::get('/admin/user_management', [UserController::class, 'AdminUserManagemen
 Route::post('/admin/user_management/add', [UserController::class, 'AdminAddUser'])->name('admin.user.add');
 Route::post('/admin/user_management/archive/{id}', [UserController::class, 'AdminArchiveUser'])->name('admin.user.archive');
 Route::put('/admin/user_management/update/{id}', [UserController::class, 'AdminUpdateUser'])->name('admin.user.update');
+
+// ADMIN STOCK IN MANAGEMENT
+Route::get('/admin/stock_in', [StockInController::class, 'StockInPage'])->name('admin.stock.in.page');

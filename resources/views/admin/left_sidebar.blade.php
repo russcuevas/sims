@@ -17,7 +17,7 @@
             <li><a href="{{ route('admin.user.management.page') }}" aria-expanded="false"><i class="icon icon-single-04"></i><span
                         class="nav-text">User Management</span></a>
             </li>
-            <li><a href="stock_in_management.html" aria-expanded="false"><i class="icon icon-form"></i><span
+            <li><a href="{{ route('admin.stock.in.page') }}" aria-expanded="false"><i class="icon icon-form"></i><span
                         class="nav-text">Stock In</span></a>
             </li>
             <li><a href="stock_management.html" aria-expanded="false"><i class="icon icon-layout-25"></i><span
