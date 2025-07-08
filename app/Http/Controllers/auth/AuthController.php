@@ -23,13 +23,25 @@ class AuthController extends Controller
         if (Auth::guard('employees')->attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->route('admin.dashboard.page');
+            $user = Auth::guard('employees')->user();
+
+            switch ($user->position_id) {
+                case 1:
+                    return redirect()->route('admin.dashboard.page');
+                case 2:
+                    return redirect()->route('some.other.page'); // example for position 2
+                case 3:
+                    return redirect()->route('another.page'); // example for position 3
+                default:
+                    return redirect()->route('default.page'); // fallback route
+            }
         }
 
         return back()->withErrors([
             'email' => 'Email or password is incorrect',
         ]);
     }
+
 
 
     public function LogoutRequest(Request $request)
