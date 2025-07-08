@@ -8,6 +8,7 @@
     <title>Sales & Inventory Management System </title>
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('partials/images/favicon.png') }}">
     <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
 </head>
 
@@ -26,15 +27,17 @@
                                         <br>
                                         Change password
                                     </h4>
-                                    <form action="index.html">
+                                    <form method="POST" action="{{ route('change.password.request') }}">
+                                        @csrf
                                         <div class="form-group">
                                             <label style="color: blueviolet;"><strong>Enter registered email</strong></label>
-                                            <input type="email" class="form-control">
+                                            <input type="email" name="email" class="form-control" required>
                                         </div>
                                         <div class="text-center">
                                             <button type="submit" class="btn btn-primary btn-block">Submit</button>
                                         </div>
                                     </form>
+                                    
                                     <div class="new-account mt-3">
                                         <p style="text-align: center;"><a class="text-primary"
                                                 href="{{ route('login.page') }}">Back to login</a></p>
@@ -52,6 +55,23 @@
     <script src="{{ asset('partials/vendor/global/global.min.js') }}"></script>
     <script src="{{ asset('partials/js/quixnav-init.js') }}"></script>
     <script src="{{ asset('partials/js/custom.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        @if(session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
+
+        @if(session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+    
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                toastr.error("{{ $error }}");
+            @endforeach
+        @endif
+    </script>
+    
 
 </body>
 

@@ -25,25 +25,34 @@
                                         <img src="https://images.freecreatives.com/wp-content/uploads/2015/04/logo033.png"
                                             alt="" style="width: 150px;">
                                         <br>
-                                        Login
+                                        Change password
                                     </h4>
-                                    <form action="{{ route('login.request') }}" method="POST">
+                                    <form method="POST" action="{{ url('/reset-password') }}">
                                         @csrf
+                                    
                                         <div class="form-group">
-                                            <label style="color: blueviolet;"><strong>Email</strong></label>
-                                            <input type="email" name="email" class="form-control" required>
+                                            <label style="color: blueviolet;"><strong>Old Password:</strong></label>
+                                            <input type="password" name="old_password" class="form-control" required />
                                         </div>
+                                    
                                         <div class="form-group">
-                                            <label style="color: blueviolet;"><strong>Password</strong></label>
-                                            <input type="password" name="password" class="form-control" required>
+                                            <label style="color: blueviolet;"><strong>New Password:</strong></label>
+                                            <input type="password" name="password" class="form-control" required />
                                         </div>
+                                    
+                                        <div class="form-group">
+                                            <label style="color: blueviolet;"><strong>Confirm Password:</strong></label>
+                                            <input type="password" name="password_confirmation" class="form-control" required />
+                                        </div>
+                                    
                                         <div class="text-center">
-                                            <button type="submit" class="btn btn-primary btn-block">Login</button>
+                                            <button type="submit" class="btn btn-primary btn-block">Reset Password</button>
                                         </div>
-                                    </form>                                    
+                                    </form>
+                                                                        
                                     <div class="new-account mt-3">
                                         <p style="text-align: center;"><a class="text-primary"
-                                                href="{{ route('change.password.page') }}">Change password</a></p>
+                                                href="{{ route('login.page') }}">Back to login</a></p>
                                     </div>
                                 </div>
                             </div>
@@ -75,8 +84,7 @@
         @endif
     </script>
     
-   
-        
+
 </body>
 
 </html>

@@ -4,6 +4,7 @@ use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\StockInController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\auth\AuthController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +26,33 @@ Route::get('/', [AuthController::class, 'LoginPage'])->name('login.page');
 Route::get('/login', [AuthController::class, 'LoginPage'])->name('login.page');
 Route::post('/login_request', [AuthController::class, 'LoginRequest'])->name('login.request');
 Route::get('/change_password', [AuthController::class, 'ChangePasswordPage'])->name('change.password.page');
+
+
+Route::post('/change_password/request', [AuthController::class, 'ChangePasswordRequest'])->name('change.password.request');
+Route::get('/reset-password/{token}', function ($token) {
+    $record = DB::table('change_passwords')->where('link', $token)->first();
+    if (!$record) {
+        return view('auth.verify-otp', ['token' => null, 'expired' => true]);
+    }
+
+    return view('auth.verify-otp', ['token' => $token, 'expired' => false]);
+})->name('reset.password.otp.form');
+
+
+// Handle OTP verification
+Route::post('/verify-otp', [AuthController::class, 'VerifyOtp'])->name('verify.otp');
+
+// Show password reset form after OTP verified
+Route::get('/reset-password-form', function () {
+    return view('auth.reset-password');
+})->name('reset.password.form');
+
+// Handle final password update
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('reset.password');
+
+
+
+
 Route::post('/logout', [AuthController::class, 'LogoutRequest'])->name('logout.request');
 
 
