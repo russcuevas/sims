@@ -222,7 +222,8 @@
                                         </div>
                                     </div>
 
-                                    <form action="">
+                                    <form action="" method="POST">
+                                        @csrf
                                         <div class="d-flex gap-2 align-items-center">
                                             <select id="product_select" name="product_ids[]" class="form-control mr-2" multiple="multiple" style="flex: 1; color: black !important">
                                                 @foreach ($products as $product)
@@ -234,6 +235,7 @@
                                             <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
                                     </form>
+                                    
                                     
                                 </div>
 
@@ -256,8 +258,9 @@
                                         <div class="col-md-3 text-left">
                                             <label style="color: #593bdb;" for="process_by" class="form-label">Process
                                                 by</label>
-                                            <input type="text" id="process_by" name="process_by" class="form-control"
-                                                value="Juan" readonly>
+                                                <input type="text" id="process_by" name="process_by" class="form-control"
+                                                value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
+                                            
                                         </div>
                                         <div class="col-md-3 text-left">
                                             <label style="color: #593bdb;" for="supplier" class="form-label">Supplier</label>

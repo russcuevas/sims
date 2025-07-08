@@ -42,3 +42,4 @@ Route::put('/admin/user_management/update/{id}', [UserController::class, 'AdminU
 Route::get('/admin/stock_in', [StockInController::class, 'StockInPage'])->name('admin.stock.in.page');
 Route::post('/admin/stock_in/add_product', [StockInController::class, 'AdminAddProduct'])->name('admin.stock.in.add.product');
 Route::post('/admin/stock_in/add_supplier', [StockInController::class, 'AdminAddSupplier'])->name('admin.stock.in.add.supplier');
+Route::post('/admin/stock_in/add_product_details', [StockInController::class, 'AdminAddProductDetails'])->name('admin.stock.in.add.product.details');

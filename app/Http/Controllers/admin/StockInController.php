@@ -74,4 +74,41 @@ class StockInController extends Controller
 
         return redirect()->route('admin.stock.in.page')->with('success', 'Supplier added successfully!');
     }
+
+    public function AdminAddProductDetails(Request $request)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
+        }
+
+        $request->validate([
+            'product_ids' => 'required|array|min:1',
+            'product_ids.*' => 'exists:products,id',
+        ]);
+
+        $now = now();
+
+        $products = DB::table('products')
+            ->whereIn('id', $request->product_ids)
+            ->get();
+
+        $insertData = [];
+
+        foreach ($products as $product) {
+            $insertData[] = [
+                'product_id' => $product->id,
+                'product_name' => $product->product_name,
+                'price' => $product->product_price,
+                'quantity' => 0,
+                'stock_unit_id' => $product->stock_unit_id,
+                'category' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+
+        DB::table('product_details')->insert($insertData);
+
+        return redirect()->route('admin.stock.in.page')->with('success', 'Product details added successfully.');
+    }
 }
