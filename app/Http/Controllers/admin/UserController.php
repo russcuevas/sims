@@ -107,9 +107,10 @@ class UserController extends Controller
             'email' => 'required|email|unique:employees,email,' . $id,
             'username' => 'required|string|unique:employees,username,' . $id . '|max:255',
             'pin' => ['required', 'digits:4'],
+            'status' => 'required|string|in:Locked,Unlocked', // Add valid statuses
         ]);
 
-        Employee::where('id', $id)->update([
+        $updateData = [
             'employee_firstname' => $request->first_name,
             'employee_lastname' => $request->last_name,
             'position_id' => $request->role,
@@ -118,7 +119,14 @@ class UserController extends Controller
             'username' => $request->username,
             'pin' => $request->pin,
             'status' => $request->status,
-        ]);
+        ];
+
+        if ($request->status === 'Unlocked') {
+            $updateData['login_attempts'] = 0;
+            $updateData['status'] = 'Unlocked';
+        }
+
+        Employee::where('id', $id)->update($updateData);
 
         return redirect()->route('admin.user.management.page')->with('success', 'User updated successfully');
     }

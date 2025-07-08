@@ -27,32 +27,57 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::guard('employees')->attempt($credentials)) {
-            $user = Auth::guard('employees')->user();
+        $employee = \App\Models\Employee::where('email', $credentials['email'])->first();
 
-            if ($user->is_archived) {
-                Auth::guard('employees')->logout();
+        if ($employee) {
+            // Check if status is Locked
+            if ($employee->status === 'Locked') {
                 return back()->withErrors([
-                    'email' => 'Email or password is incorrect',
+                    'email' => 'Your account is locked. Please contact the administrator.',
                 ]);
             }
 
-            $request->session()->regenerate();
+            if (Auth::guard('employees')->attempt($credentials)) {
+                if ($employee->is_archived) {
+                    Auth::guard('employees')->logout();
+                    return back()->withErrors(['email' => 'Email or password is incorrect.']);
+                }
 
-            switch ($user->position_id) {
-                case 1:
-                    return redirect()->route('admin.dashboard.page');
-                case 2:
-                    return redirect()->route('some.other.page');
-                case 3:
-                    return redirect()->route('another.page');
-                default:
-                    return redirect()->route('default.page');
+                // Reset login attempts on success
+                $employee->update(['login_attempts' => 0]);
+
+                $request->session()->regenerate();
+
+                switch ($employee->position_id) {
+                    case 1:
+                        return redirect()->route('admin.dashboard.page');
+                    case 2:
+                        return redirect()->route('some.other.page');
+                    case 3:
+                        return redirect()->route('another.page');
+                    default:
+                        return redirect()->route('default.page');
+                }
+            } else {
+                // Increment login attempt
+                $employee->increment('login_attempts');
+
+                // Lock account if attempts >= 6
+                if ($employee->login_attempts + 1 >= 6) {
+                    $employee->update(['status' => 'Locked']);
+                    return back()->withErrors([
+                        'email' => 'Your account has been locked due to too many failed login attempts. Please contact the administrator.',
+                    ]);
+                }
+
+                return back()->withErrors([
+                    'email' => 'Email or password is incorrect.',
+                ]);
             }
         }
 
         return back()->withErrors([
-            'email' => 'Email or password is incorrect',
+            'email' => 'Email or password is incorrect.',
         ]);
     }
 
