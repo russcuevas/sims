@@ -10,6 +10,7 @@
     <link href="{{ asset('partials/vendor/datatables/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <style>
     .col-form-label {
@@ -98,39 +99,30 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="modal-body">
-                                                            <form class="add_product_validation" action="#"
-                                                                method="post">
+                                                            <form class="add_product_validation" action="{{ route('admin.stock.in.add.product') }}" method="POST">
+                                                                @csrf
                                                                 <div class="form-group row mb-3">
-                                                                    <label for="product_name"
-                                                                        class="col-sm-4 col-form-label text-end">
+                                                                    <label for="product_name" class="col-sm-4 col-form-label text-end">
                                                                         Product Name <span class="text-danger">*</span>
                                                                     </label>
                                                                     <div class="col-sm-8">
-                                                                        <input type="text" class="form-control"
-                                                                            id="product_name" name="product_name"
-                                                                            placeholder="Enter product name" required>
+                                                                        <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row mb-3">
-                                                                    <label for="product_unit"
-                                                                        class="col-sm-4 col-form-label text-end">
+                                                                    <label for="product_unit" class="col-sm-4 col-form-label text-end">
                                                                         Product Unit <span class="text-danger">*</span>
                                                                     </label>
                                                                     <div class="col-sm-8">
-                                                                        <input type="text" class="form-control"
-                                                                            id="product_unit" name="product_unit"
-                                                                            placeholder="Enter product unit" required>
+                                                                        <input type="text" class="form-control" id="product_unit" name="product_unit" placeholder="Enter product unit" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row mb-3">
-                                                                    <label for="product_price"
-                                                                        class="col-sm-4 col-form-label text-end">
+                                                                    <label for="product_price" class="col-sm-4 col-form-label text-end">
                                                                         Product Price <span class="text-danger">*</span>
                                                                     </label>
                                                                     <div class="col-sm-8">
-                                                                        <input type="text" class="form-control"
-                                                                            id="product_price" name="product_price"
-                                                                            placeholder="Enter product price" required>
+                                                                        <input type="text" class="form-control" id="product_price" name="product_price" placeholder="Enter product price" required>
                                                                     </div>
                                                                 </div>
                                                         </div>
@@ -165,8 +157,8 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="modal-body">
-                                                            <form class="add_suppliers_validation" action="#"
-                                                                method="post">
+                                                            <form class="add_suppliers_validation" action="{{ route('admin.stock.in.add.supplier') }}" method="POST">
+                                                                @csrf
                                                                 <div class="form-group row mb-3">
                                                                     <label for="supplier_name"
                                                                         class="col-sm-4 col-form-label text-end">
@@ -230,11 +222,19 @@
                                         </div>
                                     </div>
 
-                                    <div class="d-flex gap-2">
-                                        <input type="text" class="form-control mr-2"
-                                            placeholder="Search product here & dropdown" style="flex: 1;">
-                                        <button class="btn btn-primary">Submit</button>
-                                    </div>
+                                    <form action="">
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <select id="product_select" name="product_ids[]" class="form-control mr-2" multiple="multiple" style="flex: 1; color: black !important">
+                                                @foreach ($products as $product)
+                                                    <option value="{{ $product->id }}">
+                                                        {{ $product->product_name }} ({{ $product->stock_unit_id }}) - ₱{{ $product->product_price }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                    
                                 </div>
 
                                 <form action="">
@@ -260,12 +260,12 @@
                                                 value="Juan" readonly>
                                         </div>
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #593bdb;" for="supplier"
-                                                class="form-label">Supplier</label>
+                                            <label style="color: #593bdb;" for="supplier" class="form-label">Supplier</label>
                                             <select id="supplier" name="supplier" class="form-control">
                                                 <option value="">Select supplier</option>
-                                                <option value="Supplier A">Supplier A</option>
-                                                <option value="Supplier B">Supplier B</option>
+                                                @foreach ($suppliers as $supplier)
+                                                    <option value="{{ $supplier->id }}">{{ $supplier->supplier_name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -530,6 +530,34 @@
         });
     </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        @if(session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
+
+        @if(session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                toastr.error("{{ $error }}");
+            @endforeach
+        @endif
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(function() {
+            $('#product_select').select2({
+                placeholder: "Search and select products",
+                allowClear: true,
+                width: 'resolve'
+            });
+        });
+    </script>
+        
 
 </body>
 
