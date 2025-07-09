@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BatchFinishProduct;
+use Illuminate\Support\Str;
 use App\Models\BatchProductMultipleUnits;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -153,5 +153,108 @@ class ProcessController extends Controller
         }
 
         return response()->json(['message' => 'Inserted successfully.']);
+    }
+
+    public function AdminFinishProductSubmit(Request $request)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
+        }
+
+        $request->validate([
+            'process_date' => 'required|date',
+            'quantities'   => 'required|array',
+            'prices'       => 'required|array',
+        ]);
+
+        $employee = Auth::guard('employees')->user();
+        $transactId = 'FP-' . strtoupper(Str::random(8));
+        $processDate = $request->process_date;
+        $now = now();
+
+        $finishItems = DB::table('batch_finish_products')
+            ->where('employee_id', $employee->id)
+            ->get();
+
+        if ($finishItems->isEmpty()) {
+            return back()->with('error', 'No finish products to process.');
+        }
+
+        $historyData = [];
+        $productDetailsData = [];
+
+        foreach ($finishItems as $item) {
+            $id = $item->id;
+
+            $updatedQuantity = $request->quantities[$id] ?? $item->quantity;
+            $updatedPrice    = $request->prices[$id] ?? $item->product_price;
+
+            $amount = $updatedQuantity * $updatedPrice;
+
+            // Insert into history
+            $historyData[] = [
+                'transact_id'   => $transactId,
+                'product_name'  => $item->product_name,
+                'quantity'      => $updatedQuantity,
+                'unit'          => $item->stock_unit_id,
+                'price'         => $updatedPrice,
+                'amount'        => $amount,
+                'process_by'    => $employee->employee_firstname . ' ' . $employee->employee_lastname,
+                'process_date'  => $processDate,
+                'created_at'    => $now,
+                'updated_at'    => $now,
+            ];
+
+            $productDetailsData[] = [
+                'product_id'     => null,
+                'product_name'   => $item->product_name,
+                'price'          => $updatedPrice,
+                'quantity'       => $updatedQuantity,
+                'stock_unit_id'  => $item->stock_unit_id,
+                'category'       => 'finish product',
+                'is_archived'    => 0,
+                'created_at'     => $now,
+                'updated_at'     => $now,
+            ];
+        }
+
+        // Handle raw material deduction
+        foreach ($request->input('raw_quantities', []) as $batchId => $deductQty) {
+            $rawProduct = DB::table('batch_fetch_raw_products')->where('id', $batchId)->first();
+
+            if ($rawProduct) {
+                $newBatchQty = $rawProduct->quantity - $deductQty;
+
+                if ($newBatchQty <= 0) {
+                    DB::table('batch_fetch_raw_products')->where('id', $batchId)->delete();
+                } else {
+                    DB::table('batch_fetch_raw_products')->where('id', $batchId)->update([
+                        'quantity'    => $newBatchQty,
+                        'updated_at'  => $now,
+                    ]);
+                }
+
+                if (!is_null($rawProduct->product_id_details)) {
+                    $product = DB::table('product_details')->where('id', $rawProduct->product_id_details)->first();
+
+                    if ($product) {
+                        $newProductQty = $product->quantity - $deductQty;
+
+                        DB::table('product_details')->where('id', $rawProduct->product_id_details)->update([
+                            'quantity'   => max(0, $newProductQty),
+                            'updated_at' => $now,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        DB::table('history_finish_products')->insert($historyData);
+        DB::table('product_details')->insert($productDetailsData);
+
+        DB::table('batch_finish_products')->where('employee_id', $employee->id)->delete();
+        DB::table('batch_fetch_raw_products')->where('employee_id', $employee->id)->delete();
+
+        return redirect()->route('admin.process.management.page')->with('success', 'Finished products submitted successfully');
     }
 }

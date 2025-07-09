@@ -90,12 +90,12 @@
                                         @csrf
                                         <div class="d-flex gap-2" style="width: 100%;">
                                             <select id="product_select" name="products[]" class="form-control" multiple>
-                                                @foreach ($products as $product)
+                                                @foreach ($products->where('category', 'raw materials') as $product)
                                                     <option value="{{ $product->id }}">
                                                         {{ $product->product_name }} | Qty: {{ $product->quantity }} | {{ $product->stock_unit_id }}
                                                     </option>
                                                 @endforeach
-                                            </select>
+                                            </select>                                            
                                             <button class="btn btn-primary">Submit</button>
                                         </div>
                                     </form>                                    
@@ -295,62 +295,73 @@
 
 
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-responsive-sm">
-                                        <thead>
-                                            <tr>
-                                                <th style="color: #593bdb;">Quantity</th>
-                                                <th style="color: #593bdb;">Product</th>
-                                                <th style="color: #593bdb;">Unit</th>
-                                                <th style="color: #593bdb;">Price</th>
-                                                <th style="color: #593bdb;">Amount</th>
-                                                <th style="color: #593bdb;">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php $totalAmount = 0; @endphp
-                                            @foreach($finishProducts as $product)
-                                                @php
-                                                    $amount = $product->quantity * $product->product_price;
-                                                    $totalAmount += $amount;
-                                                @endphp
+                                    <form action="{{ route('admin.finish.product.submit') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="process_date" value="{{ now()->toDateString() }}">
+                                    
+                                        <table class="table table-bordered table-responsive-sm">
+                                            <thead>
                                                 <tr>
-                                                    <td>
-                                                        <input style="border-color: #593bdb;" type="text"
-                                                               class="form-control input-rounded"
-                                                               value="{{ $product->quantity }}" readonly>
-                                                    </td>
-                                                    <td style="color: black;">{{ $product->product_name }}</td>
-                                                    <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
-                                                    <td>
-                                                        <input style="border-color: #593bdb;" type="text"
-                                                               class="form-control input-rounded"
-                                                               value="{{ number_format($product->product_price, 2) }}" readonly>
-                                                    </td>
-                                                    <td style="color: black;">{{ number_format($amount, 2) }}</td>
-                                                    <td>
-                                                        <a class="btn btn-outline-danger" href=""
-                                                           onclick="return confirm('Are you sure you want to remove this product?')">
-                                                            <i class="fa fa-close"></i> Remove
-                                                        </a>
+                                                    <th style="color: #593bdb;">Quantity</th>
+                                                    <th style="color: #593bdb;">Product</th>
+                                                    <th style="color: #593bdb;">Unit</th>
+                                                    <th style="color: #593bdb;">Price</th>
+                                                    <th style="color: #593bdb;">Amount</th>
+                                                    <th style="color: #593bdb;">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $totalAmount = 0; @endphp
+                                                @foreach($finishProducts as $product)
+                                                    @php
+                                                        $amount = $product->quantity * $product->product_price;
+                                                        $totalAmount += $amount;
+                                                    @endphp
+                                                    <tr>
+                                                        <td>
+                                                            <input type="number" name="quantities[{{ $product->id }}]"
+                                                                   value="{{ $product->quantity }}"
+                                                                   class="form-control input-rounded"
+                                                                   style="border-color: #593bdb;" min="1" required>
+                                                        </td>
+                                                        <td style="color: black;">{{ $product->product_name }}</td>
+                                                        <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
+                                                        <td>
+                                                            <input type="number" step="0.01" name="prices[{{ $product->id }}]"
+                                                                   value="{{ $product->product_price }}"
+                                                                   class="form-control input-rounded"
+                                                                   style="border-color: #593bdb;" min="0" required>
+                                                        </td>
+                                                        <td style="color: black;">{{ number_format($amount, 2) }}</td>
+                                                        <td>
+                                                            <a class="btn btn-outline-danger" href=""
+                                                               onclick="return confirm('Are you sure you want to remove this product?')">
+                                                                <i class="fa fa-close"></i> Remove
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="4" class="text-end fw-bold" style="color: blueviolet;"></td>
+                                                    <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
+                                                        <span style="color: red;">Total Amount: {{ number_format($totalAmount, 2) }}</span>
                                                     </td>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td colspan="4" class="text-end fw-bold" style="color: blueviolet;"></td>
-                                                <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
-                                                    <span style="color: red;">Total Amount: {{ number_format($totalAmount, 2) }}</span>
-                                                </td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-
-                                    <!-- SUBMIT STOCKS -->
-                                    <button type="submit" class="btn btn-primary me-2 float-right">
-                                        Submit Product
-                                    </button>
+                                            </tfoot>
+                                        </table>
+                                    
+                                        {{-- Hidden for batch_fetch_raw_products --}}
+                                        @foreach($batchProducts as $product)
+                                            <input type="hidden" name="raw_quantities[{{ $product->id }}]" value="1">
+                                        @endforeach
+                                    
+                                        <button type="submit" class="btn btn-primary float-right">Submit Product</button>
                                     </form>
+                                    
+                                    
+                                    
                                 </div>
                                 <hr class="my-4">
 

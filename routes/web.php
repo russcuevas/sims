@@ -93,3 +93,4 @@ Route::post('/admin/batch/add-raw-products', [ProcessController::class, 'AdminAd
 Route::get('/admin/batch-product-raw-details/delete/{id}', [ProcessController::class, 'AdminRemoveBatchRawProduct'])->name('admin.batch.raw.product.remove');
 Route::post('/admin/add-batch-multiple-product', [ProcessController::class, 'AdminAddBatchMultipleProduct'])->name('admin.add.batch.multiple.product');
 Route::post('/admin/add-batch-finish-product', [ProcessController::class, 'AddBatchFinishProduct'])->name('admin.batch.finish.product');
+Route::post('/admin/submit-finish-products', [ProcessController::class, 'AdminFinishProductSubmit'])->name('admin.finish.product.submit');
