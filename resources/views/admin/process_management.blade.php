@@ -102,8 +102,6 @@
                                 </div>
 
                                 <div class="table-responsive">
-                                        <form action="{{ route('admin.batch.raw.product.update') }}" method="POST">
-                                            @csrf
                                             <table class="table table-bordered table-responsive-sm">
                                                 <thead>
                                                     <tr>
@@ -132,9 +130,6 @@
                                                             </td>
                                         
                                                             <td>
-                                                                <button type="submit" class="btn btn-outline-warning" title="Update">
-                                                                    <i class="fa fa-pencil"></i> Update
-                                                                </button>                         
                                                                 
                                                                 <a href="{{ route('admin.batch.raw.product.remove', $product->id) }}" 
                                                                     class="btn btn-outline-danger" 
@@ -151,7 +146,6 @@
                                                     @endforelse
                                                 </tbody>
                                             </table>
-                                        </form>
                                 </div>
 
                                 <br>
@@ -171,7 +165,7 @@
                                             <label style="color: #593bdb;" for="process_by" class="form-label">Process
                                                 by</label>
                                             <input type="text" id="process_by" name="process_by" class="form-control"
-                                                value="Juan" readonly>
+                                            value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
                                         </div>
 
                                         <div class="col-md-3 text-end">
@@ -181,16 +175,59 @@
                                                 + Add Products
                                             </button>
                                         </div>
-
+                                    </form>
                                         <div class="col-md-3 text-end">
-                                            <button type="button" id="add_supplier_button"
-                                                class="btn btn-outline-primary w-100" data-toggle="modal"
-                                                data-target="#add_supplier_modal">
+                                            <button type="button" id="select_products_button"
+                                                class="btn btn-outline-primary w-100"
+                                                data-toggle="modal"
+                                                data-target="#select_products_modal"
+                                                title="{{ $hasFinishProducts ? 'You already have finished products submitted.' : '' }}"
+                                                @if($hasFinishProducts) disabled @endif>
                                                 Select Products
                                             </button>
                                         </div>
                                     </div>
-                                </form>
+
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="select_products_modal" tabindex="-1" role="dialog" aria-labelledby="selectProductsModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Select Product</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span>&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <table id="productTable" class="table table-bordered table-hover table-striped">
+                                                    <thead class="thead-primary">
+                                                        <tr>
+                                                            <th>Product Name</th>
+                                                            <th class="text-center">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($multipleUnitProducts as $product)
+                                                            <tr>
+                                                                <td style="color: black">{{ $product->product_name }}</td>
+                                                                <td class="text-center">
+                                                                    <button class="btn btn-sm btn-outline-primary finish-product-btn"
+                                                                            data-product="{{ $product->product_name }}">
+                                                                        <i class="fa fa-check"></i> Select
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
 
                                 <!-- ADD PRODUCTS MODAL -->
                                 <div class="modal fade" id="add_product_modal">
@@ -201,7 +238,8 @@
                                                 <button type="button" class="close"
                                                     data-dismiss="modal"><span>&times;</span></button>
                                             </div>
-                                            <form class="add_product_validation" action="#" method="post">
+                                            <form class="add_product_validation" action="{{ route('admin.add.batch.multiple.product') }}" method="POST">
+                                                @csrf
                                                 <div class="modal-body">
 
                                                     <!-- Product Name -->
@@ -269,37 +307,40 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <th>
-                                                    <input style="border-color: #593bdb;" type="text"
-                                                        class="form-control input-rounded" placeholder="0">
-                                                </th>
-                                                <td style="color: black;">Sample Product</td>
-                                                <td><span class="badge badge-primary">80kg</span>
-                                                </td>
-                                                <th>
-                                                    <input style="border-color: #593bdb;" type="text"
-                                                        class="form-control input-rounded" value="100">
-                                                </th>
-                                                <td style="color: black;">10000</td>
-                                                <td>
-                                                    <span>
-
-                                                        <a class="btn btn-outline-danger" href="" data-toggle="tooltip"
-                                                            data-placement="top" title="Close"><i
-                                                                class="fa fa-close"></i>
-                                                            Remove
+                                            @php $totalAmount = 0; @endphp
+                                            @foreach($finishProducts as $product)
+                                                @php
+                                                    $amount = $product->quantity * $product->product_price;
+                                                    $totalAmount += $amount;
+                                                @endphp
+                                                <tr>
+                                                    <td>
+                                                        <input style="border-color: #593bdb;" type="text"
+                                                               class="form-control input-rounded"
+                                                               value="{{ $product->quantity }}" readonly>
+                                                    </td>
+                                                    <td style="color: black;">{{ $product->product_name }}</td>
+                                                    <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
+                                                    <td>
+                                                        <input style="border-color: #593bdb;" type="text"
+                                                               class="form-control input-rounded"
+                                                               value="{{ number_format($product->product_price, 2) }}" readonly>
+                                                    </td>
+                                                    <td style="color: black;">{{ number_format($amount, 2) }}</td>
+                                                    <td>
+                                                        <a class="btn btn-outline-danger" href=""
+                                                           onclick="return confirm('Are you sure you want to remove this product?')">
+                                                            <i class="fa fa-close"></i> Remove
                                                         </a>
-                                                    </span>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="4" class="text-end fw-bold" style="color: blueviolet;">
-                                                </td>
+                                                <td colspan="4" class="text-end fw-bold" style="color: blueviolet;"></td>
                                                 <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
-                                                    <span style="color: red;">Total Amount: 0</span>
+                                                    <span style="color: red;">Total Amount: {{ number_format($totalAmount, 2) }}</span>
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -388,6 +429,8 @@
     <script src="{{ asset('partials/js/custom.min.js') }}"></script>
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+
     <!-- ADD USERS VALIDATION -->
     <script>
         $(document).ready(function () {
@@ -523,6 +566,59 @@
             });
         });
     </script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).on('click', '.finish-product-btn', function () {
+        const productName = $(this).data('product');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `Submit "${productName}" and all its units to batch finish products?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, submit it',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ route('admin.batch.finish.product') }}",
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        batch_product_name: productName
+                    },
+                    success: function (response) {
+                        Swal.fire('Success!', 'Product submitted successfully.', 'success').then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Error', 'An error occurred while submitting.', 'error');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#productTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: false,
+            info: false,
+            lengthChange: false,
+            pageLength: 6,
+            language: {
+                searchPlaceholder: "Search product...",
+                search: ""
+            }
+        });
+    });
+</script>
 
 </body>
 

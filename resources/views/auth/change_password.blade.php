@@ -25,7 +25,7 @@
                                         <img src="https://images.freecreatives.com/wp-content/uploads/2015/04/logo033.png"
                                             alt="" style="width: 150px;">
                                         <br>
-                                        Change password
+                                        Forgot Password
                                     </h4>
                                     <form method="POST" action="{{ route('change.password.request') }}">
                                         @csrf

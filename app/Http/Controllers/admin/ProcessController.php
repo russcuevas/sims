@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BatchFinishProduct;
+use App\Models\BatchProductMultipleUnits;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,22 +18,44 @@ class ProcessController extends Controller
             return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
         }
 
+        $user = Auth::guard('employees')->user();
 
         $products = DB::table('product_details')
             ->where('is_archived', 0)
             ->get();
 
         $batchProducts = DB::table('batch_fetch_raw_products')
-            ->where('employee_id', Auth::guard('employees')->id())
+            ->where('employee_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // fetching in left sidebar the users
-        $user = Auth::guard('employees')->user();
+        $multipleUnitProducts = DB::table('batch_product_multiple_units')
+            ->select('product_name')
+            ->groupBy('product_name')
+            ->get();
+
+        $hasFinishProducts = DB::table('batch_finish_products')
+            ->where('employee_id', $user->id)
+            ->exists();
+
+        $finishProducts = DB::table('batch_finish_products')
+            ->where('employee_id', $user->id)
+            ->get();
+
         $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
 
-        return view('admin.process_management', compact('products', 'batchProducts', 'role', 'user'));
+        return view('admin.process_management', compact(
+            'products',
+            'batchProducts',
+            'role',
+            'user',
+            'multipleUnitProducts',
+            'hasFinishProducts',
+            'finishProducts'
+        ));
     }
+
+
 
     public function AdminRemoveBatchRawProduct($id)
     {
@@ -73,22 +97,61 @@ class ProcessController extends Controller
         return redirect()->back()->with('success', 'Selected products added to batch successfully.');
     }
 
-    public function AdminUpdateBatchRawProductQuantity(Request $request)
+    public function AdminAddBatchMultipleProduct(Request $request)
     {
-        $employeeId = Auth::guard('employees')->id();
-        $updates = $request->input('quantities', []);
+        $request->validate([
+            'product_name' => 'required|string|max:255',
+            'price_80g'    => 'nullable|numeric|min:0',
+            'price_130g'   => 'nullable|numeric|min:0',
+            'price_230g'   => 'nullable|numeric|min:0',
+        ]);
 
-        foreach ($updates as $batchId => $deductQty) {
-            $deductQty = (int) $deductQty;
-            if ($deductQty <= 0) continue;
-            $batchProduct = DB::table('batch_fetch_raw_products')->where('id', $batchId)->where('employee_id', $employeeId)->first();
+        $productName = $request->input('product_name');
 
-            if ($batchProduct && $batchProduct->quantity >= $deductQty) {
-                DB::table('batch_fetch_raw_products')->where('id', $batchId)->decrement('quantity', $deductQty);
-                DB::table('product_details')->where('id', $batchProduct->product_id_details)->decrement('quantity', $deductQty);
+        $units = [
+            '80g' => $request->input('price_80g'),
+            '130g' => $request->input('price_130g'),
+            '230g' => $request->input('price_230g'),
+        ];
+
+        foreach ($units as $unit => $price) {
+            if ($price !== null) {
+                BatchProductMultipleUnits::create([
+                    'product_name'  => $productName,
+                    'stock_unit_id' => $unit,
+                    'product_price' => $price,
+                ]);
             }
         }
 
-        return redirect()->back()->with('success', 'Quantities updated successfully');
+        return redirect()->back()->with('success', 'Product added successfully.');
+    }
+
+    public function AddBatchFinishProduct(Request $request)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
+        }
+
+        $request->validate([
+            'batch_product_name' => 'required|string',
+        ]);
+
+        $employeeId = Auth::guard('employees')->id();
+        $products = BatchProductMultipleUnits::where('product_name', $request->batch_product_name)->get();
+
+        foreach ($products as $product) {
+            DB::table('batch_finish_products')->insert([
+                'employee_id'    => $employeeId,
+                'quantity'       => 100,
+                'product_name'   => $product->product_name,
+                'stock_unit_id'  => $product->stock_unit_id,
+                'product_price'  => $product->product_price,
+                'created_at'     => now(),
+                'updated_at'     => now(),
+            ]);
+        }
+
+        return response()->json(['message' => 'Inserted successfully.']);
     }
 }

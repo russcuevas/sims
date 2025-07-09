@@ -30,8 +30,8 @@
                                     <form action="{{ route('login.request') }}" method="POST">
                                         @csrf
                                         <div class="form-group">
-                                            <label style="color: blueviolet;"><strong>Email</strong></label>
-                                            <input type="email" name="email" class="form-control" required>
+                                            <label style="color: blueviolet;"><strong>Username</strong></label>
+                                            <input type="text" name="username" class="form-control" required>
                                         </div>
                                         <div class="form-group">
                                             <label style="color: blueviolet;"><strong>Password</strong></label>
@@ -40,10 +40,11 @@
                                         <div class="text-center">
                                             <button type="submit" class="btn btn-primary btn-block">Login</button>
                                         </div>
-                                    </form>                                    
+                                    </form>
+                                                                        
                                     <div class="new-account mt-3">
                                         <p style="text-align: center;"><a class="text-primary"
-                                                href="{{ route('change.password.page') }}">Change password</a></p>
+                                                href="{{ route('change.password.page') }}">Forgot Password</a></p>
                                     </div>
                                 </div>
                             </div>

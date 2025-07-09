@@ -177,19 +177,7 @@
                                                                         </div>
                                                                     </div>
 
-                                                                    <!-- Username -->
-                                                                    <div class="form-group row mb-3">
-                                                                        <label class="col-sm-4 col-form-label text-end"
-                                                                            for="username">Username <span
-                                                                                class="text-danger">*</span></label>
-                                                                        <div class="col-sm-8">
-                                                                            <input type="text" class="form-control"
-                                                                                id="username" name="username"
-                                                                                placeholder="Enter username">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    
+                                                                
                                                                     <!-- Pin -->
                                                                     <div class="form-group row mb-3">
                                                                         <label class="col-sm-4 col-form-label text-end"
@@ -291,13 +279,13 @@
                                                 <td>
                                                     <div class="d-flex gap-2">
                                                         <!-- Update button triggers this user's modal -->
-                                                        <button class="btn btn-outline-primary mr-2" data-toggle="modal" data-target="#updateUserModal{{ $employee->id }}">
+                                                        <button class="btn btn-outline-warning mr-2" data-toggle="modal" data-target="#updateUserModal{{ $employee->id }}">
                                                             Update
                                                         </button>
                                             
                                                         <form action="{{ route('admin.user.archive', $employee->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to archive this user?');">
                                                             @csrf
-                                                            <button type="submit" class="btn btn-outline-secondary">Archive</button>
+                                                            <button type="submit" class="btn btn-outline-danger">Archive</button>
                                                         </form>
                                                     </div>
                                                 </td>

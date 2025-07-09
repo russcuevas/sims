@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\Employee;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -69,12 +70,23 @@ class UserController extends Controller
             'role' => 'required|exists:positions,id',
             'contract' => 'required|exists:contracts,id',
             'email' => 'required|email|unique:employees,email',
-            'username' => 'required|string|unique:employees,username|max:255',
             'pin' => ['required', 'digits:4'],
         ]);
 
-        $formattedBirthday = str_replace('-', '', $request->birthday);
-        $rawPassword = $request->last_name . $formattedBirthday;
+        $firstName = strtolower(explode(' ', trim($request->first_name))[0]);
+        $lastName = strtolower(trim($request->last_name));
+        $firstLetterLastName = substr($lastName, 0, 1);
+        $username = $firstName . $firstLetterLastName;
+
+        $birthYear = date('Y', strtotime($request->birthday));
+        $rawPassword = $lastName . $birthYear;
+
+        $originalUsername = $username;
+        $counter = 1;
+        while (\App\Models\Employee::where('username', $username)->exists()) {
+            $username = $originalUsername . $counter;
+            $counter++;
+        }
 
         Employee::create([
             'employee_firstname' => $request->first_name,
@@ -84,14 +96,22 @@ class UserController extends Controller
             'contract_id' => $request->contract,
             'status' => 'Unlocked',
             'email' => $request->email,
-            'username' => $request->username,
+            'username' => $username,
             'password' => Hash::make($rawPassword),
             'pin' => $request->pin,
             'login_attempts' => 0,
         ]);
 
-        return redirect()->route('admin.user.management.page')->with('success', 'User added successfully');
+        // Send simple email
+        Mail::raw("Welcome to the system!\n\nYour default login credentials are:\nUsername: {$username}\nPassword: {$rawPassword}\n\nPlease change your password after logging in.", function ($message) use ($request) {
+            $message->to($request->email)
+                ->subject('Your Default Login Credentials');
+        });
+
+        return redirect()->route('admin.user.management.page')
+            ->with('success', "User added successfully please check the email to logged in your account!");
     }
+
 
     public function AdminUpdateUser(Request $request, $id)
     {

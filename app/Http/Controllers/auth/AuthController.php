@@ -23,29 +23,26 @@ class AuthController extends Controller
     public function LoginRequest(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'username' => ['required', 'string'],
             'password' => ['required'],
         ]);
 
-        $employee = \App\Models\Employee::where('email', $credentials['email'])->first();
+        $employee = \App\Models\Employee::where('username', $credentials['username'])->first();
 
         if ($employee) {
-            // Check if status is Locked
             if ($employee->status === 'Locked') {
                 return back()->withErrors([
-                    'email' => 'Your account is locked. Please contact the administrator.',
+                    'username' => 'Your account is locked. Please contact the administrator or forgot your password',
                 ]);
             }
 
             if (Auth::guard('employees')->attempt($credentials)) {
                 if ($employee->is_archived) {
                     Auth::guard('employees')->logout();
-                    return back()->withErrors(['email' => 'Email or password is incorrect.']);
+                    return back()->withErrors(['username' => 'Username or password is incorrect.']);
                 }
 
-                // Reset login attempts on success
                 $employee->update(['login_attempts' => 0]);
-
                 $request->session()->regenerate();
 
                 switch ($employee->position_id) {
@@ -59,27 +56,26 @@ class AuthController extends Controller
                         return redirect()->route('default.page');
                 }
             } else {
-                // Increment login attempt
                 $employee->increment('login_attempts');
 
-                // Lock account if attempts >= 6
                 if ($employee->login_attempts + 1 >= 6) {
                     $employee->update(['status' => 'Locked']);
                     return back()->withErrors([
-                        'email' => 'Your account has been locked due to too many failed login attempts. Please contact the administrator.',
+                        'username' => 'Your account has been locked due to too many failed login attempts. Please contact the administrator.',
                     ]);
                 }
 
                 return back()->withErrors([
-                    'email' => 'Email or password is incorrect.',
+                    'username' => 'Username or password is incorrect.',
                 ]);
             }
         }
 
         return back()->withErrors([
-            'email' => 'Email or password is incorrect.',
+            'username' => 'Username or password is incorrect.',
         ]);
     }
+
 
 
 
@@ -155,7 +151,6 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'old_password' => 'required',
             'password' => 'required|confirmed|min:6',
         ]);
 
@@ -165,14 +160,10 @@ class AuthController extends Controller
             return redirect('/login')->withErrors(['session' => 'Session expired. Please request password reset again.']);
         }
 
-        $employee = DB::table('employees')->where('id', $employee_id)->first();
-
-        if (!$employee || !Hash::check($request->old_password, $employee->password)) {
-            return back()->withErrors(['old_password' => 'The old password you entered is incorrect.']);
-        }
-
         DB::table('employees')->where('id', $employee_id)->update([
             'password' => Hash::make($request->password),
+            'login_attempts' => 0,
+            'status' => 'Unlocked',
         ]);
 
         Session::forget('reset_employee_id');

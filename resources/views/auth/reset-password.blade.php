@@ -29,11 +29,7 @@
                                     </h4>
                                     <form method="POST" action="{{ url('/reset-password') }}">
                                         @csrf
-                                    
-                                        <div class="form-group">
-                                            <label style="color: blueviolet;"><strong>Old Password:</strong></label>
-                                            <input type="password" name="old_password" class="form-control" required />
-                                        </div>
+                                
                                     
                                         <div class="form-group">
                                             <label style="color: blueviolet;"><strong>New Password:</strong></label>

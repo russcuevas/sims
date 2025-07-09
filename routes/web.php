@@ -90,6 +90,6 @@ Route::post('/admin/stock/update-product/{id}', [StockController::class, 'StockU
 Route::get('/admin/process_management', [ProcessController::class, 'ProcessManagementPage'])->name('admin.process.management.page');
 Route::post('/admin/batch/add-raw-products', [ProcessController::class, 'AdminAddBatchFetchRawProducts'])
     ->name('admin.batch.add.raw.products');
-Route::post('/admin/batch/raw-product/update', [ProcessController::class, 'AdminUpdateBatchRawProductQuantity'])
-    ->name('admin.batch.raw.product.update');
 Route::get('/admin/batch-product-raw-details/delete/{id}', [ProcessController::class, 'AdminRemoveBatchRawProduct'])->name('admin.batch.raw.product.remove');
+Route::post('/admin/add-batch-multiple-product', [ProcessController::class, 'AdminAddBatchMultipleProduct'])->name('admin.add.batch.multiple.product');
+Route::post('/admin/add-batch-finish-product', [ProcessController::class, 'AddBatchFinishProduct'])->name('admin.batch.finish.product');

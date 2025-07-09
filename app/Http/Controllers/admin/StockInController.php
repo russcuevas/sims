@@ -35,14 +35,14 @@ class StockInController extends Controller
 
         $historyGroups = DB::table('history_raw_materials')
             ->join('suppliers', 'history_raw_materials.supplier_id', '=', 'suppliers.id')
-            ->join('products', 'history_raw_materials.product_id', '=', 'products.id') // Join products table
+            ->join('products', 'history_raw_materials.product_id', '=', 'products.id')
             ->select(
                 'history_raw_materials.*',
                 'suppliers.supplier_name',
                 'suppliers.supplier_contact_num',
                 'suppliers.supplier_email_add',
                 'suppliers.supplier_address',
-                'products.product_name' // Add product name to select
+                'products.product_name'
             )
             ->where('history_raw_materials.is_archived', 0)
             ->orderBy('history_raw_materials.created_at', 'desc')

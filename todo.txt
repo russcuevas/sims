@@ -1,0 +1,6 @@
+Add Users - working
+if i add user set username to default first_name like if Russel Vincent it must only russel then first letter of last_name which is if Cuevas it must c the default username is russelc
+then the password the default must combination of lastname and year of birthday like if lastname is Cuevas then the birthday is 26-12-2001 then it must cuevas2001
+
+Forgot Password - working
+
