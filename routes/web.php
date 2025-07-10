@@ -95,3 +95,4 @@ Route::post('/admin/add-batch-multiple-product', [ProcessController::class, 'Adm
 Route::post('/admin/add-batch-finish-product', [ProcessController::class, 'AddBatchFinishProduct'])->name('admin.batch.finish.product');
 Route::post('/admin/submit-finish-products', [ProcessController::class, 'AdminFinishProductSubmit'])->name('admin.finish.product.submit');
 Route::get('/admin/batch-product-finish/delete/{id}', [ProcessController::class, 'AdminRemoveFinishProduct'])->name('admin.batch.finish.product.remove');
+Route::post('/admin/archive-history-finish-product/{transactId}', [ProcessController::class, 'AdminArchiveHistoryFinishProduct'])->name('admin.archive.history.finish.product');

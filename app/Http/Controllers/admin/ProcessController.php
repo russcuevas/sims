@@ -270,4 +270,14 @@ class ProcessController extends Controller
         DB::table('batch_finish_products')->where('id', $id)->delete();
         return redirect()->back()->with('success', 'Finish product removed successfully.');
     }
+
+
+    public function AdminArchiveHistoryFinishProduct(Request $request, $transactId)
+    {
+        DB::table('history_finish_products')
+            ->where('transact_id', $transactId)
+            ->update(['is_archived' => 1]);
+
+        return redirect()->back()->with('success', 'History archived successfully.');
+    }
 }

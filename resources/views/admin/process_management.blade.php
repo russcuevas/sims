@@ -411,7 +411,11 @@
                                                     <input type="text" class="form-control form-control-sm" value="{{ $first->process_by }}" readonly>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-outline-danger btn-sm">Archive</button>
+                                                    <form action="{{ route('admin.archive.history.finish.product', ['transactId' => $transactId]) }}" method="POST" onsubmit="return confirm('Are you sure you want to archive this?')">
+                                                        @csrf
+                                                        <input type="hidden" name="is_archived" value="1">
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
+                                                    </form>
                                                 </td>
                                             </tr>
 
