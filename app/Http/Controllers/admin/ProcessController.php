@@ -44,6 +44,12 @@ class ProcessController extends Controller
 
         $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
 
+        $historyRecords = DB::table('history_finish_products')
+            ->where('is_archived', 0)
+            ->orderBy('process_date', 'desc')
+            ->get()
+            ->groupBy('transact_id');
+
         return view('admin.process_management', compact(
             'products',
             'batchProducts',
@@ -51,7 +57,8 @@ class ProcessController extends Controller
             'user',
             'multipleUnitProducts',
             'hasFinishProducts',
-            'finishProducts'
+            'finishProducts',
+            'historyRecords'
         ));
     }
 
@@ -256,5 +263,11 @@ class ProcessController extends Controller
         DB::table('batch_fetch_raw_products')->where('employee_id', $employee->id)->delete();
 
         return redirect()->route('admin.process.management.page')->with('success', 'Finished products submitted successfully');
+    }
+
+    public function AdminRemoveFinishProduct($id)
+    {
+        DB::table('batch_finish_products')->where('id', $id)->delete();
+        return redirect()->back()->with('success', 'Finish product removed successfully.');
     }
 }

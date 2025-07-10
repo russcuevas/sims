@@ -319,26 +319,34 @@
                                                     @endphp
                                                     <tr>
                                                         <td>
-                                                            <input type="number" name="quantities[{{ $product->id }}]"
-                                                                   value="{{ $product->quantity }}"
-                                                                   class="form-control input-rounded"
-                                                                   style="border-color: #593bdb;" min="1" required>
+                                                            <input type="number"
+                                                            name="quantities[{{ $product->id }}]"
+                                                            value="{{ $product->quantity }}"
+                                                            class="form-control input-rounded quantity-input"
+                                                            data-id="{{ $product->id }}"
+                                                            style="border-color: #593bdb;" min="100" required>
+                                                     
                                                         </td>
                                                         <td style="color: black;">{{ $product->product_name }}</td>
                                                         <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
                                                         <td>
-                                                            <input type="number" step="0.01" name="prices[{{ $product->id }}]"
-                                                                   value="{{ $product->product_price }}"
-                                                                   class="form-control input-rounded"
-                                                                   style="border-color: #593bdb;" min="0" required>
+                                                            <input type="number" step="0.01"
+                                                            name="prices[{{ $product->id }}]"
+                                                            value="{{ $product->product_price }}"
+                                                            class="form-control input-rounded price-input"
+                                                            data-id="{{ $product->id }}"
+                                                            style="border-color: #593bdb;" min="0" required>
                                                         </td>
-                                                        <td style="color: black;">{{ number_format($amount, 2) }}</td>
-                                                        <td>
-                                                            <a class="btn btn-outline-danger" href=""
-                                                               onclick="return confirm('Are you sure you want to remove this product?')">
+                                                        <td style="color: black;">
+                                                            <span id="amount-{{ $product->id }}">₱{{ number_format($amount, 2) }}</span>
+                                                        </td>
+                                                                                                                <td>
+                                                            <a class="btn btn-outline-danger"
+                                                               href="{{ route('admin.batch.finish.product.remove', ['id' => $product->id]) }}"
+                                                               onclick="return confirm('Are you sure you want to remove this finish product?')">
                                                                 <i class="fa fa-close"></i> Remove
                                                             </a>
-                                                        </td>
+                                                        </td>                                                        
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -346,7 +354,7 @@
                                                 <tr>
                                                     <td colspan="4" class="text-end fw-bold" style="color: blueviolet;"></td>
                                                     <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
-                                                        <span style="color: red;">Total Amount: {{ number_format($totalAmount, 2) }}</span>
+                                                        <span style="color: red;">Total Amount: ₱{{ number_format($totalAmount, 2) }}</span>
                                                     </td>
                                                 </tr>
                                             </tfoot>
@@ -386,22 +394,87 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @foreach ($historyRecords as $transactId => $records)
+                                            @php
+                                                $first = $records->first();
+                                                $totalAmount = $records->sum('amount');
+                                            @endphp
+
                                             <tr>
                                                 <td>
-                                                    <button class="btn btn-outline-primary btn-sm">View</button>
+                                                    <a href="#" data-toggle="modal" data-target="#viewHistoryModal{{ $transactId }}" class="btn btn-outline-primary btn-sm">View</a>
                                                 </td>
                                                 <td>
-                                                    <input type="date" class="form-control form-control-sm"
-                                                        value="2025-07-07" readonly>
+                                                    <input type="date" class="form-control form-control-sm" value="{{ $first->process_date }}" readonly>
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control form-control-sm"
-                                                        value="Juan dela Cruz" readonly>
+                                                    <input type="text" class="form-control form-control-sm" value="{{ $first->process_by }}" readonly>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-outline-primary btn-sm">Archive</button>
+                                                    <button class="btn btn-outline-danger btn-sm">Archive</button>
                                                 </td>
                                             </tr>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="viewHistoryModal{{ $transactId }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Transaction Details - {{ $transactId }}</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                        </div>
+
+                                                        <div class="modal-body">
+                                                            <div class="p-4 position-relative">
+                                                                <h5>Details</h5>
+
+                                                                <div class="row mt-4">
+                                                                    <div class="col-12 d-flex justify-content-between">
+                                                                        <p style="color: black" class="mb-1"><strong>Processed By:</strong> {{ $first->process_by }}</p>
+                                                                        <p style="color: black" class="mb-1"><strong>Process Date:</strong> {{ \Carbon\Carbon::parse($first->process_date)->format('F d, Y') }}</p>
+                                                                    </div>
+                                                                </div>
+                                                                
+
+                                                                <div class="mt-4">
+                                                                    <div class="row fw-bold border-bottom pb-2">
+                                                                        <div class="col-2" style="color: #593bdb;">Qty</div>
+                                                                        <div class="col-4" style="color: #593bdb;">Product</div>
+                                                                        <div class="col-2" style="color: #593bdb;">Unit</div>
+                                                                        <div class="col-2 text-end" style="color: #593bdb;">Price</div>
+                                                                        <div class="col-2 text-end" style="color: #593bdb;">Amount</div>
+                                                                    </div>
+
+                                                                    @foreach ($records as $item)
+                                                                        <div class="row py-2 border-bottom">
+                                                                            <div class="col-2" style="color: black">{{ $item->quantity }}</div>
+                                                                            <div class="col-4" style="color: black">{{ $item->product_name }}</div>
+                                                                            <div class="col-2" style="color: black">{{ $item->unit }}</div>
+                                                                            <div class="col-2 text-end" style="color: black">₱{{ number_format($item->price, 2) }}</div>
+                                                                            <div class="col-2 text-end" style="color: black">₱{{ number_format($item->amount, 2) }}</div>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+
+                                                                <div class="row mt-4">
+                                                                    <div class="col-md-6"></div>
+                                                                    <div class="col-md-6 text-end">
+                                                                        <p style="color: black"><strong>Total Amount:</strong> ₱{{ number_format($totalAmount, 2) }}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -441,7 +514,46 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const quantityInputs = document.querySelectorAll('.quantity-input');
+            const priceInputs = document.querySelectorAll('.price-input');
+    
+            function updateAmounts() {
+                let totalAmount = 0;
+    
+                quantityInputs.forEach(quantityInput => {
+                    const id = quantityInput.getAttribute('data-id');
+                    const priceInput = document.querySelector(`.price-input[data-id="${id}"]`);
+    
+                    // Parse and sanitize input values
+                    const quantity = parseFloat(quantityInput.value.replace(',', '.')) || 0;
+                    const price = parseFloat(priceInput.value.replace(',', '.')) || 0;
+                    const amount = quantity * price;
+    
+                    // Update amount with peso sign
+                    const amountSpan = document.getElementById(`amount-${id}`);
+                    if (amountSpan) {
+                        amountSpan.textContent = `₱${amount.toFixed(2)}`;
+                    }
+    
+                    totalAmount += amount;
+                });
+    
+                // Update total amount with peso sign
+                const totalAmountSpan = document.getElementById('total_amount');
+                if (totalAmountSpan) {
+                    totalAmountSpan.innerHTML = `<span style="color: red;">Total Amount: ₱${totalAmount.toFixed(2)}</span>`;
+                }
+            }
+    
+            // Attach listeners
+            quantityInputs.forEach(input => input.addEventListener('input', updateAmounts));
+            priceInputs.forEach(input => input.addEventListener('input', updateAmounts));
+        });
+    </script>
+    
+    
     <!-- ADD USERS VALIDATION -->
     <script>
         $(document).ready(function () {
