@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class StockInController extends Controller
 {
-    public function StockInPage()
+    public function StockInPage(Request $request)  // Inject Request
     {
         if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
             return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
@@ -33,7 +33,8 @@ class StockInController extends Controller
 
         $totalAmount = $batchProductDetails->sum('amount');
 
-        $historyGroups = DB::table('history_raw_materials')
+        // Build query for history_raw_materials with joins
+        $query = DB::table('history_raw_materials')
             ->join('suppliers', 'history_raw_materials.supplier_id', '=', 'suppliers.id')
             ->join('products', 'history_raw_materials.product_id', '=', 'products.id')
             ->select(
@@ -44,10 +45,36 @@ class StockInController extends Controller
                 'suppliers.supplier_address',
                 'products.product_name'
             )
-            ->where('history_raw_materials.is_archived', 0)
-            ->orderBy('history_raw_materials.created_at', 'desc')
-            ->get()
-            ->groupBy('transact_id');
+            ->where('history_raw_materials.is_archived', 0);
+
+        // Apply search filter on product name
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('products.product_name', 'like', '%' . $search . '%');
+        }
+
+        // Filter by supplier
+        if ($request->filled('supplier')) {
+            $supplierId = $request->input('supplier');
+            $query->where('history_raw_materials.supplier_id', $supplierId);
+        }
+
+        // Sort by date
+        if ($request->filled('sort')) {
+            if ($request->input('sort') == 'newest') {
+                $query->orderBy('history_raw_materials.created_at', 'desc');
+            } elseif ($request->input('sort') == 'oldest') {
+                $query->orderBy('history_raw_materials.created_at', 'asc');
+            }
+        } else {
+            // Default order if no sort given
+            $query->orderBy('history_raw_materials.created_at', 'desc');
+        }
+
+        $historyMaterials = $query->get();
+
+        // Group by transact_id
+        $historyGroups = $historyMaterials->groupBy('transact_id');
 
         return view('admin.stock_in', compact(
             'role',
@@ -59,6 +86,7 @@ class StockInController extends Controller
             'historyGroups'
         ));
     }
+
 
 
     public function AdminAddProduct(Request $request)

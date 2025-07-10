@@ -377,10 +377,29 @@
 
                                 <!-- Search bar and actions -->
                                 <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
-                                    <input type="text" class="form-control w-auto" placeholder="Search product here">
-                                    <button class="btn btn-primary mr-2">Search</button>
-                                    <button class="btn btn-primary mr-2">Filter</button>
-                                    <button class="btn btn-primary mr-2">Sort</button>
+                                    <form method="GET" action="{{ route('admin.process.management.page') }}" class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="filterSortForm">
+
+                                        <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto" placeholder="Search product here">
+                                        <button type="submit" class="btn btn-primary mr-2">Search</button>
+                                    
+                                        <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
+                                            <option value="">Filter by Processor</option>
+                                            @foreach($processors as $processor)
+                                                <option value="{{ $processor }}" {{ request('process_by') == $processor ? 'selected' : '' }}>
+                                                    {{ $processor }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    
+                                        <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
+                                            <option value="">Sort by Date</option>
+                                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                                        </select>
+                                    
+                                    </form>
+                                    
+                                    
                                 </div>
 
                                 <div class="table-responsive">

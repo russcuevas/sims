@@ -355,10 +355,29 @@
                             <h5 class="text-center text-primary">History</h5>
 
                             <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
-                                <input type="text" class="form-control w-auto" placeholder="Search product here">
-                                <button class="btn btn-primary mr-2">Search</button>
-                                <button class="btn btn-primary mr-2">Filter</button>
-                                <button class="btn btn-primary mr-2">Sort</button>
+                                <form method="GET" action="{{ route('admin.stock.in.page') }}" class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="filterSortForm">
+
+                                    <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto" placeholder="Search product here">
+                                    <button type="submit" class="btn btn-primary mr-2">Search</button>
+                                
+                                    <select name="supplier" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
+                                        <option value="">Filter by Supplier</option>
+                                        @foreach($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}" {{ request('supplier') == $supplier->id ? 'selected' : '' }}>
+                                                {{ $supplier->supplier_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                
+                                    <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
+                                        <option value="">Sort by Date</option>
+                                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                                    </select>
+                                
+                                </form>
+                                
+                                
                             </div>
 
                             <div class="table-responsive">

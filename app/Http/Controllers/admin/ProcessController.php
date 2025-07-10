@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class ProcessController extends Controller
 {
-    public function ProcessManagementPage()
+    public function ProcessManagementPage(Request $request)
     {
         if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
             return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
@@ -44,11 +44,43 @@ class ProcessController extends Controller
 
         $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
 
-        $historyRecords = DB::table('history_finish_products')
+        $historyQuery = DB::table('history_finish_products')
+            ->where('is_archived', 0);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $historyQuery->where('product_name', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('process_by')) {
+            $historyQuery->where('process_by', $request->input('process_by'));
+        }
+
+        if ($request->filled('date_from')) {
+            $historyQuery->whereDate('process_date', '>=', $request->input('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $historyQuery->whereDate('process_date', '<=', $request->input('date_to'));
+        }
+
+        if ($request->filled('sort')) {
+            if ($request->input('sort') == 'newest') {
+                $historyQuery->orderBy('process_date', 'desc');
+            } elseif ($request->input('sort') == 'oldest') {
+                $historyQuery->orderBy('process_date', 'asc');
+            }
+        } else {
+            $historyQuery->orderBy('process_date', 'desc');
+        }
+
+        $historyRecords = $historyQuery->get()->groupBy('transact_id');
+
+        // Get distinct processors for the filter dropdown
+        $processors = DB::table('history_finish_products')
             ->where('is_archived', 0)
-            ->orderBy('process_date', 'desc')
-            ->get()
-            ->groupBy('transact_id');
+            ->distinct()
+            ->pluck('process_by');
 
         return view('admin.process_management', compact(
             'products',
@@ -58,9 +90,12 @@ class ProcessController extends Controller
             'multipleUnitProducts',
             'hasFinishProducts',
             'finishProducts',
-            'historyRecords'
+            'historyRecords',
+            'processors'   // <-- added here
         ));
     }
+
+
 
 
 
