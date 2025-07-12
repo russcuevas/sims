@@ -324,7 +324,7 @@
                                                             value="{{ $product->quantity }}"
                                                             class="form-control input-rounded quantity-input"
                                                             data-id="{{ $product->id }}"
-                                                            style="border-color: #593bdb;" min="100" required>
+                                                            style="border-color: #593bdb;" min="1" required>
                                                      
                                                         </td>
                                                         <td style="color: black;">{{ $product->product_name }}</td>

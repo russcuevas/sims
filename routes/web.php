@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\admin\DeliveryController;
 use App\Http\Controllers\admin\ProcessController;
 use App\Http\Controllers\admin\StockController;
 use App\Http\Controllers\admin\StockInController;
@@ -96,3 +97,7 @@ Route::post('/admin/add-batch-finish-product', [ProcessController::class, 'AddBa
 Route::post('/admin/submit-finish-products', [ProcessController::class, 'AdminFinishProductSubmit'])->name('admin.finish.product.submit');
 Route::get('/admin/batch-product-finish/delete/{id}', [ProcessController::class, 'AdminRemoveFinishProduct'])->name('admin.batch.finish.product.remove');
 Route::post('/admin/archive-history-finish-product/{transactId}', [ProcessController::class, 'AdminArchiveHistoryFinishProduct'])->name('admin.archive.history.finish.product');
+
+
+// ADMIN DELIVERY MANAGEMENT
+Route::get('/admin/delivery_management', [DeliveryController::class, 'AdminDeliveryPage'])->name('admin.delivery.management.page');

@@ -26,7 +26,7 @@
             <li><a href="{{ route('admin.process.management.page')}}" aria-expanded="false"><i class="icon icon-app-store"></i><span
                         class="nav-text">Process Management</span></a>
             </li>
-            <li><a href="delivery_management.html" aria-expanded="false"><i class="icon icon-cart-9"></i><span
+            <li><a href="{{ route('admin.delivery.management.page') }}" aria-expanded="false"><i class="icon icon-cart-9"></i><span
                         class="nav-text">Delivery
                         Management</span></a>
             </li>
