@@ -50,7 +50,14 @@ class StockController extends Controller
 
         $productDetails = $query->orderBy($sortBy, $sortDir)->get();
 
-        return view('admin.stock_management', compact('productDetails', 'categories', 'sortBy', 'sortDir', 'role', 'user'));
+        $lowRawMaterialsCount = DB::table('product_details')
+            ->where('category', 'raw materials')
+            ->where('quantity', '<=', 20)
+            ->where('is_archived', 0)
+            ->count();
+
+
+        return view('admin.stock_management', compact('productDetails', 'categories', 'sortBy', 'sortDir', 'role', 'user', 'lowRawMaterialsCount'));
     }
 
 
@@ -141,5 +148,28 @@ class StockController extends Controller
             ]);
 
         return redirect()->route('admin.stock.management.page')->with('success', 'Product archived successfully.');
+    }
+
+    public function StockPurchaseOrderPage()
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
+        }
+
+        $user = Auth::guard('employees')->user();
+
+        // Get low-stock raw materials
+        $lowStockProducts = DB::table('product_details')
+            ->where('category', 'raw materials')
+            ->where('quantity', '<=', 20)
+            ->where('is_archived', 0)
+            ->get();
+
+        // Generate PO number: e.g. PO-company-24071700001
+        $date = now()->format('ymd');
+        $sequence = str_pad(1, 5, '0', STR_PAD_LEFT); // This should increment in real app logic
+        $poNumber = 'PO-company-' . $date . $sequence;
+
+        return view('admin.purchase_order', compact('lowStockProducts', 'poNumber', 'user'));
     }
 }

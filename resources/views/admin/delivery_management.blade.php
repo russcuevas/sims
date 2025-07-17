@@ -119,18 +119,25 @@
                                 <div class="container my-4">
                                     <!-- Add Store Buttons aligned to the right -->
                                     <div class="row mb-3 justify-content-end">
-                                        <div class="col-md-3 text-end">
-                                            <button type="button" id="add_store_button_1"
-                                                class="btn btn-outline-secondary w-100"
-                                                data-toggle="modal" data-target="#add_store_modal_1">
-                                                + Add Store
-                                            </button>
-                                        </div>
-                                        <div class="col-md-3 text-end">
+                                        <div class="col-md-2 text-end">
                                             <button type="button" id="add_store_button_2"
                                                 class="btn btn-outline-secondary w-100"
                                                 data-toggle="modal" data-target="#add_store_modal_2">
-                                                + Add Store
+                                                View available cars
+                                            </button>
+                                        </div>
+                                        <div class="col-md-2 text-end">
+                                            <button type="button" id="add_store_button_1"
+                                                class="btn btn-outline-secondary w-100"
+                                                data-toggle="modal" data-target="#add_store_modal_1">
+                                                Add car details
+                                            </button>
+                                        </div>
+                                        <div class="col-md-2 text-end">
+                                            <button type="button" id="add_store_button_2"
+                                                class="btn btn-outline-secondary w-100"
+                                                data-toggle="modal" data-target="#add_store_modal_2">
+                                                Add store
                                             </button>
                                         </div>
                                     </div>
@@ -152,21 +159,20 @@
                                     <div class="row mb-3 align-items-end">
                                         <div class="col-md-3 text-left">
                                             <label style="color: #593bdb;" for="memo" class="form-label">Memo</label>
-                                            <select id="memo" name="memo" class="form-control">
-
-                                            </select>
+                                            <input type="text" id="memo" name="memo"
+                                                class="form-control">
                                         </div>
                                         <div class="col-md-3">
                                             <label for="process_date" class="form-label"
-                                                style="color: #593bdb;">Process Date</label>
-                                            <input type="date" id="process_date" name="process_date"
+                                                style="color: #593bdb;">Transaction Date</label>
+                                            <input type="date" id="transaction_date" name="transaction_date"
                                                 class="form-control">
                                         </div>
 
                                         <div class="col-md-3">
                                             <label for="process_date" class="form-label"
-                                                style="color: #593bdb;">Process Date</label>
-                                            <input type="date" id="process_date" name="process_date"
+                                                style="color: #593bdb;">Expected Delivery</label>
+                                            <input type="date" id="expected_date" name="expected_date"
                                                 class="form-control">
                                         </div>
 
@@ -177,21 +183,27 @@
                                             value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
                                         </div>
 
-                                        <div class="col-md-4 text-left" style="margin-top: 20px">
+                                        <div class="col-md-3 text-left" style="margin-top: 20px">
                                             <label style="color: #593bdb;" for="approved_by" class="form-label">Approved
                                                 by</label>
                                             <input type="text" id="approved_by" name="approved_by" class="form-control"
                                             value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
                                         </div>
-                                        <div class="col-md-4 text-left">
+                                        <div class="col-md-3 text-left">
                                             <label style="color: #593bdb;" for="delivered_by" class="form-label">Delivered
                                                 by</label>
                                             <input type="text" id="delivered_by" name="delivered_by" class="form-control"
                                             value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
                                         </div>
-                                        <div class="col-md-4 text-left">
-                                            <label style="color: #593bdb;" for="supplier" class="form-label">Supplier</label>
-                                            <select id="supplier" name="supplier" class="form-control">
+                                        <div class="col-md-3 text-left">
+                                            <label style="color: #593bdb;" for="car" class="form-label">Select Car</label>
+                                            <select id="car" name="car" class="form-control">
+
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 text-left">
+                                            <label style="color: #593bdb;" for="store" class="form-label">Select Store</label>
+                                            <select id="store" name="store" class="form-control">
 
                                             </select>
                                         </div>
@@ -302,17 +314,14 @@
                                         <table class="table table-bordered table-responsive-sm">
                                             <thead>
                                                 <tr>
-                                                    <th style="color: #593bdb;">Barcode</th>
                                                     <th style="color: #593bdb;">Product</th>
                                                     <th style="color: #593bdb;">Pack</th>
                                                     <th style="color: #593bdb;">Unit</th>
                                                     <th style="color: #593bdb;">Qty Ordered</th>
                                                     <th style="color: #593bdb;">Qty Received</th>
                                                     <th style="color: #593bdb;">Price</th>
-                                                    <th style="color: #593bdb;">Cost</th>
                                                     <th style="color: #593bdb;">Amount</th>
                                                     <th style="color: #593bdb;">Action</th>
-
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -320,7 +329,7 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan="5" class="text-end fw-bold" style="color: blueviolet;">
+                                                    <td colspan="4" class="text-end fw-bold" style="color: blueviolet;">
                                                         Total Ordered: 
                                                     </td>
                                                     <td colspan="6" id="total_amount" class="fw-bold" style="color: black;">
