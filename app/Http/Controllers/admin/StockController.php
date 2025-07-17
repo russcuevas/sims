@@ -120,4 +120,26 @@ class StockController extends Controller
 
         return redirect()->route('admin.stock.management.page')->with('success', 'Product updated successfully.');
     }
+
+    public function StockArchiveProduct($id)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
+        }
+
+        $product = DB::table('product_details')->where('id', $id)->first();
+
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product not found.');
+        }
+
+        DB::table('product_details')
+            ->where('id', $id)
+            ->update([
+                'is_archived' => 1,
+                'updated_at' => now(),
+            ]);
+
+        return redirect()->route('admin.stock.management.page')->with('success', 'Product archived successfully.');
+    }
 }

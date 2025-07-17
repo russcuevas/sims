@@ -75,11 +75,15 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: blueviolet;">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h4 class="card-title m-0" style="font-size: 20px; color: blueviolet;">
                                     Stock Management
                                 </h4>
+                                <a href="" class="btn btn-primary">
+                                    VIEW P.O
+                                </a>
                             </div>
+
 
                             <div class="card-body">
 
