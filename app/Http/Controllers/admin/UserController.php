@@ -56,7 +56,14 @@ class UserController extends Controller
         $user = Auth::guard('employees')->user();
         $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
 
-        return view('admin.user_management', compact('positions', 'contracts', 'employees', 'role', 'user'));
+        // fetch notification finish products
+        $lowFinishedProducts = DB::table('product_details')
+            ->where('category', 'finish product')
+            ->where('quantity', '<', 1000)
+            ->where('is_archived', 0)
+            ->get();
+
+        return view('admin.user_management', compact('positions', 'contracts', 'employees', 'role', 'user', 'lowFinishedProducts'));
     }
 
 

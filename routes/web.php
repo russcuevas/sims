@@ -87,6 +87,7 @@ Route::post('/admin/stock/update-product-quantity/{id}', [StockController::class
 Route::post('/admin/stock/archive-product/{id}', [StockController::class, 'StockArchiveProduct'])->name('admin.stock.archive.product');
 Route::post('/admin/stock/update-product/{id}', [StockController::class, 'StockUpdateProduct'])->name('admin.stock.update.product');
 Route::get('/admin/purchase-order', [StockController::class, 'StockPurchaseOrderPage'])->name('admin.purchase.order.page');
+Route::post('/admin/submit/purchase-order', [StockController::class, 'StockSubmitPO'])->name('admin.stock.submit.po');
 
 
 // ADMIN PROCESS MANAGEMENT

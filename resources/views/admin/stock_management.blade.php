@@ -79,7 +79,7 @@
                                 <h4 class="card-title m-0" style="font-size: 20px; color: blueviolet;">
                                     Stock Management
                                 </h4>
-                                <a href="{{ route('admin.purchase.order.page') }}" class="btn btn-primary position-relative">
+                                <a href="{{ route('admin.purchase.order.page') }}" target="_blank" class="btn btn-primary position-relative">
                                     VIEW P.O
                                     @if($lowRawMaterialsCount > 0)
                                         <span class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger">

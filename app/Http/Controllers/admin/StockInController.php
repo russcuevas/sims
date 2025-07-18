@@ -76,6 +76,13 @@ class StockInController extends Controller
         // Group by transact_id
         $historyGroups = $historyMaterials->groupBy('transact_id');
 
+        // fetch notification finish products
+        $lowFinishedProducts = DB::table('product_details')
+            ->where('category', 'finish product')
+            ->where('quantity', '<', 1000)
+            ->where('is_archived', 0)
+            ->get();
+
         return view('admin.stock_in', compact(
             'role',
             'user',
@@ -83,7 +90,8 @@ class StockInController extends Controller
             'suppliers',
             'batchProductDetails',
             'totalAmount',
-            'historyGroups'
+            'historyGroups',
+            'lowFinishedProducts'
         ));
     }
 

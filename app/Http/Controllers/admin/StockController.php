@@ -56,8 +56,15 @@ class StockController extends Controller
             ->where('is_archived', 0)
             ->count();
 
+        // fetch notification finish products
+        $lowFinishedProducts = DB::table('product_details')
+            ->where('category', 'finish product')
+            ->where('quantity', '<', 1000)
+            ->where('is_archived', 0)
+            ->get();
 
-        return view('admin.stock_management', compact('productDetails', 'categories', 'sortBy', 'sortDir', 'role', 'user', 'lowRawMaterialsCount'));
+
+        return view('admin.stock_management', compact('productDetails', 'categories', 'sortBy', 'sortDir', 'role', 'user', 'lowRawMaterialsCount', 'lowFinishedProducts'));
     }
 
 
@@ -158,18 +165,84 @@ class StockController extends Controller
 
         $user = Auth::guard('employees')->user();
 
-        // Get low-stock raw materials
         $lowStockProducts = DB::table('product_details')
             ->where('category', 'raw materials')
             ->where('quantity', '<=', 20)
             ->where('is_archived', 0)
             ->get();
 
-        // Generate PO number: e.g. PO-company-24071700001
         $date = now()->format('ymd');
-        $sequence = str_pad(1, 5, '0', STR_PAD_LEFT); // This should increment in real app logic
-        $poNumber = 'PO-company-' . $date . $sequence;
 
-        return view('admin.purchase_order', compact('lowStockProducts', 'poNumber', 'user'));
+        $lastPONumber = DB::table('purchase_orders')
+            ->where('po_number', 'like', 'PO-COMPANY-' . $date . '%')
+            ->orderBy('po_number', 'desc')
+            ->value('po_number');
+
+        if ($lastPONumber) {
+            $lastSequence = (int)substr($lastPONumber, -5);
+            $nextSequence = str_pad($lastSequence + 1, 5, '0', STR_PAD_LEFT);
+        } else {
+            $nextSequence = '00001';
+        }
+
+        $poNumber = 'PO-COMPANY-' . $date . $nextSequence;
+
+        $admins = DB::table('employees')
+            ->where('position_id', 1)
+            ->get();
+
+        return view('admin.purchase_order', compact('lowStockProducts', 'poNumber', 'user', 'admins'));
+    }
+
+
+    public function StockSubmitPO(Request $request)
+    {
+        $request->validate([
+            'approved_by' => 'required|exists:employees,id',
+            'total_amount' => 'required|numeric|min:0',
+            'products' => 'required|array|min:1',
+            'products.*.product_name' => 'required|string',
+            'products.*.quantity' => 'required|numeric|min:1',
+            'products.*.unit' => 'required|string',
+            'products.*.price' => 'required|numeric|min:0',
+            'products.*.amount' => 'required|numeric|min:0',
+        ]);
+
+        $user = Auth::guard('employees')->user();
+
+        $date = now()->format('ymd');
+
+
+        $lastPONumber = DB::table('purchase_orders')
+            ->where('po_number', 'like', 'PO-COMPANY-' . $date . '%')
+            ->orderBy('po_number', 'desc')
+            ->value('po_number');
+
+        if ($lastPONumber) {
+            $lastSequence = (int)substr($lastPONumber, -5);
+            $newSequence = str_pad($lastSequence + 1, 5, '0', STR_PAD_LEFT);
+        } else {
+            $newSequence = '00001';
+        }
+
+        $poNumber = 'PO-COMPANY-' . $date . $newSequence;
+
+        foreach ($request->products as $product) {
+            DB::table('purchase_orders')->insert([
+                'po_number' => $poNumber,
+                'process_by' => $user->employee_firstname . ' ' . $user->employee_lastname,
+                'approved_by' => $request->approved_by,
+                'product_name' => $product['product_name'],
+                'quantity' => $product['quantity'],
+                'unit' => $product['unit'],
+                'price' => $product['price'],
+                'amount' => $product['amount'],
+                'total_amount' => $request->total_amount,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return redirect()->route('admin.stock.management.page')->with('success', 'Downloaded successfully!');
     }
 }

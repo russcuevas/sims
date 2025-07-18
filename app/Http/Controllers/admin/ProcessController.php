@@ -82,6 +82,14 @@ class ProcessController extends Controller
             ->distinct()
             ->pluck('process_by');
 
+
+        // fetch notification finish products
+        $lowFinishedProducts = DB::table('product_details')
+            ->where('category', 'finish product')
+            ->where('quantity', '<', 1000)
+            ->where('is_archived', 0)
+            ->get();
+
         return view('admin.process_management', compact(
             'products',
             'batchProducts',
@@ -91,7 +99,8 @@ class ProcessController extends Controller
             'hasFinishProducts',
             'finishProducts',
             'historyRecords',
-            'processors'   // <-- added here
+            'processors',
+            'lowFinishedProducts'   // <-- added here
         ));
     }
 
