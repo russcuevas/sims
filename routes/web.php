@@ -104,3 +104,10 @@ Route::post('/admin/archive-history-finish-product/{transactId}', [ProcessContro
 
 // ADMIN DELIVERY MANAGEMENT
 Route::get('/admin/delivery_management', [DeliveryController::class, 'AdminDeliveryPage'])->name('admin.delivery.management.page');
+Route::post('/admin/delivery/add-store', [DeliveryController::class, 'AdminDeliveryAddStore'])->name('admin.delivery.add.store');
+Route::post('/admin/delivery/add-car', [DeliveryController::class, 'AdminAddCar'])->name('admin.delivery.add.car');
+Route::post('/admin/delivery/add-multiple-finish/', [DeliveryController::class, 'AdminDeliverySubmitBatch'])->name('admin.delivery.submit.batch');
+Route::get('/admin/delivery/remove-product/{id}', [DeliveryController::class, 'AdminDeliveryRemoveProduct'])
+    ->name('admin.delivery.remove.product');
+
+Route::post('/admin/delivery/add', [DeliveryController::class, 'AdminDeliveryAdd'])->name('admin.delivery.add');

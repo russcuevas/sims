@@ -127,27 +127,200 @@
                                             </button>
                                         </div>
                                         <div class="col-md-2 text-end">
-                                            <button type="button" id="add_store_button_1"
+                                            <button type="button" id="add_store_button"
                                                 class="btn btn-outline-secondary w-100"
-                                                data-toggle="modal" data-target="#add_store_modal_1">
+                                                data-toggle="modal" data-target="#add_car">
                                                 Add car details
                                             </button>
                                         </div>
                                         <div class="col-md-2 text-end">
                                             <button type="button" id="add_store_button_2"
                                                 class="btn btn-outline-secondary w-100"
-                                                data-toggle="modal" data-target="#add_store_modal_2">
+                                                data-toggle="modal" data-target="#add_store_modal">
                                                 Add store
                                             </button>
                                         </div>
                                     </div>
 
-                                    <!-- Existing Form -->
-                                    <form action="" method="POST">
+                                    {{-- ADD CAR --}}
+                                    <div class="modal fade" id="add_car">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Add Car</h5>
+                                                    <button type="button" class="close"
+                                                        data-dismiss="modal"><span>&times;</span></button>
+                                                </div>
+                                                <form action="{{ route('admin.delivery.add.car') }}" method="POST">
+                                                    @csrf
+                                                    <div class="modal-body">
+
+                                                        <div class="form-group row mb-3">
+                                                            <label for="car"
+                                                                class="col-sm-4 col-form-label text-end">
+                                                                CAR <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="car"
+                                                                    name="car" placeholder="Enter car"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row mb-3">
+                                                            <label for="plate_number"
+                                                                class="col-sm-4 col-form-label text-end">
+                                                                Plate Number <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="plate_number"
+                                                                    name="plate_number" placeholder="Enter plate number"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-danger"
+                                                            data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- ADD STORE MODAL --}}
+                                    <div class="modal fade" id="add_store_modal">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Add Store</h5>
+                                                    <button type="button" class="close"
+                                                        data-dismiss="modal"><span>&times;</span></button>
+                                                </div>
+                                                <form action="{{ route('admin.delivery.add.store') }}" method="POST">
+                                                        @csrf
+                                                    <div class="modal-body">
+
+                                                        <!-- Store Name -->
+                                                        <div class="form-group row mb-3">
+                                                            <label for="store_name"
+                                                                class="col-sm-4 col-form-label text-end">
+                                                                Store name <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="store_name"
+                                                                    name="store_name" placeholder="Enter store name"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <!-- Store Code -->
+                                                        <div class="form-group row mb-3">
+                                                            <label for="store_code"
+                                                                class="col-sm-4 col-form-label text-end">
+                                                                Store code <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="store_code"
+                                                                    name="store_code" placeholder="Enter store code"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                        <!-- Store Address -->
+                                                        <div class="form-group row mb-3">
+                                                            <label for="store_address"
+                                                                class="col-sm-4 col-form-label text-end">
+                                                                Store address <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="store_address"
+                                                                    name="store_address" placeholder="Enter store address"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                    
+                                                        
+                                                        <!-- Store Tel No -->
+                                                        <div class="form-group row mb-3">
+                                                            <label for="store_tel_no"
+                                                                class="col-sm-4 col-form-label text-end">
+                                                                Tel no. <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="store_tel_no"
+                                                                    name="store_tel_no" placeholder="Enter tel no."
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                        <!-- Store CP No -->
+                                                        <div class="form-group row mb-3">
+                                                            <label for="store_cp_number"
+                                                                class="col-sm-4 col-form-label text-end">
+                                                                Store Cellphone No. <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="store_cp_number"
+                                                                    name="store_cp_number" placeholder="Enter cellphone no."
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                        <!-- Store FAX -->
+                                                        <div class="form-group row mb-3">
+                                                            <label for="store_fax"
+                                                                class="col-sm-4 col-form-label text-end">
+                                                                FAX <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="store_fax"
+                                                                    name="store_fax" placeholder="Enter fax"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Store TIN -->
+                                                        <div class="form-group row mb-3">
+                                                            <label for="store_tin"
+                                                                class="col-sm-4 col-form-label text-end">
+                                                                TIN <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="store_tin"
+                                                                    name="store_tin" placeholder="Enter tin"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-danger"
+                                                            data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <form action="{{ route('admin.delivery.submit.batch') }}" method="POST">
                                         @csrf
                                         <div class="d-flex gap-2" style="width: 100%;">
                                             <select id="product_select" name="products[]" class="form-control" multiple>
-                                                <!-- Options -->
+                                                @foreach ($products as $product)
+                                                    <option value="{{ $product->id }}">
+                                                        {{ $product->product_name }} | Qty: {{ $product->quantity }} | {{ $product->stock_unit_id }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                             <button class="btn btn-primary">Submit</button>
                                         </div>
@@ -155,7 +328,8 @@
                                 </div>
 
 
-                                <form action="#">
+                                <form action="{{ route('admin.delivery.add') }}" method="POST">
+                                    @csrf                                    
                                     <div class="row mb-3 align-items-end">
                                         <div class="col-md-3 text-left">
                                             <label style="color: #593bdb;" for="memo" class="form-label">Memo</label>
@@ -184,30 +358,54 @@
                                         </div>
 
                                         <div class="col-md-3 text-left" style="margin-top: 20px">
-                                            <label style="color: #593bdb;" for="approved_by" class="form-label">Approved
-                                                by</label>
-                                            <input type="text" id="approved_by" name="approved_by" class="form-control"
-                                            value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
+                                            <label style="color: #593bdb;" for="approved_by" class="form-label">Approved by</label>
+                                            <select id="approved_by" name="approved_by" class="form-control">
+                                                @foreach ($allEmployees as $employee)
+                                                    @if ($employee->position_id == 1)  <!-- Approved by: Position 1 -->
+                                                        <option value="{{ $employee->id }}">
+                                                            {{ $employee->employee_firstname }} {{ $employee->employee_lastname }}
+                                                        </option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
                                         </div>
-                                        <div class="col-md-3 text-left">
-                                            <label style="color: #593bdb;" for="delivered_by" class="form-label">Delivered
-                                                by</label>
-                                            <input type="text" id="delivered_by" name="delivered_by" class="form-control"
-                                            value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
+
+                                        <div class="col-md-3 text-left" style="margin-top: 20px">
+                                            <label style="color: #593bdb;" for="delivered_by" class="form-label">Delivered by</label>
+                                            <select id="delivered_by" name="delivered_by" class="form-control">
+                                                @foreach ($allEmployees as $employee)
+                                                    @if ($employee->position_id == 3)  <!-- Delivered by: Position 3 -->
+                                                        <option value="{{ $employee->id }}">
+                                                            {{ $employee->employee_firstname }} {{ $employee->employee_lastname }}
+                                                        </option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
                                         </div>
+
+
                                         <div class="col-md-3 text-left">
                                             <label style="color: #593bdb;" for="car" class="form-label">Select Car</label>
                                             <select id="car" name="car" class="form-control">
-
+                                                @foreach ($cars as $car)
+                                                    <option value="{{ $car->id }}">
+                                                        {{ $car->car }} ({{ $car->plate_number }})
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
+
                                         <div class="col-md-3 text-left">
                                             <label style="color: #593bdb;" for="store" class="form-label">Select Store</label>
                                             <select id="store" name="store" class="form-control">
-
+                                                @foreach ($stores as $store)
+                                                    <option value="{{ $store->id }}">
+                                                        {{ $store->store_name }} - {{ $store->store_code }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
-                                    </form>
+
                                     </div>
 
 
@@ -241,104 +439,67 @@
                                 
 
 
-                                <!-- ADD PRODUCTS MODAL -->
-                                <div class="modal fade" id="add_product_modal">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Add Product With Multiple Units</h5>
-                                                <button type="button" class="close"
-                                                    data-dismiss="modal"><span>&times;</span></button>
-                                            </div>
-                                            <form class="add_product_validation" action="{{ route('admin.add.batch.multiple.product') }}" method="POST">
-                                                @csrf
-                                                <div class="modal-body">
-
-                                                    <!-- Product Name -->
-                                                    <div class="form-group row mb-3">
-                                                        <label for="product_name"
-                                                            class="col-sm-4 col-form-label text-end">
-                                                            Product Name <span class="text-danger">*</span>
-                                                        </label>
-                                                        <div class="col-sm-8">
-                                                            <input type="text" class="form-control" id="product_name"
-                                                                name="product_name" placeholder="Enter product name"
-                                                                required>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Product Units + Prices -->
-                                                    <div class="form-group row mb-3">
-                                                        <label class="col-sm-4 col-form-label text-end">
-                                                            Product Units & Prices <span class="text-danger">*</span>
-                                                        </label>
-                                                        <div class="col-sm-8">
-                                                            <div class="input-group mb-2">
-                                                                <span class="input-group-text">80g</span>
-                                                                <input type="text" class="form-control" name="price_80g"
-                                                                    placeholder="Enter price for 80g" required>
-                                                            </div>
-                                                            <div class="input-group mb-2">
-                                                                <span class="input-group-text">130g</span>
-                                                                <input type="text" class="form-control"
-                                                                    name="price_130g" placeholder="Enter price for 130g"
-                                                                    required>
-                                                            </div>
-                                                            <div class="input-group">
-                                                                <span class="input-group-text">230g</span>
-                                                                <input type="text" class="form-control"
-                                                                    name="price_230g" placeholder="Enter price for 230g"
-                                                                    required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-danger"
-                                                        data-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
 
                                 <div class="table-responsive">
-                                    <form action="{{ route('admin.finish.product.submit') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="process_date" value="{{ now()->toDateString() }}">
                                     
                                         <table class="table table-bordered table-responsive-sm">
-                                            <thead>
+                                        <thead>
+                                            <tr>
+                                                <th style="color: #593bdb;">Product</th>
+                                                <th style="color: #593bdb;">Pack</th>
+                                                <th style="color: #593bdb;">Unit</th>
+                                                <th style="color: #593bdb;">Qty Ordered</th>
+                                                <th style="color: #593bdb;">Qty Received</th>
+                                                <th style="color: #593bdb;">Price</th>
+                                                <th style="color: #593bdb;">Amount</th>
+                                                <th style="color: #593bdb;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($fetch_finished_products as $batch)
                                                 <tr>
-                                                    <th style="color: #593bdb;">Product</th>
-                                                    <th style="color: #593bdb;">Pack</th>
-                                                    <th style="color: #593bdb;">Unit</th>
-                                                    <th style="color: #593bdb;">Qty Ordered</th>
-                                                    <th style="color: #593bdb;">Qty Received</th>
-                                                    <th style="color: #593bdb;">Price</th>
-                                                    <th style="color: #593bdb;">Amount</th>
-                                                    <th style="color: #593bdb;">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan="4" class="text-end fw-bold" style="color: blueviolet;">
-                                                        Total Ordered: 
+                                                    <td style="color: black">{{ $batch->product_name }}</td>
+                                                    <td>
+                                                        <input type="number" class="form-control quantity" value="1" style="width: 50px; background-color: gray; color: white; cursor: none;" readonly>
                                                     </td>
-                                                    <td colspan="6" id="total_amount" class="fw-bold" style="color: black;">
-                                                        <span style="color: red;">Total Amount: ₱</span>
+                                                    <td style="color: black">{{ $batch->unit }}</td>
+                                                    <td>
+                                                        <input type="hidden" name="product_id[]" value="{{ $batch->id }}">
+                                                        <input type="number" name="quantity_ordered[]" class="form-control quantity" style="width: 70px" value="1" required data-price="{{ $batch->price }}" data-row-id="row-{{ $batch->id }}">
+                                                    </td>
+                                                    <td></td>
+                                                    <td style="color: black">₱{{ $batch->price }}
+                                                        <input type="hidden" name="price[]" value="{{ $batch->price }}">
+                                                    </td>
+                                                    <td style="color: black">
+                                                        <span class="amount">₱{{ $batch->price }}</span>
+                                                        <input type="hidden" name="amount[]" class="amount-hidden" value="{{ $batch->price }}">
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ route('admin.delivery.remove.product', $batch->id) }}" 
+                                                        class="btn btn-outline-danger" 
+                                                        title="Remove" 
+                                                        onclick="return confirm('Are you sure you want to remove this product from the batch?');">
+                                                        <i class="fa fa-close"></i> Remove
+                                                        </a>
                                                     </td>
                                                 </tr>
-                                            </tfoot>
-                                        </table>
-                                    
+                                            @endforeach
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="4" class="text-end fw-bold" style="color: blueviolet;">
+                                                    Total Ordered:
+                                                </td>
+                                                <td colspan="5" id="total_amount" class="fw-bold" style="color: black;">
+                                                    <span style="color: red;">Total Amount: ₱</span>
+                                                    <input type="hidden" name="total_amount">
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
                                         <button type="submit" class="btn btn-primary float-right">Submit & Print</button>
                                     </form>
                                     
@@ -423,40 +584,58 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
-    
-    
+    <script>
+        function updateAmount(input) {
+            const quantity = parseFloat(input.value);
+            const price = parseFloat(input.getAttribute('data-price'));
+            const amount = quantity * price; 
+
+            // Update the amount display for this row
+            const amountDisplay = input.closest('tr').querySelector('.amount');
+            const amountHidden = input.closest('tr').querySelector('.amount-hidden');
+            
+            // Update the display
+            amountDisplay.textContent = '₱' + amount.toFixed(2); // Display amount with two decimals
+            amountHidden.value = amount.toFixed(2); // Store amount in hidden input
+            
+            // Recalculate and update the total amount
+            updateTotalAmount();
+        }
+
+        // Function to calculate the total amount from all rows
+        function updateTotalAmount() {
+            let totalAmount = 0;
+
+            // Get all amount hidden inputs and sum their values
+            const amountHiddenInputs = document.querySelectorAll('.amount-hidden');
+            amountHiddenInputs.forEach(input => {
+                totalAmount += parseFloat(input.value); // Add the hidden amount value
+            });
+
+            // Update the total amount display
+            const totalAmountDisplay = document.getElementById('total_amount');
+            totalAmountDisplay.querySelector('span').textContent = 'Total Amount: ₱' + totalAmount.toFixed(2); // Update the total amount
+            totalAmountDisplay.querySelector('input[name="total_amount"]').value = totalAmount.toFixed(2); // Update the hidden total amount field
+        }
+
+        // Get all quantity input elements and add event listeners
+        const quantityInputs = document.querySelectorAll('.quantity');
+        quantityInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                updateAmount(input); // Call the updateAmount function when quantity changes
+            });
+
+            // Call the updateAmount function on page load to initialize the amounts
+            updateAmount(input);
+        });
+    </script>
+
+
+
     <!-- ADD USERS VALIDATION -->
     <script>
         $(document).ready(function () {
-            $(".add_product_validation").validate({
-                rules: {
-                    product_name: {
-                        required: true,
-                        minlength: 3
-                    },
-                    product_unit: {
-                        required: true,
-                    },
-                    product_price: {
-                        required: true,
-                        number: true,
-                        min: 0.01
-                    }
-                },
-                messages: {
-                    product_name: {
-                        required: "Please enter the product name",
-                        minlength: "Product name must be at least 3 characters"
-                    },
-                    product_unit: {
-                        required: "Please enter the unit",
-                    },
-                    product_price: {
-                        required: "Please enter the product price",
-                        number: "Please enter a valid number",
-                        min: "Price must be greater than zero"
-                    }
-                },
+            $(".add_store_validation").validate({
                 ignore: [],
                 errorClass: "invalid-feedback animated fadeInUp",
                 errorElement: "div",
@@ -471,44 +650,13 @@
                 }
             });
 
-            $("#product_price").on("input", function () {
-                this.value = this.value.replace(/[^0-9.]/g, "");
-            });
         });
     </script>
 
 
     <script>
         $(document).ready(function () {
-            $(".add_suppliers_validation").validate({
-                rules: {
-                    product_name: {
-                        required: true,
-                        minlength: 3
-                    },
-                    product_unit: {
-                        required: true,
-                    },
-                    product_price: {
-                        required: true,
-                        number: true,
-                        in: 0.
-                    }
-                },
-                messages: {
-                    product_name: {
-                        required: "Please enter the product name",
-                        minlength: "Product name must be at least 3 characters"
-                    },
-                    product_unit: {
-                        required: "Please enter the unit",
-                    },
-                    product_price: {
-                        required: "Please enter the product price",
-                        number: "Please enter a valid number",
-                        min: "Price must be greater than zero"
-                    }
-                },
+            $(".add_car_validation").validate({
                 ignore: [],
                 errorClass: "invalid-feedback animated fadeInUp",
                 errorElement: "div",

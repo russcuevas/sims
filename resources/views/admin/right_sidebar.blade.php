@@ -70,7 +70,9 @@
                     <li class="nav-item dropdown header-notification">
                         <a class="nav-link" href="#" role="button" data-toggle="dropdown">
                             <i class="mdi mdi-bell-outline"></i>
-                            <span class="badge badge-danger">{{ count($lowFinishedProducts) }}</span>
+                        <span class="badge badge-danger">
+                            {{ $lowFinishedProducts ? count($lowFinishedProducts) : 0 }}
+                        </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <div class="dropdown-header">
@@ -88,7 +90,7 @@
                                         </div>
                                     @endforeach
                                 @else
-                                    <div class="text-center">No low stock items.</div>
+                                    <div class="text-center">No notification</div>
                                 @endif
                             </div>
 
