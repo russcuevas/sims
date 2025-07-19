@@ -120,11 +120,9 @@
                                     <!-- Add Store Buttons aligned to the right -->
                                     <div class="row mb-3 justify-content-end">
                                         <div class="col-md-2 text-end">
-                                            <button type="button" id="add_store_button_2"
-                                                class="btn btn-outline-secondary w-100"
-                                                data-toggle="modal" data-target="#add_store_modal_2">
-                                                View available cars
-                                            </button>
+                                        <a href="{{ route('admin.view.available.cars') }}" class="btn btn-outline-secondary w-100">
+                                            View available cars
+                                        </a>
                                         </div>
                                         <div class="col-md-2 text-end">
                                             <button type="button" id="add_store_button"

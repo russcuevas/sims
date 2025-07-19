@@ -6,6 +6,7 @@ use App\Http\Controllers\admin\ProcessController;
 use App\Http\Controllers\admin\StockController;
 use App\Http\Controllers\admin\StockInController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\ViewAvailableCarsController;
 use App\Http\Controllers\auth\AuthController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -111,3 +112,7 @@ Route::get('/admin/delivery/remove-product/{id}', [DeliveryController::class, 'A
 Route::post('/admin/delivery/add', [DeliveryController::class, 'AdminDeliveryAdd'])->name('admin.delivery.add');
 Route::get('/delivery/view/{transact_id}', [DeliveryController::class, 'AdminViewDeliveryOrder'])->name('admin.delivery.view');
 Route::post('/admin/delivery/archive/{transact_id}', [DeliveryController::class, 'AdminArchiveDeliveryOrder'])->name('admin.delivery.archive');
+
+
+// ADMIN VIEW AVAILABLE CARS
+Route::get('/admin/view/available-cars', [ViewAvailableCarsController::class, 'ViewAvailableCarsPage'])->name('admin.view.available.cars');

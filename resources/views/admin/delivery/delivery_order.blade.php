@@ -125,7 +125,7 @@
             <div class="info-item"><strong>Transaction Date:</strong> {{ \Carbon\Carbon::parse($first->transaction_date)->format('Y-m-d') ?? '(date)' }}</div>
         </div>
         <div class="info-row">
-            <div class="info-item"><strong>Branch:</strong> Savemore Megamall</div>
+            <div class="info-item"><strong>Branch:</strong> {{ $first->store_name }}</div>
             <div class="info-item"><strong>Expected Delivery:</strong> {{ \Carbon\Carbon::parse($first->transaction_date)->addDays(7)->format('Y-m-d') }}</div>
         </div>
         <div class="info-row">
