@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: blueviolet;" href="">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Delivery Management</li>
                         </ol>
                     </div>
@@ -88,28 +88,16 @@
                                 <!-- Status Buttons aligned to the right -->
                                 <div class="row mb-3 justify-content-center">
                                     <div class="col-auto px-1">
-                                        <button type="button" id="status_preparing"
-                                            class="btn btn-secondary">
-                                            Preparing
-                                        </button>
+                                        <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-secondary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <button type="button" id="status_to_ship"
-                                            class="btn btn-outline-secondary">
-                                            Return item
-                                        </button>
+                                        <a href="" class="btn btn-outline-secondary" id="status_to_ship">Return item</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <button type="button" id="status_delivered"
-                                            class="btn btn-outline-secondary">
-                                            Pending delivery
-                                        </button>
+                                        <a href="{{ route('admin.pending.management.page') }}" class="btn btn-outline-secondary" id="status_delivered">Pending delivery</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <button type="button" id="status_return"
-                                            class="btn btn-outline-secondary">
-                                            Delivery Status
-                                        </button>
+                                        <a href="{{ route('admin.delivery.status.page') }}" class="btn btn-outline-secondary" id="status_return">Delivery Status</a>
                                     </div>
                                 </div>
                             </div>

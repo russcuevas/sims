@@ -86,27 +86,35 @@
 
                                 <div class="table-responsive">
                                     <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
-                                        <form method="GET" action="" class="d-flex gap-2 align-items-center mb-3">
+                                        <form method="GET" action="{{ route('admin.view.available.cars') }}" class="d-flex gap-2 align-items-center mb-3">
+                                            <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto" placeholder="Search car or plate">
 
-                                            <input type="text" name="search" value="" class="form-control w-auto" placeholder="Search product here">
-                                            <button type="submit" class="btn btn-primary mr-2">Search</button>
-
-                                            {{-- Filter Dropdown --}}
-                                            <div class="dropdown">
-                                                <button class="btn btn-outline-primary dropdown-toggle mr-2" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <!-- Filter Dropdown -->
+                                            <div class="dropdown me-2">
+                                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                                     Filter Available
                                                 </button>
+                                                <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                                                    <li><a class="dropdown-item" href="{{ route('admin.view.available.cars', ['filter' => 'Available']) }}">Available</a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('admin.view.available.cars', ['filter' => 'Not Available']) }}">Not Available</a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('admin.view.available.cars') }}">Clear Filter</a></li>
+                                                </ul>
                                             </div>
-                                        
-                                            {{-- Sort Dropdown --}}
+
+                                            <!-- Sort Dropdown -->
                                             <div class="dropdown">
                                                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                                     Sort
                                                 </button>
+                                                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                                                    <li><a class="dropdown-item" href="{{ route('admin.view.available.cars', ['sort' => 'asc']) }}">Availability Ascending</a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('admin.view.available.cars', ['sort' => 'desc']) }}">Availability Descending</a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('admin.view.available.cars') }}">Clear Sort</a></li>
+                                                </ul>
                                             </div>
-                                    
-                                        
+                                            <button type="submit" class="btn btn-primary">Apply</button>
                                         </form>
+
                                         
                                     </div>
                                     <table class="table table-bordered table-responsive-sm">

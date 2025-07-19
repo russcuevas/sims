@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <div class="quixnav">
     <div class="quixnav-scroll">
 
@@ -26,13 +28,17 @@
             <li><a href="{{ route('admin.process.management.page')}}" aria-expanded="false"><i class="icon icon-app-store"></i><span
                         class="nav-text">Process Management</span></a>
             </li>
-            <li><a href="{{ route('admin.delivery.management.page') }}" aria-expanded="false"><i class="icon icon-cart-9"></i><span
+            <li><a href="{{ route('admin.delivery.management.page') }}" aria-expanded="false"><i class="fa-solid fa-truck-fast"></i><span
                         class="nav-text">Delivery
                         Management</span></a>
             </li>
             <li><a href="sales_reports.html" aria-expanded="false"><i class="icon icon-chart-bar-33"></i><span
                         class="nav-text">Sales
                         Report</span></a>
+            </li>
+            <li><a href="logs.html" aria-expanded="false"><i class="fa-solid fa-receipt"></i><span
+                        class="nav-text">Logs
+                    </span></a>
             </li>
             <li><a href="archive.html" aria-expanded="false"><i class="icon icon-card-update"></i><span
                         class="nav-text">Archive

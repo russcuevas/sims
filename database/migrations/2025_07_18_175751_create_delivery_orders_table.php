@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('transact_id', 255)->nullable();
             $table->string('memo', 255)->nullable();
+            $table->string('upload_image', 255)->nullable();
+            $table->text('upload_notes')->nullable();
             $table->date('transaction_date')->nullable();
             $table->date('expected_delivery')->nullable();
             $table->string('process_by', 255)->nullable();

@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\DeliveryController;
+use App\Http\Controllers\admin\DeliveryStatusController;
+use App\Http\Controllers\admin\PendingDeliveryController;
 use App\Http\Controllers\admin\ProcessController;
 use App\Http\Controllers\admin\StockController;
 use App\Http\Controllers\admin\StockInController;
@@ -102,7 +104,7 @@ Route::get('/admin/batch-product-finish/delete/{id}', [ProcessController::class,
 Route::post('/admin/archive-history-finish-product/{transactId}', [ProcessController::class, 'AdminArchiveHistoryFinishProduct'])->name('admin.archive.history.finish.product');
 
 
-// ADMIN DELIVERY MANAGEMENT
+// ADMIN DELIVERY PREPARING MANAGEMENT
 Route::get('/admin/delivery_management', [DeliveryController::class, 'AdminDeliveryPage'])->name('admin.delivery.management.page');
 Route::post('/admin/delivery/add-store', [DeliveryController::class, 'AdminDeliveryAddStore'])->name('admin.delivery.add.store');
 Route::post('/admin/delivery/add-car', [DeliveryController::class, 'AdminAddCar'])->name('admin.delivery.add.car');
@@ -116,3 +118,10 @@ Route::post('/admin/delivery/archive/{transact_id}', [DeliveryController::class,
 
 // ADMIN VIEW AVAILABLE CARS
 Route::get('/admin/view/available-cars', [ViewAvailableCarsController::class, 'ViewAvailableCarsPage'])->name('admin.view.available.cars');
+
+// ADMIN DELIVERY PENDING MANAGEMENT
+Route::get('/admin/pending_delivery', [PendingDeliveryController::class, 'AdminPendingDeliveryPage'])->name('admin.pending.management.page');
+Route::post('/admin/pending/marked-status/{transact_id}', [PendingDeliveryController::class, 'AdminMarkStatusDelivery'])->name('admin.delivery.mark.status');
+
+// ADMIN DELIVERY STATUS MAANGEMENT
+Route::get('/admin/delivery_status', [DeliveryStatusController::class, 'AdminDeliveryStatusPage'])->name('admin.delivery.status.page');
