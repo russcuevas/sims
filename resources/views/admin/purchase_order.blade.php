@@ -33,9 +33,9 @@
         @endif
 
         <div class="container mt-4">
-        <p class="text-center mb-1">Company name</p>
+        <p class="text-center mb-1">Supplier name</p>
         <p class="text-center mb-1">Address</p>
-        <p class="text-center mb-1">Tel no.: Cell no.:<br>Email address:</p>
+        <p class="text-center mb-1">Cell no.:<br>Email address:</p>
 
         <div class="text-center my-2">
                 <h3 class="text-center">Purchase Order</h3>

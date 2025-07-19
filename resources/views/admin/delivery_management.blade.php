@@ -96,19 +96,19 @@
                                     <div class="col-auto px-1">
                                         <button type="button" id="status_to_ship"
                                             class="btn btn-outline-secondary">
-                                            To Ship
+                                            Return item
                                         </button>
                                     </div>
                                     <div class="col-auto px-1">
                                         <button type="button" id="status_delivered"
                                             class="btn btn-outline-secondary">
-                                            Delivered
+                                            Pending delivery
                                         </button>
                                     </div>
                                     <div class="col-auto px-1">
                                         <button type="button" id="status_return"
                                             class="btn btn-outline-secondary">
-                                            Return
+                                            Delivery Status
                                         </button>
                                     </div>
                                 </div>
@@ -543,8 +543,22 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-
-
+                                            @foreach($deliveryOrders as $transactId => $orders)
+                                                @php $first = $orders->first(); @endphp
+                                                <tr>
+                                                    <td>
+                                                        <a target="_blank" href="{{ route('admin.delivery.view', $transactId) }}" class="btn btn-outline-primary btn-sm">View</a>
+                                                    </td>
+                                                    <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
+                                                    <td style="color: black">{{ $first->process_by }}</td>
+                                                    <td>
+                                                        <form method="POST" action="{{ route('admin.delivery.archive', $transactId) }}">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>

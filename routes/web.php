@@ -83,7 +83,6 @@ Route::post('/admin/archive-raw-stock/{transactId}', [StockInController::class, 
 
 // ADMIN STOCK MANAGEMENT
 Route::get('/admin/stock_management', [StockController::class, 'StockManagementPage'])->name('admin.stock.management.page');
-Route::post('/admin/stock/update-product-quantity/{id}', [StockController::class, 'StockUpdateProductQuantity'])->name('admin.stock.update.product.quantity');
 Route::post('/admin/stock/archive-product/{id}', [StockController::class, 'StockArchiveProduct'])->name('admin.stock.archive.product');
 Route::post('/admin/stock/update-product/{id}', [StockController::class, 'StockUpdateProduct'])->name('admin.stock.update.product');
 Route::get('/admin/purchase-order', [StockController::class, 'StockPurchaseOrderPage'])->name('admin.purchase.order.page');
@@ -109,5 +108,6 @@ Route::post('/admin/delivery/add-car', [DeliveryController::class, 'AdminAddCar'
 Route::post('/admin/delivery/add-multiple-finish/', [DeliveryController::class, 'AdminDeliverySubmitBatch'])->name('admin.delivery.submit.batch');
 Route::get('/admin/delivery/remove-product/{id}', [DeliveryController::class, 'AdminDeliveryRemoveProduct'])
     ->name('admin.delivery.remove.product');
-
 Route::post('/admin/delivery/add', [DeliveryController::class, 'AdminDeliveryAdd'])->name('admin.delivery.add');
+Route::get('/delivery/view/{transact_id}', [DeliveryController::class, 'AdminViewDeliveryOrder'])->name('admin.delivery.view');
+Route::post('/admin/delivery/archive/{transact_id}', [DeliveryController::class, 'AdminArchiveDeliveryOrder'])->name('admin.delivery.archive');

@@ -68,40 +68,6 @@ class StockController extends Controller
     }
 
 
-    public function StockUpdateProductQuantity(Request $request, $id)
-    {
-        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-        }
-
-        $validated = $request->validate([
-            'quantity' => 'required|numeric|min:0',
-        ]);
-
-        // Update product_details
-        $updatedProduct = DB::table('product_details')
-            ->where('id', $id)
-            ->update([
-                'quantity' => $validated['quantity'],
-                'updated_at' => now(),
-            ]);
-
-        // Update batch_fetch_raw_products where product_id_details matches
-        $updatedBatch = DB::table('batch_fetch_raw_products')
-            ->where('product_id_details', $id)
-            ->update([
-                'quantity' => $validated['quantity'],
-                'updated_at' => now(),
-            ]);
-
-        if ($updatedProduct || $updatedBatch) {
-            return response()->json(['success' => true, 'message' => 'Quantity updated successfully.']);
-        }
-
-        return response()->json(['success' => false, 'message' => 'Update failed.']);
-    }
-
-
     public function StockUpdateProduct(Request $request, $id)
     {
         $request->validate([
@@ -185,7 +151,7 @@ class StockController extends Controller
             $nextSequence = '00001';
         }
 
-        $poNumber = 'PO-COMPANY-' . $date . $nextSequence;
+        $poNumber = 'PO-RHEA-' . $date . $nextSequence;
 
         $admins = DB::table('employees')
             ->where('position_id', 1)
@@ -225,7 +191,7 @@ class StockController extends Controller
             $newSequence = '00001';
         }
 
-        $poNumber = 'PO-COMPANY-' . $date . $newSequence;
+        $poNumber = 'PO-RHEA-' . $date . $newSequence;
 
         foreach ($request->products as $product) {
             DB::table('purchase_orders')->insert([

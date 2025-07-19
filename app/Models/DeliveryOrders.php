@@ -27,6 +27,7 @@ class DeliveryOrders extends Model
         'amount',
         'total_ordered',
         'total_amount',
+        'status',
         'is_archived',
     ];
 }

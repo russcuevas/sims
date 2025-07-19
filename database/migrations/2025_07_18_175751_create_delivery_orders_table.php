@@ -31,6 +31,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->integer('total_ordered')->nullable();
             $table->decimal('total_amount', 10, 2);
+            $table->string('status', 255)->nullable();
             $table->integer('is_archived')->default(0);
 
             $table->timestamps();

@@ -20,10 +20,8 @@ class DeliveryController extends Controller
         $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
 
         $allEmployees = DB::table('employees')
-            ->select('employees.id', 'employees.employee_firstname', 'employees.employee_lastname', 'employees.position_id')
+            ->select('id', 'employee_firstname', 'employee_lastname', 'position_id')
             ->get();
-
-
 
         $lowFinishedProducts = DB::table('product_details')
             ->where('category', 'finish product')
@@ -36,11 +34,16 @@ class DeliveryController extends Controller
             ->where('is_archived', 0)
             ->get();
 
-        $fetch_finished_products = DB::table('batch_fetch_finish_products')
-            ->get();
-
+        $fetch_finished_products = DB::table('batch_fetch_finish_products')->get();
         $cars = DB::table('cars')->get();
         $stores = DB::table('stores')->get();
+
+        // Fetch and group delivery orders by transact_id
+        $deliveryOrders = DB::table('delivery_orders')
+            ->where('is_archived', 0)
+            ->orderBy('transaction_date', 'desc')
+            ->get()
+            ->groupBy('transact_id');
 
         return view('admin.delivery_management', compact(
             'role',
@@ -51,8 +54,10 @@ class DeliveryController extends Controller
             'allEmployees',
             'cars',
             'stores',
+            'deliveryOrders' // pass to view
         ));
     }
+
 
 
     public function AdminDeliverySubmitBatch(Request $request)
@@ -164,30 +169,29 @@ class DeliveryController extends Controller
         ]);
 
         $user = Auth::guard('employees')->user();
-        $transactId = uniqid('transact_');
+        $storeCode = $request->store ? DB::table('stores')->where('id', $request->store)->value('store_code') : 'UNKNOWN';
+        $dateFormatted = date('ymd');
+        $lastTransaction = DB::table('delivery_orders')
+            ->where('transact_id', 'like', "DO-{$storeCode}-{$dateFormatted}%")
+            ->orderBy('transact_id', 'desc')
+            ->first();
+        $lastSeq = $lastTransaction ? (int)substr($lastTransaction->transact_id, -5) : 0;
+        $nextSeq = str_pad($lastSeq + 1, 5, '0', STR_PAD_LEFT);
+        $transactId = "DO-{$storeCode}-{$dateFormatted}{$nextSeq}";
+
         $deliveryOrders = [];
 
-        // Loop through each product ordered
         foreach ($request->product_id as $key => $productId) {
-            // Retrieve the product details from `batch_fetch_finish_products`
             $product = DB::table('batch_fetch_finish_products')->find($productId);
 
             if ($product) {
-                // Retrieve the corresponding product quantity from `product_details`
                 $productDetails = DB::table('product_details')->where('id', $product->product_id_details)->first();
                 $currentQuantity = $productDetails ? $productDetails->quantity : 0;
-
-                // Ensure there's enough stock to fulfill the order
                 if ($currentQuantity >= $request->quantity_ordered[$key]) {
-                    // Calculate the new quantity after subtracting the ordered quantity
                     $newQuantity = $currentQuantity - $request->quantity_ordered[$key];
-
-                    // Update the product quantity in the `product_details` table
                     DB::table('product_details')
                         ->where('id', $product->product_id_details)
                         ->update(['quantity' => $newQuantity]);
-
-                    // Prepare the delivery order data
                     $deliveryOrders[] = [
                         'transact_id' => $transactId,
                         'memo' => $request->memo,
@@ -199,10 +203,10 @@ class DeliveryController extends Controller
                         'car' => $request->car,
                         'store' => $request->store,
                         'product_name' => $product->product_name,
-                        'pack' => 1,  // Fixed value, can be dynamic if needed
+                        'pack' => 1,
                         'unit' => $product->unit,
                         'quantity_ordered' => $request->quantity_ordered[$key],
-                        'quantity_received' => null,  // Initially null
+                        'quantity_received' => null,
                         'price' => $request->price[$key],
                         'amount' => $request->amount[$key],
                         'total_amount' => $request->total_amount,
@@ -216,13 +220,66 @@ class DeliveryController extends Controller
             }
         }
 
-        // Insert all records in bulk if there are any orders to insert
         if (count($deliveryOrders) > 0) {
             DB::table('delivery_orders')->insert($deliveryOrders);
         }
 
         // Redirect with success message
         return redirect()->route('admin.delivery.management.page')
-            ->with('success', 'Delivery Order Added Successfully!');
+            ->with('success', 'Delivery added successfully!');
+    }
+
+    public function AdminViewDeliveryOrder($transact_id)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
+        }
+
+        $delivery = DB::table('delivery_orders')
+            ->leftJoin('employees as approved', 'delivery_orders.approved_by', '=', 'approved.id')
+            ->leftJoin('employees as delivered', 'delivery_orders.delivered_by', '=', 'delivered.id')
+            ->leftJoin('stores', 'delivery_orders.store', '=', 'stores.id')
+            ->leftJoin('cars', 'delivery_orders.car', '=', 'cars.id')
+            ->select(
+                'delivery_orders.*',
+                DB::raw("CONCAT(approved.employee_firstname, ' ', approved.employee_lastname) as approved_by_name"),
+                DB::raw("CONCAT(delivered.employee_firstname, ' ', delivered.employee_lastname) as delivered_by_name"),
+                'stores.store_name',
+                'stores.store_code',
+                'stores.store_address',
+                'stores.store_tel_no',
+                'stores.store_cp_number',
+                'stores.store_fax',
+                'stores.store_tin',
+                'cars.car as car_name',
+                'cars.plate_number'
+            )
+            ->where('delivery_orders.transact_id', $transact_id)
+            ->get();
+
+        if ($delivery->isEmpty()) {
+            abort(404);
+        }
+
+        $first = $delivery->first();
+
+        return view('admin.delivery.delivery_order', compact('delivery', 'first'));
+    }
+
+    public function AdminArchiveDeliveryOrder($transact_id)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
+        }
+
+        $updated = DB::table('delivery_orders')
+            ->where('transact_id', $transact_id)
+            ->update(['is_archived' => 1]);
+
+        if ($updated) {
+            return redirect()->back()->with('success', 'Delivery order archived successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Failed to archive delivery order.');
+        }
     }
 }

@@ -79,17 +79,21 @@
                                 <h4 class="card-title m-0" style="font-size: 20px; color: blueviolet;">
                                     Stock Management
                                 </h4>
-                                <a href="{{ route('admin.purchase.order.page') }}" target="_blank" class="btn btn-primary position-relative">
-                                    VIEW P.O
-                                    @if($lowRawMaterialsCount > 0)
-                                        <span class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            {{ $lowRawMaterialsCount }}
-                                            <span class="visually-hidden">low stock alerts</span>
-                                        </span>
-                                    @endif
-                                </a>
-                            </div>
 
+                                <!-- Group the buttons in a flex container -->
+                                <div class="d-flex gap-2">
+                                    <a href="" class="btn btn-primary mr-2">History P.O</a>
+                                    <a href="{{ route('admin.purchase.order.page') }}" target="_blank" class="btn btn-primary position-relative">
+                                        View P.O
+                                        @if($lowRawMaterialsCount > 0)
+                                            <span class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                {{ $lowRawMaterialsCount }}
+                                                <span class="visually-hidden">low stock alerts</span>
+                                            </span>
+                                        @endif
+                                    </a>
+                                </div>
+                            </div>
 
                             <div class="card-body">
 
@@ -172,10 +176,9 @@
                                             <tr>
                                                 <td style="color: black;">{{ \Carbon\Carbon::parse($product->created_at)->format('m/d/Y') }}</td>
                                                 <td>
-                                                    <input style="border-color: #593bdb;" type="number" 
-                                                        class="form-control input-rounded quantity-input"
-                                                        data-id="{{ $product->id }}"
-                                                        value="{{ $product->quantity ?? '' }}">
+                                                    <input style="border-color: #593bdb; background-color: gray; color: white;" type="number" 
+                                                        class="form-control input-rounded"
+                                                        value="{{ $product->quantity ?? '' }}" readonly>
                                                 </td>                                                <td style="color: black;">{{ $product->product_name }} - ₱{{ $product->price }}</td>
                                                 <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
                                                 <td style="color: black; text-transform: capitalize">{{ $product->category }}</td>
@@ -270,43 +273,6 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const inputs = document.querySelectorAll('.quantity-input');
-    
-            inputs.forEach(input => {
-                input.addEventListener('change', function () {
-                    const productId = this.dataset.id;
-                    const newQuantity = this.value;
-    
-                    fetch(`/admin/stock/update-product-quantity/${productId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            quantity: newQuantity
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            console.log('Updated:', data.message);
-                        } else {
-                            console.error('Error:', data.message);
-                            alert('Failed to update quantity.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Something went wrong.');
-                    });
-                });
-            });
-        });
-    </script>
     
     <!-- ADD USERS VALIDATION -->
     <script>
