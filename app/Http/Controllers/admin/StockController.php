@@ -63,8 +63,13 @@ class StockController extends Controller
             ->where('is_archived', 0)
             ->get();
 
+        $purchaseOrders = DB::table('purchase_orders')
+            ->select('po_number', 'process_by', 'total_amount')
+            ->groupBy('po_number', 'process_by', 'total_amount')  // Avoid showing same PO multiple times
+            ->orderBy('id', 'desc')
+            ->get();
 
-        return view('admin.stock_management', compact('productDetails', 'categories', 'sortBy', 'sortDir', 'role', 'user', 'lowRawMaterialsCount', 'lowFinishedProducts'));
+        return view('admin.stock_management', compact('productDetails', 'categories', 'sortBy', 'sortDir', 'role', 'user', 'lowRawMaterialsCount', 'lowFinishedProducts', 'purchaseOrders'));
     }
 
 
@@ -140,7 +145,7 @@ class StockController extends Controller
         $date = now()->format('ymd');
 
         $lastPONumber = DB::table('purchase_orders')
-            ->where('po_number', 'like', 'PO-COMPANY-' . $date . '%')
+            ->where('po_number', 'like', 'PO-RHEA-' . $date . '%')
             ->orderBy('po_number', 'desc')
             ->value('po_number');
 
@@ -157,13 +162,16 @@ class StockController extends Controller
             ->where('position_id', 1)
             ->get();
 
-        return view('admin.purchase_order', compact('lowStockProducts', 'poNumber', 'user', 'admins'));
+        $suppliers = DB::table('suppliers')->get();
+
+        return view('admin.purchase_order', compact('lowStockProducts', 'poNumber', 'user', 'admins', 'suppliers'));
     }
 
 
     public function StockSubmitPO(Request $request)
     {
         $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
             'approved_by' => 'required|exists:employees,id',
             'total_amount' => 'required|numeric|min:0',
             'products' => 'required|array|min:1',
@@ -196,6 +204,7 @@ class StockController extends Controller
         foreach ($request->products as $product) {
             DB::table('purchase_orders')->insert([
                 'po_number' => $poNumber,
+                'supplier_id' => $request->supplier_id,
                 'process_by' => $user->employee_firstname . ' ' . $user->employee_lastname,
                 'approved_by' => $request->approved_by,
                 'product_name' => $product['product_name'],
@@ -210,5 +219,26 @@ class StockController extends Controller
         }
 
         return redirect()->route('admin.stock.management.page')->with('success', 'Downloaded successfully!');
+    }
+
+    public function AdminViewPO($po_number)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
+        }
+
+        $purchaseOrderItems = DB::table('purchase_orders')
+            ->where('po_number', $po_number)
+            ->get();
+
+        if ($purchaseOrderItems->isEmpty()) {
+            return redirect()->route('admin.view.po.history')->with('error', 'Purchase Order not found.');
+        }
+
+        $supplier_id = $purchaseOrderItems->first()->supplier_id;
+
+        $supplier = DB::table('suppliers')->where('id', $supplier_id)->first();
+
+        return view('admin.history.view_po_history', compact('purchaseOrderItems', 'po_number', 'supplier'));
     }
 }

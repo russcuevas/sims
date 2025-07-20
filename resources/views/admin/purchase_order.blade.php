@@ -5,6 +5,8 @@
     <title>Sales & Inventory Management System </title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <style>
         body {
             background-color: white !important;
@@ -33,15 +35,27 @@
         @endif
 
         <div class="container mt-4">
-        <p class="text-center mb-1">Supplier name</p>
-        <p class="text-center mb-1">Address</p>
-        <p class="text-center mb-1">Cell no.:<br>Email address:</p>
+<div class="text-center my-2">
+    <div class="d-inline-block" style="min-width: 300px;">
+<select name="supplier_id" id="supplier_id" class="form-control select2" required>
+    <option value="">-- Select Supplier --</option>
+    @foreach($suppliers as $supplier)
+        <option value="{{ $supplier->id }}"
+            data-name="{{ $supplier->supplier_name }}"
+            data-address="{{ $supplier->supplier_address }}"
+            data-contact="{{ $supplier->supplier_contact_num }}"
+            data-email="{{ $supplier->supplier_email_add }}">
+            {{ $supplier->supplier_name }}
+        </option>
+    @endforeach
+</select>
 
-        <div class="text-center my-2">
-                <h3 class="text-center">Purchase Order</h3>
+    </div>
 
-            <strong>{{ $poNumber }}</strong>
-        </div>
+    <h3 class="mt-3">Purchase Order</h3>
+    <strong>{{ $poNumber }}</strong>
+</div>
+
 
             <table class="table table-bordered mt-3 text-center" style="color: black !important;">
                 <thead>
@@ -71,14 +85,14 @@
                                 <input type="number" class="form-control price" name="products[{{ $index }}][price]" value="{{ $product->price }}" step="0.01" min="0" required>
                             </td>
                             <td>
-                                <input type="text" class="form-control amount" name="products[{{ $index }}][amount]" value="0.00" readonly>
+                                <input style="background-color:gray; color: white; cursor: none;" type="text" class="form-control amount" name="products[{{ $index }}][amount]" value="0.00" readonly>
                             </td>
                         </tr>
                     @endforeach
                     <tr>
                         <td colspan="4" class="text-right font-weight-bold">Total Amount:</td>
                         <td>
-                            <input type="text" id="display_total" class="form-control" readonly>
+                            <input style="background-color:gray; color: white; cursor: none;" type="text" id="display_total" class="form-control" readonly>
                             <input type="hidden" name="total_amount" id="total_amount" value="0">
                         </td>
                     </tr>
@@ -102,6 +116,32 @@
             </div>
         </div>
     </form>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+    $('#supplier_id').select2({
+        templateResult: function (data) {
+            if (!data.id) return data.text;
+
+            var name = $(data.element).data('name');
+            var address = $(data.element).data('address');
+            var contact = $(data.element).data('contact');
+            var email = $(data.element).data('email');
+
+            var $result = $(`
+                <div>
+                    <strong>${name}</strong><br>
+                    Address: ${address}<br>
+                    Contact: ${contact}<br>
+                    Email: ${email}
+                </div>
+            `);
+
+            return $result;
+        }
+    });
+
+    </script>
 
     <!-- JavaScript to calculate amounts -->
     <script>

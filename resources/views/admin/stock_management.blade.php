@@ -11,6 +11,8 @@
     <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="{{ asset('partials/vendor/datatables/css/jquery.dataTables.min.css') }}" rel="stylesheet">
+
     <style>
         .col-form-label {
             color: black;
@@ -82,7 +84,47 @@
 
                                 <!-- Group the buttons in a flex container -->
                                 <div class="d-flex gap-2">
-                                    <a href="" class="btn btn-primary mr-2">History P.O</a>
+                                    <a href="#" class="btn btn-primary mr-2" data-toggle="modal" data-target="#historyPOModal">
+                                        History P.O
+                                    </a>
+                                    <div class="modal fade" id="historyPOModal" tabindex="-1" aria-labelledby="historyPOModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="historyPOModalLabel">P.O History</h5>
+                                                        <button type="button" class="close"
+                                                            data-dismiss="modal"><span>&times;</span>
+                                                        </button>                                                
+                                                    </div>
+                                                <div class="modal-body">
+                                                    <table id="poTable" class="table table-bordered text-center">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="color: black">Details</th>
+                                                                <th style="color: black">P.O Number</th>
+                                                                <th style="color: black">Process By</th>
+                                                                <th style="color: black">Total Amount</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach($purchaseOrders as $order)
+                                                                <tr>
+                                                                    <td style="color: black">
+                                                                        <a target="_blank" href="{{ route('admin.view.po', $order->po_number) }}" class="btn btn-primary">
+                                                                            View
+                                                                        </a>
+                                                                    </td>
+                                                                    <td style="color: black">{{ $order->po_number }}</td>
+                                                                    <td style="color: black">{{ $order->process_by }}</td>
+                                                                    <td style="color: black">₱{{ number_format($order->total_amount, 2) }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <a href="{{ route('admin.purchase.order.page') }}" target="_blank" class="btn btn-primary position-relative">
                                         View P.O
                                         @if($lowRawMaterialsCount > 0)
@@ -273,6 +315,15 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#poTable').DataTable({
+                pageLength: 10,
+                responsive: true,
+            });
+        });
+    </script>
     
     <!-- ADD USERS VALIDATION -->
     <script>

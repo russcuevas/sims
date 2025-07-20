@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->id();
             $table->string('po_number');
+            $table->unsignedBigInteger('supplier_id');
             $table->string('process_by', 255);
             $table->string('product_name', 255);
             $table->integer('quantity')->default(0)->nullable();
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->decimal('total_amount', 10, 2);
             $table->timestamps();
             $table->foreign('approved_by')->references('id')->on('employees')->onDelete('set null');
+            $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('set null');
         });
     }
 
