@@ -107,7 +107,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach($purchaseOrders as $order)
+                                                            @forelse($purchaseOrders as $order)
                                                                 <tr>
                                                                     <td style="color: black">
                                                                         <a target="_blank" href="{{ route('admin.view.po', $order->po_number) }}" class="btn btn-primary">
@@ -118,7 +118,14 @@
                                                                     <td style="color: black">{{ $order->process_by }}</td>
                                                                     <td style="color: black">₱{{ number_format($order->total_amount, 2) }}</td>
                                                                 </tr>
-                                                            @endforeach
+                                                            @empty
+                                                                <tr>
+                                                                    <td colspan="4" class="text-muted" style="text-align: center;">
+                                                                        No purchase orders found.
+                                                                    </td>
+                                                                </tr>
+                                                            @endforelse
+
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -214,67 +221,74 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($productDetails as $product)
-                                            <tr>
-                                                <td style="color: black;">{{ \Carbon\Carbon::parse($product->created_at)->format('m/d/Y') }}</td>
-                                                <td>
-                                                    <input style="border-color: #593bdb; background-color: gray; color: white;" type="number" 
-                                                        class="form-control input-rounded"
-                                                        value="{{ $product->quantity ?? '' }}" readonly>
-                                                </td>                                                <td style="color: black;">{{ $product->product_name }} - ₱{{ $product->price }}</td>
-                                                <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
-                                                <td style="color: black; text-transform: capitalize">{{ $product->category }}</td>
-                                                <td>
-                                                    <button class="btn btn-outline-warning btn-sm" data-toggle="modal" data-target="#updateProductModal{{ $product->id }}">
-                                                        <i class="fa fa-pencil"></i> Update
-                                                    </button>
-                                            
-                                                    <form action="{{ route('admin.stock.archive.product', ['id' => $product->id]) }}" method="POST" style="display: inline;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            
-                                            <!-- Update Modal -->
-                                            <div class="modal fade" id="updateProductModal{{ $product->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $product->id }}" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <form action="{{ route('admin.stock.update.product', ['id' => $product->id]) }}" method="POST">
-                                                        @csrf
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">Update Product - {{ $product->product_name }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                            @forelse ($productDetails as $product)
+                                                <tr>
+                                                    <td style="color: black;">{{ \Carbon\Carbon::parse($product->created_at)->format('m/d/Y') }}</td>
+                                                    <td>
+                                                        <input style="border-color: #593bdb; background-color: gray; color: white;" type="number" 
+                                                            class="form-control input-rounded"
+                                                            value="{{ $product->quantity ?? '' }}" readonly>
+                                                    </td>
+                                                    <td style="color: black;">{{ $product->product_name }} - ₱{{ $product->price }}</td>
+                                                    <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
+                                                    <td style="color: black; text-transform: capitalize">{{ $product->category }}</td>
+                                                    <td>
+                                                        <button class="btn btn-outline-warning btn-sm" data-toggle="modal" data-target="#updateProductModal{{ $product->id }}">
+                                                            <i class="fa fa-pencil"></i> Update
+                                                        </button>
+
+                                                        <form action="{{ route('admin.stock.archive.product', ['id' => $product->id]) }}" method="POST" style="display: inline;">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Update Modal -->
+                                                <div class="modal fade" id="updateProductModal{{ $product->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $product->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <form action="{{ route('admin.stock.update.product', ['id' => $product->id]) }}" method="POST">
+                                                            @csrf
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Update Product - {{ $product->product_name }}</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="form-group">
+                                                                        <label style="color: black">Product Name</label>
+                                                                        <input type="text" name="product_name" value="{{ $product->product_name }}" class="form-control" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label style="color: black">Quantity</label>
+                                                                        <input type="number" name="quantity" value="{{ $product->quantity }}" min="0" class="form-control" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label style="color: black">Price</label>
+                                                                        <input type="number" step="0.01" name="price" value="{{ $product->price }}" class="form-control" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label style="color: black">Stock Unit</label>
+                                                                        <input type="text" name="stock_unit_id" value="{{ $product->stock_unit_id }}" class="form-control" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button class="btn btn-primary" type="submit">Save</button>
+                                                                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                                                                </div>
                                                             </div>
-                                                            <div class="modal-body">
-                                                                <div class="form-group">
-                                                                    <label>Product Name</label>
-                                                                    <input type="text" name="product_name" value="{{ $product->product_name }}" class="form-control" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Quantity</label>
-                                                                    <input type="number" name="quantity" value="{{ $product->quantity }}" min="0" class="form-control" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Price</label>
-                                                                    <input type="number" step="0.01" name="price" value="{{ $product->price }}" class="form-control" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Stock Unit</label>
-                                                                    <input type="text" name="stock_unit_id" value="{{ $product->stock_unit_id }}" class="form-control" required>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button class="btn btn-primary" type="submit">Save</button>
-                                                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
+                                                        </form>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            @endforeach
-                                            
+                                            @empty
+                                                <tr>
+                                                    <td colspan="6" class="text-center text-muted">
+                                                        No products available.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
+
                                     </table>
                                 
                                 </div>

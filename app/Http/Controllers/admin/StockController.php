@@ -142,10 +142,15 @@ class StockController extends Controller
             ->where('is_archived', 0)
             ->get();
 
+        if ($lowStockProducts->isEmpty()) {
+            return redirect()->back()->with('error', 'No product to request.');
+        }
+
         $date = now()->format('ymd');
+        $currentMonth = now()->format('ym');
 
         $lastPONumber = DB::table('purchase_orders')
-            ->where('po_number', 'like', 'PO-RHEA-' . $date . '%')
+            ->where('po_number', 'like', 'PO-RHEA-' . $currentMonth . '%')
             ->orderBy('po_number', 'desc')
             ->value('po_number');
 
@@ -157,6 +162,7 @@ class StockController extends Controller
         }
 
         $poNumber = 'PO-RHEA-' . $date . $nextSequence;
+
 
         $admins = DB::table('employees')
             ->where('position_id', 1)
@@ -187,8 +193,11 @@ class StockController extends Controller
         $date = now()->format('ymd');
 
 
+        $date = now()->format('ymd');
+        $currentMonth = now()->format('ym');
+
         $lastPONumber = DB::table('purchase_orders')
-            ->where('po_number', 'like', 'PO-COMPANY-' . $date . '%')
+            ->where('po_number', 'like', 'PO-RHEA-' . $currentMonth . '%')
             ->orderBy('po_number', 'desc')
             ->value('po_number');
 

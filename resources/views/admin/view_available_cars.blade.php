@@ -126,15 +126,19 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($cars as $car)
-                                            <tr>
-                                                <td style="color: black">{{ $car->car }}</td>
-                                                <td style="color: black">{{ $car->plate_number }}</td>
-                                                <td class="{{ $car->status === 'Available' ? 'text-success' : 'text-danger' }}">
-                                                    {{ $car->status }}
-                                                </td>
-                                            </tr>
-                                            @endforeach
+                                            @forelse($cars as $car)
+                                                <tr>
+                                                    <td style="color: black">{{ $car->car }}</td>
+                                                    <td style="color: black">{{ $car->plate_number }}</td>
+                                                    <td class="{{ $car->status === 'Available' ? 'text-success' : 'text-danger' }}">
+                                                        {{ $car->status }}
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="3" class="text-center text-muted">No cars available.</td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                     <a href="{{ route('admin.delivery.management.page') }}" style="color: white; cursor: pointer;" class="btn btn-primary float-right">Go back</a>

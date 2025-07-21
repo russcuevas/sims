@@ -109,7 +109,7 @@
                                         <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-outline-secondary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-secondary" id="status_to_ship">Return item</a>
+                                        <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-secondary" id="status_to_ship">Return item</a>
                                     </div>
                                     <div class="col-auto px-1">
                                         <a href="{{ route('admin.pending.management.page') }}" class="btn btn-outline-secondary" id="status_delivered">Pending delivery</a>
@@ -135,7 +135,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($deliveryOrders as $transactId => $orders)
+                                            @forelse($deliveryOrders as $transactId => $orders)
                                                 @php
                                                     $first = $orders->first();
                                                 @endphp
@@ -145,69 +145,73 @@
                                                     </td>
                                                     <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
                                                     <td style="color: black">{{ $first->delivered_by_name ?? 'N/A' }}</td>
-                                                        <td>
-                                                            @if($first->upload_image)
-                                                                <!-- Button trigger modal -->
-                                                                <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#imageModal-{{ $transactId }}">
-                                                                    <i class="fa-solid fa-images"></i>
-                                                                </button>
+                                                    <td>
+                                                        @if($first->upload_image)
+                                                            <!-- Button trigger modal -->
+                                                            <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#imageModal-{{ $transactId }}">
+                                                                <i class="fa-solid fa-images"></i>
+                                                            </button>
 
-                                                                <!-- Modal -->
-                                                                <div class="modal fade" id="imageModal-{{ $transactId }}" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel-{{ $transactId }}" aria-hidden="true">
-                                                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title" id="imageModalLabel-{{ $transactId }}">Uploaded Image</h5>
-                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                    <span aria-hidden="true">&times;</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="modal-body text-center">
-                                                                                <img src="{{ asset('storage/upload_images/' . $first->upload_image) }}" alt="Image" class="img-fluid">
-                                                                            </div>
+                                                            <!-- Modal -->
+                                                            <div class="modal fade" id="imageModal-{{ $transactId }}" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel-{{ $transactId }}" aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="imageModalLabel-{{ $transactId }}">Uploaded Image</h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body text-center">
+                                                                            <img src="{{ asset('storage/upload_images/' . $first->upload_image) }}" alt="Image" class="img-fluid">
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            @else
-                                                                <span class="text-muted">No Image</span>
-                                                            @endif
-                                                        </td>
+                                                            </div>
+                                                        @else
+                                                            <span class="text-muted">No Image</span>
+                                                        @endif
+                                                    </td>
 
-                                                        <td style="color: black">
-                                                            @if($first->upload_notes)
-                                                                <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#notesModal-{{ $transactId }}">
-                                                                    <i class="fa-solid fa-note-sticky"></i>
-                                                                </button>
+                                                    <td style="color: black">
+                                                        @if($first->upload_notes)
+                                                            <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#notesModal-{{ $transactId }}">
+                                                                <i class="fa-solid fa-note-sticky"></i>
+                                                            </button>
 
-                                                                <!-- Modal -->
-                                                                <div class="modal fade" id="notesModal-{{ $transactId }}" tabindex="-1" role="dialog" aria-labelledby="notesModalLabel-{{ $transactId }}" aria-hidden="true">
-                                                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title" id="notesModalLabel-{{ $transactId }}">Upload Notes</h5>
-                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                    <span aria-hidden="true">&times;</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <p style="text-align: left;">{{ $first->upload_notes }}</p>   
-                                                                            </div>
+                                                            <!-- Modal -->
+                                                            <div class="modal fade" id="notesModal-{{ $transactId }}" tabindex="-1" role="dialog" aria-labelledby="notesModalLabel-{{ $transactId }}" aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="notesModalLabel-{{ $transactId }}">Upload Notes</h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <p style="text-align: left;">{{ $first->upload_notes }}</p>   
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            @else
-                                                                <span class="text-muted">No Notes</span>
-                                                            @endif
-                                                        </td>
+                                                            </div>
+                                                        @else
+                                                            <span class="text-muted">No Notes</span>
+                                                        @endif
+                                                    </td>
 
                                                     <td style="color: black">
                                                         <span class="badge 
-                                                            {{ $first->status == 'completed' ? 'bg-success' : 'bg-danger' }}">
+                                                            {{ $first->status == 'completed' ? 'bg-success text-white' : 'bg-danger text-white' }}">
                                                             {{ ucfirst($first->status) }}
                                                         </span>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="6" class="text-center text-muted">No delivery orders</td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class DeliveryController extends Controller
 {
-    public function AdminDeliveryPage()
+    public function AdminDeliveryPage(Request $request)
     {
         if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
             return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
@@ -18,6 +18,39 @@ class DeliveryController extends Controller
 
         $user = Auth::guard('employees')->user();
         $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
+
+        // Get filters from request
+        $search = $request->input('search');
+        $processBy = $request->input('process_by');
+        $sort = $request->input('sort');
+
+        // Start query
+        $query = DB::table('delivery_orders')->where('is_archived', 0);
+
+        // Apply processor filter if selected
+        if ($processBy) {
+            $query->where('process_by', $processBy);
+        }
+
+        // Apply search filter on transact_id or process_by
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('transact_id', 'like', '%' . $search . '%')
+                    ->orWhere('process_by', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Apply sorting
+        if ($sort === 'oldest') {
+            $query->orderBy('transaction_date', 'asc');
+        } else {
+            // default newest first
+            $query->orderBy('transaction_date', 'desc');
+        }
+
+        $deliveryOrders = $query->get()->groupBy('transact_id');
+
+        $processors = DB::table('delivery_orders')->select('process_by')->distinct()->pluck('process_by');
 
         $allEmployees = DB::table('employees')
             ->select('id', 'employee_firstname', 'employee_lastname', 'position_id')
@@ -38,13 +71,6 @@ class DeliveryController extends Controller
         $cars = DB::table('cars')->get();
         $stores = DB::table('stores')->get();
 
-        // Fetch and group delivery orders by transact_id
-        $deliveryOrders = DB::table('delivery_orders')
-            ->where('is_archived', 0)
-            ->orderBy('transaction_date', 'desc')
-            ->get()
-            ->groupBy('transact_id');
-
         return view('admin.delivery_management', compact(
             'role',
             'user',
@@ -54,9 +80,14 @@ class DeliveryController extends Controller
             'allEmployees',
             'cars',
             'stores',
-            'deliveryOrders' // pass to view
+            'deliveryOrders',
+            'processors',
+            'processBy',
+            'search',
+            'sort'
         ));
     }
+
 
 
 
@@ -151,12 +182,12 @@ class DeliveryController extends Controller
     {
         $validated = $request->validate([
             'memo' => 'nullable|string|max:255',
-            'transaction_date' => 'nullable|date',
-            'expected_date' => 'nullable|date',
-            'approved_by' => 'nullable',
-            'delivered_by' => 'nullable',
-            'car' => 'nullable|exists:cars,id',
-            'store' => 'nullable|exists:stores,id',
+            'transaction_date' => 'required|date',
+            'expected_date' => 'required|date',
+            'approved_by' => 'required',
+            'delivered_by' => 'required',
+            'car' => 'required|exists:cars,id',
+            'store' => 'required|exists:stores,id',
             'product_id' => 'required|array',
             'product_id.*' => 'required|exists:batch_fetch_finish_products,id',
             'quantity_ordered' => 'required|array',
@@ -169,15 +200,21 @@ class DeliveryController extends Controller
         ]);
 
         $user = Auth::guard('employees')->user();
-        $storeCode = $request->store ? DB::table('stores')->where('id', $request->store)->value('store_code') : 'UNKNOWN';
-        $dateFormatted = date('ymd');
+        $storeCode = $request->store
+            ? DB::table('stores')->where('id', $request->store)->value('store_code')
+            : 'UNKNOWN';
+        $exactDate = date('ymd');
+        $monthFormatted = date('ym');
+        $searchPrefix = "DO-{$storeCode}-{$monthFormatted}";
         $lastTransaction = DB::table('delivery_orders')
-            ->where('transact_id', 'like', "DO-{$storeCode}-{$dateFormatted}%")
+            ->where('transact_id', 'like', "{$searchPrefix}%")
             ->orderBy('transact_id', 'desc')
             ->first();
-        $lastSeq = $lastTransaction ? (int)substr($lastTransaction->transact_id, -5) : 0;
+        $lastSeq = $lastTransaction
+            ? (int)substr($lastTransaction->transact_id, -5)
+            : 0;
         $nextSeq = str_pad($lastSeq + 1, 5, '0', STR_PAD_LEFT);
-        $transactId = "DO-{$storeCode}-{$dateFormatted}{$nextSeq}";
+        $transactId = "DO-{$storeCode}-{$exactDate}{$nextSeq}";
 
         $deliveryOrders = [];
 
@@ -210,6 +247,7 @@ class DeliveryController extends Controller
                         'price' => $request->price[$key],
                         'amount' => $request->amount[$key],
                         'total_amount' => $request->total_amount,
+                        'status' => 'pending',
                         'is_archived' => 0,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -222,7 +260,11 @@ class DeliveryController extends Controller
 
         if (count($deliveryOrders) > 0) {
             DB::table('delivery_orders')->insert($deliveryOrders);
+            DB::table('batch_fetch_finish_products')
+                ->whereIn('id', $request->product_id)
+                ->delete();
         }
+
 
         // Redirect with success message
         return redirect()->route('admin.delivery.management.page')

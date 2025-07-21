@@ -294,55 +294,62 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($batchProductDetails as $detail)
-                                                <tr>
-                                                    <td>
-                                                        <input type="number"
-                                                               class="form-control input-rounded update-quantity"
-                                                               value="{{ $detail->quantity }}"
-                                                               data-id="{{ $detail->id }}"               
-                                                               data-price="{{ $detail->price }}"
-                                                               min="0"
-                                                               style="border-color: #593bdb;">
-                                                    </td>
-                                                
-                                                    <td style="color: black;">{{ $detail->product_name }}</td>
-                                                    <td><span class="badge badge-primary">{{ $detail->stock_unit_id }}</span></td>
-                                                
-                                                    <td>
-                                                        <input type="number" 
-                                                               class="form-control input-rounded update-price" 
-                                                               value="{{ number_format($detail->price, 2, '.', '') }}" 
-                                                               data-id="{{ $detail->id }}"                 
-                                                               data-product-id="{{ $detail->product_id }}" 
-                                                               min="0" step="0.01" 
-                                                               style="border-color: #593bdb;">
-                                                    </td>
-                                                
-                                                    <td style="color: black;" class="amount-cell" id="amount-{{ $detail->id }}">
-                                                        ₱{{ number_format($detail->amount, 2) }}
-                                                    </td>
-                                                
-                                                    <td>
-                                                        <a href="{{ route('admin.batch.product.remove', $detail->id) }}"
-                                                            onclick="return confirm('Are you sure you want to remove this item?');"
-                                                            class="btn btn-outline-danger" title="Remove">
-                                                            <i class="fa fa-close"></i> Remove
-                                                        </a>                                                         
-                                                    </td>                                                    
-                                                </tr>
-                                                @endforeach
-                                                </tbody>
-                                                
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan="4" class="text-end fw-bold" style="color: blueviolet;">
-                                                    </td>
-                                                    <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
-                                                        <span style="color: red;">Total Amount: <span id="total_amount_value">₱{{ number_format($totalAmount, 2) }}</span></span>
-                                                    </td>                                                    
-                                                </tr>
-                                            </tfoot>                                            
+    @forelse($batchProductDetails as $detail)
+        <tr>
+            <td>
+                <input type="number"
+                       class="form-control input-rounded update-quantity"
+                       value="{{ $detail->quantity }}"
+                       data-id="{{ $detail->id }}"               
+                       data-price="{{ $detail->price }}"
+                       min="0"
+                       style="border-color: #593bdb;">
+            </td>
+        
+            <td style="color: black;">{{ $detail->product_name }}</td>
+            <td><span class="badge badge-primary">{{ $detail->stock_unit_id }}</span></td>
+        
+            <td>
+                <input type="number" 
+                       class="form-control input-rounded update-price" 
+                       value="{{ number_format($detail->price, 2, '.', '') }}" 
+                       data-id="{{ $detail->id }}"                 
+                       data-product-id="{{ $detail->product_id }}" 
+                       min="0" step="0.01" 
+                       style="border-color: #593bdb;">
+            </td>
+        
+            <td style="color: black;" class="amount-cell" id="amount-{{ $detail->id }}">
+                ₱{{ number_format($detail->amount, 2) }}
+            </td>
+        
+            <td>
+                <a href="{{ route('admin.batch.product.remove', $detail->id) }}"
+                    onclick="return confirm('Are you sure you want to remove this item?');"
+                    class="btn btn-outline-danger" title="Remove">
+                    <i class="fa fa-close"></i> Remove
+                </a>                                                         
+            </td>                                                    
+        </tr>
+    @empty
+        <tr>
+            <td colspan="6" class="text-center text-muted">
+                No products available.
+            </td>
+        </tr>
+    @endforelse
+</tbody>
+
+<tfoot>
+    <tr>
+        <td colspan="4" class="text-end fw-bold" style="color: blueviolet;">
+        </td>
+        <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
+            <span style="color: red;">Total Amount: <span id="total_amount_value">₱{{ number_format($totalAmount, 2) }}</span></span>
+        </td>                                                    
+    </tr>
+</tfoot>
+                                            
                                         </table>
 
                                         <!-- SUBMIT STOCKS -->
@@ -392,12 +399,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($historyGroups as $transactId => $group)
+                                        @forelse ($historyGroups as $transactId => $group)
                                             @php
                                                 $first = $group->first();
                                                 $totalAmount = $group->sum('amount');
                                             @endphp
-                                        
+
                                             <!-- Table Row -->
                                             <tr>
                                                 <td>
@@ -419,77 +426,82 @@
                                                     </form>
                                                 </td>
                                             </tr>
-                                        
-                                            <!-- Modal must be outside the <tr> -->
-                                                <div class="modal fade" id="viewRawHistory{{ $transactId }}" tabindex="-1" role="dialog" aria-hidden="true">
-                                                    <div class="modal-dialog modal-xl">
-                                                        <div class="modal-content">
-                                                
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">Transaction Details - {{ $transactId }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                                                            </div>
-                                                
-                                                            <div class="modal-body">
-                                                                <div class=" p-4 position-relative">
-                                                            
-                                                                    <h5>Details</h5>
-                                                            
-                                                                    <div class="row mt-4">
-                                                                        <div class="col-md-6">
-                                                                            <p style="color: black" class="mb-1"><strong>Supplier:</strong> {{ $first->supplier_name }}</p>
-                                                                            <p style="color: black" class="mb-1"><strong>Contact number:</strong> {{ $first->supplier_contact_num }}</p>
-                                                                            <p style="color: black" class="mb-1"><strong>Email address:</strong> {{ $first->supplier_email_add }}</p>
-                                                                            <p style="color: black" class="mb-1"><strong>Address:</strong> {{ $first->supplier_address }}</p>
-                                                                        </div>
-                                                                        <div class="col-md-6">
-                                                                            <p style="color: black" class="mb-1"><strong>Process Date:</strong> {{ \Carbon\Carbon::parse($first->created_at)->format('F d, Y') }}</p>
-                                                                            <p style="color: black" class="mb-1"><strong>Deliver Date:</strong> {{ \Carbon\Carbon::parse($first->received_date)->format('F d, Y') }}</p>
-                                                                        </div>
+
+                                            <!-- Modal outside <tr> -->
+                                            <div class="modal fade" id="viewRawHistory{{ $transactId }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Transaction Details - {{ $transactId }}</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                        </div>
+
+                                                        <div class="modal-body">
+                                                            <div class="p-4 position-relative">
+
+                                                                <h5>Details</h5>
+
+                                                                <div class="row mt-4">
+                                                                    <div class="col-md-6">
+                                                                        <p style="color: black" class="mb-1"><strong>Supplier:</strong> {{ $first->supplier_name }}</p>
+                                                                        <p style="color: black" class="mb-1"><strong>Contact number:</strong> {{ $first->supplier_contact_num }}</p>
+                                                                        <p style="color: black" class="mb-1"><strong>Email address:</strong> {{ $first->supplier_email_add }}</p>
+                                                                        <p style="color: black" class="mb-1"><strong>Address:</strong> {{ $first->supplier_address }}</p>
                                                                     </div>
-                                                            
-                                                                    <!-- Products Table -->
-                                                                    <div class="mt-4">
-                                                                        <div class="row fw-bold border-bottom pb-2">
-                                                                            <div style="color: #593bdb; font-weight: 900;" class="col-2">Qty</div>
-                                                                            <div style="color: #593bdb; font-weight: 900;" class="col-4">Product</div>
-                                                                            <div style="color: #593bdb; font-weight: 900;" class="col-2">Unit</div>
-                                                                            <div style="color: #593bdb; font-weight: 900;" class="col-2 text-end">Price</div>
-                                                                            <div style="color: #593bdb; font-weight: 900;" class="col-2 text-end">Amount</div>
-                                                                        </div>
-                                                            
-                                                                        @foreach ($group as $item)
-                                                                            <div class="row py-2 border-bottom">
-                                                                                <div style="color: black" class="col-2">{{ $item->quantity }}</div>
-                                                                                <div style="color: black" class="col-4">{{ $item->product_name }}</div> <!-- updated -->
-                                                                                <div style="color: black" class="col-2">{{ $item->unit }}</div>
-                                                                                <div style="color: black" class="col-2 text-end">₱{{ number_format($item->price, 2) }}</div>
-                                                                                <div style="color: black" class="col-2 text-end">₱{{ number_format($item->amount, 2) }}</div>
-                                                                            </div>
-                                                                        @endforeach
+                                                                    <div class="col-md-6">
+                                                                        <p style="color: black" class="mb-1"><strong>Process Date:</strong> {{ \Carbon\Carbon::parse($first->created_at)->format('F d, Y') }}</p>
+                                                                        <p style="color: black" class="mb-1"><strong>Deliver Date:</strong> {{ \Carbon\Carbon::parse($first->received_date)->format('F d, Y') }}</p>
                                                                     </div>
-                                                            
-                                                                    <!-- Total and Received By -->
-                                                                    <div class="row mt-4">
-                                                                        <div class="col-md-6"></div>
-                                                                        <div class="col-md-6 text-end">
-                                                                            <p style="color: black" class="mb-2"><strong>Total amount:</strong> ₱{{ number_format($totalAmount, 2) }}</p>
-                                                                            <p style="color: black" class="mb-0"><strong>Received by:</strong> {{ $first->process_by }}</p>
+                                                                </div>
+
+                                                                <!-- Products Table -->
+                                                                <div class="mt-4">
+                                                                    <div class="row fw-bold border-bottom pb-2">
+                                                                        <div style="color: #593bdb; font-weight: 900;" class="col-2">Qty</div>
+                                                                        <div style="color: #593bdb; font-weight: 900;" class="col-4">Product</div>
+                                                                        <div style="color: #593bdb; font-weight: 900;" class="col-2">Unit</div>
+                                                                        <div style="color: #593bdb; font-weight: 900;" class="col-2 text-end">Price</div>
+                                                                        <div style="color: #593bdb; font-weight: 900;" class="col-2 text-end">Amount</div>
+                                                                    </div>
+
+                                                                    @foreach ($group as $item)
+                                                                        <div class="row py-2 border-bottom">
+                                                                            <div style="color: black" class="col-2">{{ $item->quantity }}</div>
+                                                                            <div style="color: black" class="col-4">{{ $item->product_name }}</div>
+                                                                            <div style="color: black" class="col-2">{{ $item->unit }}</div>
+                                                                            <div style="color: black" class="col-2 text-end">₱{{ number_format($item->price, 2) }}</div>
+                                                                            <div style="color: black" class="col-2 text-end">₱{{ number_format($item->amount, 2) }}</div>
                                                                         </div>
+                                                                    @endforeach
+                                                                </div>
+
+                                                                <!-- Total and Received By -->
+                                                                <div class="row mt-4">
+                                                                    <div class="col-md-6"></div>
+                                                                    <div class="col-md-6 text-end">
+                                                                        <p style="color: black" class="mb-2"><strong>Total amount:</strong> ₱{{ number_format($totalAmount, 2) }}</p>
+                                                                        <p style="color: black" class="mb-0"><strong>Received by:</strong> {{ $first->process_by }}</p>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            
-                                                
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                                            </div>
-                                                
                                                         </div>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                                        </div>
+
                                                     </div>
                                                 </div>
-                                        @endforeach
-                                        </tbody>                                       
+                                            </div>
+
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">No history records found.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                       
                                 </table>
                             </div>
                         </div>

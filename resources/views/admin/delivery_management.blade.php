@@ -91,7 +91,7 @@
                                         <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-secondary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-secondary" id="status_to_ship">Return item</a>
+                                        <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-secondary" id="status_to_ship">Return item</a>
                                     </div>
                                     <div class="col-auto px-1">
                                         <a href="{{ route('admin.pending.management.page') }}" class="btn btn-outline-secondary" id="status_delivered">Pending delivery</a>
@@ -444,7 +444,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($fetch_finished_products as $batch)
+                                            <tbody>
+                                            @forelse ($fetch_finished_products as $batch)
                                                 <tr>
                                                     <td style="color: black">{{ $batch->product_name }}</td>
                                                     <td>
@@ -468,11 +469,17 @@
                                                         class="btn btn-outline-danger" 
                                                         title="Remove" 
                                                         onclick="return confirm('Are you sure you want to remove this product from the batch?');">
-                                                        <i class="fa fa-close"></i> Remove
+                                                            <i class="fa fa-close"></i> Remove
                                                         </a>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="8" class="text-center text-muted">
+                                                        No products
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                         <tfoot>
                                             <tr>
@@ -500,20 +507,26 @@
                                 <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
                                     <form method="GET" action="" class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="filterSortForm">
 
-                                        <input type="text" name="search" value="" class="form-control w-auto" placeholder="Search product here">
+                                        <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto" placeholder="Search product here">
                                         <button type="submit" class="btn btn-primary mr-2">Search</button>
-                                    
+
                                         <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Filter by Processor</option>
+                                            @foreach ($processors as $processor)
+                                                <option value="{{ $processor }}" {{ (request('process_by') == $processor) ? 'selected' : '' }}>
+                                                    {{ $processor }}
+                                                </option>
+                                            @endforeach
                                         </select>
-                                    
+
                                         <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Sort by Date</option>
-                                            <option value="newest">Newest First</option>
-                                            <option value="oldest">Oldest First</option>
+                                            <option value="newest" {{ (request('sort') == 'newest') ? 'selected' : '' }}>Newest First</option>
+                                            <option value="oldest" {{ (request('sort') == 'oldest') ? 'selected' : '' }}>Oldest First</option>
                                         </select>
-                                    
+
                                     </form>
+
                                     
                                     
                                 </div>
@@ -529,7 +542,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($deliveryOrders as $transactId => $orders)
+                                            @forelse($deliveryOrders as $transactId => $orders)
                                                 @php $first = $orders->first(); @endphp
                                                 <tr>
                                                     <td>
@@ -544,7 +557,13 @@
                                                         </form>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted">
+                                                        No delivery orders
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>

@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\DeliveryController;
 use App\Http\Controllers\admin\DeliveryStatusController;
 use App\Http\Controllers\admin\PendingDeliveryController;
 use App\Http\Controllers\admin\ProcessController;
+use App\Http\Controllers\admin\ReturnItemController;
 use App\Http\Controllers\admin\StockController;
 use App\Http\Controllers\admin\StockInController;
 use App\Http\Controllers\admin\UserController;
@@ -55,10 +56,6 @@ Route::get('/reset-password-form', function () {
 
 // Handle final password update
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('reset.password');
-
-
-
-
 Route::post('/logout', [AuthController::class, 'LogoutRequest'])->name('logout.request');
 
 
@@ -125,5 +122,14 @@ Route::get('/admin/view/available-cars', [ViewAvailableCarsController::class, 'V
 Route::get('/admin/pending_delivery', [PendingDeliveryController::class, 'AdminPendingDeliveryPage'])->name('admin.pending.management.page');
 Route::post('/admin/pending/marked-status/{transact_id}', [PendingDeliveryController::class, 'AdminMarkStatusDelivery'])->name('admin.delivery.mark.status');
 
-// ADMIN DELIVERY STATUS MAANGEMENT
+// ADMIN DELIVERY STATUS MANAGEMENT
 Route::get('/admin/delivery_status', [DeliveryStatusController::class, 'AdminDeliveryStatusPage'])->name('admin.delivery.status.page');
+
+// ADMIN RETURN ITEM MANAGEMENT
+Route::get('/admin/return_item', [ReturnItemController::class, 'AdminReturnItemPage'])->name('admin.return.item.page');
+Route::post('/admin//return/add-multiple-finish', [ReturnItemController::class, 'AdminBatchReturnProductSubmit'])->name('admin.return.submit.item');
+Route::post('/admin/return/submit-items', [ReturnItemController::class, 'AdminAddReturnItem'])->name('admin.return.submit');
+Route::get('/admin/return/delete/{id}', [ReturnItemController::class, 'AdminDeleteBatchReturnProduct'])->name('admin.batch-return-item.delete');
+
+
+// DELIVERY ROUTES

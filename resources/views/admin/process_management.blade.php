@@ -312,7 +312,8 @@
                                             </thead>
                                             <tbody>
                                                 @php $totalAmount = 0; @endphp
-                                                @foreach($finishProducts as $product)
+
+                                                @forelse($finishProducts as $product)
                                                     @php
                                                         $amount = $product->quantity * $product->product_price;
                                                         $totalAmount += $amount;
@@ -320,35 +321,38 @@
                                                     <tr>
                                                         <td>
                                                             <input type="number"
-                                                            name="quantities[{{ $product->id }}]"
-                                                            value="{{ $product->quantity }}"
-                                                            class="form-control input-rounded quantity-input"
-                                                            data-id="{{ $product->id }}"
-                                                            style="border-color: #593bdb;" min="1" required>
-                                                     
+                                                                name="quantities[{{ $product->id }}]"
+                                                                value="{{ $product->quantity }}"
+                                                                class="form-control input-rounded quantity-input"
+                                                                data-id="{{ $product->id }}"
+                                                                style="border-color: #593bdb;" min="1" required>
                                                         </td>
                                                         <td style="color: black;">{{ $product->product_name }}</td>
                                                         <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
                                                         <td>
                                                             <input type="number" step="0.01"
-                                                            name="prices[{{ $product->id }}]"
-                                                            value="{{ $product->product_price }}"
-                                                            class="form-control input-rounded price-input"
-                                                            data-id="{{ $product->id }}"
-                                                            style="border-color: #593bdb;" min="0" required>
+                                                                name="prices[{{ $product->id }}]"
+                                                                value="{{ $product->product_price }}"
+                                                                class="form-control input-rounded price-input"
+                                                                data-id="{{ $product->id }}"
+                                                                style="border-color: #593bdb;" min="0" required>
                                                         </td>
                                                         <td style="color: black;">
                                                             <span id="amount-{{ $product->id }}">₱{{ number_format($amount, 2) }}</span>
                                                         </td>
-                                                                                                                <td>
+                                                        <td>
                                                             <a class="btn btn-outline-danger"
-                                                               href="{{ route('admin.batch.finish.product.remove', ['id' => $product->id]) }}"
-                                                               onclick="return confirm('Are you sure you want to remove this finish product?')">
+                                                            href="{{ route('admin.batch.finish.product.remove', ['id' => $product->id]) }}"
+                                                            onclick="return confirm('Are you sure you want to remove this finish product?')">
                                                                 <i class="fa fa-close"></i> Remove
                                                             </a>
-                                                        </td>                                                        
+                                                        </td>
                                                     </tr>
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted">No product to process.</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -358,6 +362,7 @@
                                                     </td>
                                                 </tr>
                                             </tfoot>
+
                                         </table>
                                     
                                         {{-- Hidden for batch_fetch_raw_products --}}
@@ -413,91 +418,95 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($historyRecords as $transactId => $records)
-                                            @php
-                                                $first = $records->first();
-                                                $totalAmount = $records->sum('amount');
-                                            @endphp
+                                            @forelse ($historyRecords as $transactId => $records)
+                                                @php
+                                                    $first = $records->first();
+                                                    $totalAmount = $records->sum('amount');
+                                                @endphp
 
-                                            <tr>
-                                                <td>
-                                                    <a href="#" data-toggle="modal" data-target="#viewHistoryModal{{ $transactId }}" class="btn btn-outline-primary btn-sm">View</a>
-                                                </td>
-                                                <td>
-                                                    <input type="date" class="form-control form-control-sm" value="{{ $first->process_date }}" readonly>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control form-control-sm" value="{{ $first->process_by }}" readonly>
-                                                </td>
-                                                <td>
-                                                    <form action="{{ route('admin.archive.history.finish.product', ['transactId' => $transactId]) }}" method="POST" onsubmit="return confirm('Are you sure you want to archive this?')">
-                                                        @csrf
-                                                        <input type="hidden" name="is_archived" value="1">
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
+                                                <tr>
+                                                    <td>
+                                                        <a href="#" data-toggle="modal" data-target="#viewHistoryModal{{ $transactId }}" class="btn btn-outline-primary btn-sm">View</a>
+                                                    </td>
+                                                    <td>
+                                                        <input type="date" class="form-control form-control-sm" value="{{ $first->process_date }}" readonly>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control form-control-sm" value="{{ $first->process_by }}" readonly>
+                                                    </td>
+                                                    <td>
+                                                        <form action="{{ route('admin.archive.history.finish.product', ['transactId' => $transactId]) }}" method="POST" onsubmit="return confirm('Are you sure you want to archive this?')">
+                                                            @csrf
+                                                            <input type="hidden" name="is_archived" value="1">
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
 
-                                            <!-- Modal -->
-                                            <div class="modal fade" id="viewHistoryModal{{ $transactId }}" tabindex="-1" role="dialog" aria-hidden="true">
-                                                <div class="modal-dialog modal-xl">
-                                                    <div class="modal-content">
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="viewHistoryModal{{ $transactId }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                                    <div class="modal-dialog modal-xl">
+                                                        <div class="modal-content">
 
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">Transaction Details - {{ $transactId }}</h5>
-                                                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                                                        </div>
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Transaction Details - {{ $transactId }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                            </div>
 
-                                                        <div class="modal-body">
-                                                            <div class="p-4 position-relative">
-                                                                <h5>Details</h5>
+                                                            <div class="modal-body">
+                                                                <div class="p-4 position-relative">
+                                                                    <h5>Details</h5>
 
-                                                                <div class="row mt-4">
-                                                                    <div class="col-12 d-flex justify-content-between">
-                                                                        <p style="color: black" class="mb-1"><strong>Processed By:</strong> {{ $first->process_by }}</p>
-                                                                        <p style="color: black" class="mb-1"><strong>Process Date:</strong> {{ \Carbon\Carbon::parse($first->process_date)->format('F d, Y') }}</p>
-                                                                    </div>
-                                                                </div>
-                                                                
-
-                                                                <div class="mt-4">
-                                                                    <div class="row fw-bold border-bottom pb-2">
-                                                                        <div class="col-2" style="color: #593bdb;">Qty</div>
-                                                                        <div class="col-4" style="color: #593bdb;">Product</div>
-                                                                        <div class="col-2" style="color: #593bdb;">Unit</div>
-                                                                        <div class="col-2 text-end" style="color: #593bdb;">Price</div>
-                                                                        <div class="col-2 text-end" style="color: #593bdb;">Amount</div>
-                                                                    </div>
-
-                                                                    @foreach ($records as $item)
-                                                                        <div class="row py-2 border-bottom">
-                                                                            <div class="col-2" style="color: black">{{ $item->quantity }}</div>
-                                                                            <div class="col-4" style="color: black">{{ $item->product_name }}</div>
-                                                                            <div class="col-2" style="color: black">{{ $item->unit }}</div>
-                                                                            <div class="col-2 text-end" style="color: black">₱{{ number_format($item->price, 2) }}</div>
-                                                                            <div class="col-2 text-end" style="color: black">₱{{ number_format($item->amount, 2) }}</div>
+                                                                    <div class="row mt-4">
+                                                                        <div class="col-12 d-flex justify-content-between">
+                                                                            <p style="color: black" class="mb-1"><strong>Processed By:</strong> {{ $first->process_by }}</p>
+                                                                            <p style="color: black" class="mb-1"><strong>Process Date:</strong> {{ \Carbon\Carbon::parse($first->process_date)->format('F d, Y') }}</p>
                                                                         </div>
-                                                                    @endforeach
-                                                                </div>
+                                                                    </div>
 
-                                                                <div class="row mt-4">
-                                                                    <div class="col-md-6"></div>
-                                                                    <div class="col-md-6 text-end">
-                                                                        <p style="color: black"><strong>Total Amount:</strong> ₱{{ number_format($totalAmount, 2) }}</p>
+                                                                    <div class="mt-4">
+                                                                        <div class="row fw-bold border-bottom pb-2">
+                                                                            <div class="col-2" style="color: #593bdb; font-weight:900">Qty</div>
+                                                                            <div class="col-4" style="color: #593bdb; font-weight:900">Product</div>
+                                                                            <div class="col-2" style="color: #593bdb; font-weight:900">Unit</div>
+                                                                            <div class="col-2 text-end" style="color: #593bdb; font-weight:900">Price</div>
+                                                                            <div class="col-2 text-end" style="color: #593bdb; font-weight:900">Amount</div>
+                                                                        </div>
+
+                                                                        @foreach ($records as $item)
+                                                                            <div class="row py-2 border-bottom">
+                                                                                <div class="col-2" style="color: black">{{ $item->quantity }}</div>
+                                                                                <div class="col-4" style="color: black">{{ $item->product_name }}</div>
+                                                                                <div class="col-2" style="color: black">{{ $item->unit }}</div>
+                                                                                <div class="col-2 text-end" style="color: black">₱{{ number_format($item->price, 2) }}</div>
+                                                                                <div class="col-2 text-end" style="color: black">₱{{ number_format($item->amount, 2) }}</div>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+
+                                                                    <div class="row mt-4">
+                                                                        <div class="col-md-6"></div>
+                                                                        <div class="col-md-6 text-end">
+                                                                            <p style="color: black"><strong>Total Amount:</strong> ₱{{ number_format($totalAmount, 2) }}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
 
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                                        </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                                            </div>
 
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endforeach
-
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted">
+                                                        No history records found.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>

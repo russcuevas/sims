@@ -126,7 +126,14 @@
         </div>
         <div class="info-row">
             <div class="info-item"><strong>Branch:</strong> {{ $first->store_name }}</div>
-            <div class="info-item"><strong>Expected Delivery:</strong> {{ \Carbon\Carbon::parse($first->transaction_date)->addDays(7)->format('Y-m-d') }}</div>
+            @php
+                $expectedFrom = \Carbon\Carbon::parse($first->transaction_date)->addDays(6)->format('Y-m-d');
+                $expectedTo = \Carbon\Carbon::parse($first->transaction_date)->addDays(7)->format('Y-m-d');
+            @endphp
+
+            <div class="info-item">
+                <strong>Expected Delivery:</strong> {{ $expectedFrom }} to {{ $expectedTo }}
+            </div>
         </div>
         <div class="info-row">
             <div class="info-item"><strong>Memo:</strong> {{ $first->memo ?? 'None' }}</div>

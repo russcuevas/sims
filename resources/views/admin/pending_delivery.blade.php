@@ -89,18 +89,26 @@
                             <div class="container my-4">
                                 <!-- Search bar and actions -->
                                 <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
-                                    <form method="GET" action="" class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="filterSortForm">
-                                        <input type="text" name="search" value="" class="form-control w-auto" placeholder="Search product here">
-                                        <button type="submit" class="btn btn-primary mr-2">Search</button>
-                                        <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
-                                            <option value="">Filter by Processor</option>
-                                        </select>
-                                        <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
-                                            <option value="">Sort by Date</option>
-                                            <option value="newest">Newest First</option>
-                                            <option value="oldest">Oldest First</option>
-                                        </select>
-                                    </form>
+<form method="GET" action="" class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="filterSortForm">
+    <input type="text" name="search" value="{{ old('search', $search ?? '') }}" class="form-control w-auto" placeholder="Search product here">
+    <button type="submit" class="btn btn-primary mr-2">Search</button>
+
+    <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
+        <option value="">Filter by Processor</option>
+        @foreach ($processors as $processor)
+            <option value="{{ $processor->id }}" {{ (isset($processBy) && $processBy == $processor->id) ? 'selected' : '' }}>
+                {{ $processor->full_name }}
+            </option>
+        @endforeach
+    </select>
+
+    <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
+        <option value="">Sort by Date</option>
+        <option value="newest" {{ (isset($sort) && $sort == 'newest') ? 'selected' : '' }}>Newest First</option>
+        <option value="oldest" {{ (isset($sort) && $sort == 'oldest') ? 'selected' : '' }}>Oldest First</option>
+    </select>
+</form>
+
                                 </div>
 
                                 <!-- Status Buttons aligned to the right -->
@@ -109,7 +117,7 @@
                                         <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-outline-secondary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-secondary" id="status_to_ship">Return item</a>
+                                        <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-secondary" id="status_to_ship">Return item</a>
                                     </div>
                                     <div class="col-auto px-1">
                                         <a href="{{ route('admin.pending.management.page') }}" class="btn btn-secondary" id="status_delivered">Pending delivery</a>
@@ -134,37 +142,40 @@
                                                 <th style="width: 20%; color: #593bdb;">Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            @foreach($deliveryOrders as $transactId => $orders)
-                                                @php
-                                                    $first = $orders->first();
-                                                @endphp
-                                                <tr>
-                                                    <td>
-                                                        <a target="_blank" href="{{ route('admin.delivery.view', $transactId) }}" class="btn btn-outline-primary btn-sm">View</a>
-                                                    </td>
-                                                    <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
-                                                    <td style="color: black">{{ $first->delivered_by_name ?? 'N/A' }}</td>
-                                                    <form method="POST" action="{{ route('admin.delivery.mark.status', $transactId) }}" enctype="multipart/form-data">
-                                                        @csrf
-                                                    <td>
-                                                        <input type="file" name="upload_image" class="form-control form-control-sm">
-                                                    </td>
-                                                    <td>
-                                                        <textarea name="upload_notes" class="form-control" placeholder="Add notes..."></textarea>
-                                                    </td>
-                                                    <td>
+                                            <tbody>
+                                                @forelse($deliveryOrders as $transactId => $orders)
+                                                    @php
+                                                        $first = $orders->first();
+                                                    @endphp
+                                                    <tr>
+                                                        <td>
+                                                            <a target="_blank" href="{{ route('admin.delivery.view', $transactId) }}" class="btn btn-outline-primary btn-sm">View</a>
+                                                        </td>
+                                                        <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
+                                                        <td style="color: black">{{ $first->delivered_by_name ?? 'N/A' }}</td>
+                                                        <form id="form-{{ $transactId }}" method="POST" action="{{ route('admin.delivery.mark.status', $transactId) }}" enctype="multipart/form-data">
+                                                            @csrf
+                                                        <td>
+                                                            <input type="file" name="upload_image" class="form-control form-control-sm">
+                                                        </td>
+                                                        <td>
+                                                            <textarea name="upload_notes" class="form-control" placeholder="Add notes..."></textarea>
+                                                        </td>
+                                                        <td>
                                                             <div class="d-flex justify-content-center">
                                                                 <button type="submit" name="completed" class="btn btn-outline-primary btn-sm mr-2">Completed</button>
                                                                 <button type="button" onclick="confirmReturn('{{ $transactId }}')" class="btn btn-outline-danger btn-sm">Returned</button>
                                                             </div>
+                                                        </td>
                                                         </form>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted">No pending delivery.</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
 
-                                    </table>
                                 </div>
                             </div>
                         </div>
