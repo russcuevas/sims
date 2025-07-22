@@ -32,7 +32,7 @@
                         class="nav-text">Delivery
                         Management</span></a>
             </li>
-            <li><a href="sales_reports.html" aria-expanded="false"><i class="icon icon-chart-bar-33"></i><span
+            <li><a href="{{ route('admin.sales.management.page') }}" aria-expanded="false"><i class="icon icon-chart-bar-33"></i><span
                         class="nav-text">Sales
                         Report</span></a>
             </li>

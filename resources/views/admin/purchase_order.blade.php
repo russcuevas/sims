@@ -35,27 +35,26 @@
         @endif
 
         <div class="container mt-4">
-<div class="text-center my-2">
-    <div class="d-inline-block" style="min-width: 300px;">
-<select name="supplier_id" id="supplier_id" class="form-control select2" required>
-    <option value="">-- Select Supplier --</option>
-    @foreach($suppliers as $supplier)
-        <option value="{{ $supplier->id }}"
-            data-name="{{ $supplier->supplier_name }}"
-            data-address="{{ $supplier->supplier_address }}"
-            data-contact="{{ $supplier->supplier_contact_num }}"
-            data-email="{{ $supplier->supplier_email_add }}">
-            {{ $supplier->supplier_name }}
-        </option>
-    @endforeach
-</select>
+            <div class="text-center my-2">
+                <div class="d-inline-block" style="min-width: 300px;">
+            <select name="supplier_id" id="supplier_id" class="form-control select2" required>
+                <option value="">-- Select Supplier --</option>
+                @foreach($suppliers as $supplier)
+                    <option value="{{ $supplier->id }}"
+                        data-name="{{ $supplier->supplier_name }}"
+                        data-address="{{ $supplier->supplier_address }}"
+                        data-contact="{{ $supplier->supplier_contact_num }}"
+                        data-email="{{ $supplier->supplier_email_add }}">
+                        {{ $supplier->supplier_name }}
+                    </option>
+                @endforeach
+            </select>
 
-    </div>
+                </div>
 
-    <h3 class="mt-3">Purchase Order</h3>
-    <strong>{{ $poNumber }}</strong>
-</div>
-
+                <h3 class="mt-3">Purchase Order</h3>
+                <strong>{{ $poNumber }}</strong>
+            </div>
 
             <table class="table table-bordered mt-3 text-center" style="color: black !important;">
                 <thead>

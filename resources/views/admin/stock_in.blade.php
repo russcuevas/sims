@@ -294,61 +294,61 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-    @forelse($batchProductDetails as $detail)
-        <tr>
-            <td>
-                <input type="number"
-                       class="form-control input-rounded update-quantity"
-                       value="{{ $detail->quantity }}"
-                       data-id="{{ $detail->id }}"               
-                       data-price="{{ $detail->price }}"
-                       min="0"
-                       style="border-color: #593bdb;">
-            </td>
-        
-            <td style="color: black;">{{ $detail->product_name }}</td>
-            <td><span class="badge badge-primary">{{ $detail->stock_unit_id }}</span></td>
-        
-            <td>
-                <input type="number" 
-                       class="form-control input-rounded update-price" 
-                       value="{{ number_format($detail->price, 2, '.', '') }}" 
-                       data-id="{{ $detail->id }}"                 
-                       data-product-id="{{ $detail->product_id }}" 
-                       min="0" step="0.01" 
-                       style="border-color: #593bdb;">
-            </td>
-        
-            <td style="color: black;" class="amount-cell" id="amount-{{ $detail->id }}">
-                ₱{{ number_format($detail->amount, 2) }}
-            </td>
-        
-            <td>
-                <a href="{{ route('admin.batch.product.remove', $detail->id) }}"
-                    onclick="return confirm('Are you sure you want to remove this item?');"
-                    class="btn btn-outline-danger" title="Remove">
-                    <i class="fa fa-close"></i> Remove
-                </a>                                                         
-            </td>                                                    
-        </tr>
-    @empty
-        <tr>
-            <td colspan="6" class="text-center text-muted">
-                No products available.
-            </td>
-        </tr>
-    @endforelse
-</tbody>
+                                                @forelse($batchProductDetails as $detail)
+                                                    <tr>
+                                                        <td>
+                                                            <input type="number"
+                                                                class="form-control input-rounded update-quantity"
+                                                                value="{{ $detail->quantity }}"
+                                                                data-id="{{ $detail->id }}"               
+                                                                data-price="{{ $detail->price }}"
+                                                                min="0"
+                                                                style="border-color: #593bdb;">
+                                                        </td>
+                                                    
+                                                        <td style="color: black;">{{ $detail->product_name }}</td>
+                                                        <td><span class="badge badge-primary">{{ $detail->stock_unit_id }}</span></td>
+                                                    
+                                                        <td>
+                                                            <input type="number" 
+                                                                class="form-control input-rounded update-price" 
+                                                                value="{{ number_format($detail->price, 2, '.', '') }}" 
+                                                                data-id="{{ $detail->id }}"                 
+                                                                data-product-id="{{ $detail->product_id }}" 
+                                                                min="0" step="0.01" 
+                                                                style="border-color: #593bdb;">
+                                                        </td>
+                                                    
+                                                        <td style="color: black;" class="amount-cell" id="amount-{{ $detail->id }}">
+                                                            ₱{{ number_format($detail->amount, 2) }}
+                                                        </td>
+                                                    
+                                                        <td>
+                                                            <a href="{{ route('admin.batch.product.remove', $detail->id) }}"
+                                                                onclick="return confirm('Are you sure you want to remove this item?');"
+                                                                class="btn btn-outline-danger" title="Remove">
+                                                                <i class="fa fa-close"></i> Remove
+                                                            </a>                                                         
+                                                        </td>                                                    
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted">
+                                                            No products available.
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
 
-<tfoot>
-    <tr>
-        <td colspan="4" class="text-end fw-bold" style="color: blueviolet;">
-        </td>
-        <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
-            <span style="color: red;">Total Amount: <span id="total_amount_value">₱{{ number_format($totalAmount, 2) }}</span></span>
-        </td>                                                    
-    </tr>
-</tfoot>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="4" class="text-end fw-bold" style="color: blueviolet;">
+                                                    </td>
+                                                    <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
+                                                        <span style="color: red;">Total Amount: <span id="total_amount_value">₱{{ number_format($totalAmount, 2) }}</span></span>
+                                                    </td>                                                    
+                                                </tr>
+                                            </tfoot>
                                             
                                         </table>
 

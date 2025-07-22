@@ -6,6 +6,7 @@ use App\Http\Controllers\admin\DeliveryStatusController;
 use App\Http\Controllers\admin\PendingDeliveryController;
 use App\Http\Controllers\admin\ProcessController;
 use App\Http\Controllers\admin\ReturnItemController;
+use App\Http\Controllers\admin\SalesReportController;
 use App\Http\Controllers\admin\StockController;
 use App\Http\Controllers\admin\StockInController;
 use App\Http\Controllers\admin\UserController;
@@ -131,5 +132,10 @@ Route::post('/admin//return/add-multiple-finish', [ReturnItemController::class, 
 Route::post('/admin/return/submit-items', [ReturnItemController::class, 'AdminAddReturnItem'])->name('admin.return.submit');
 Route::get('/admin/return/delete/{id}', [ReturnItemController::class, 'AdminDeleteBatchReturnProduct'])->name('admin.batch-return-item.delete');
 
+// ADMIN SALES REPORT MANAGEMENT
+Route::get('/admin/sales/report', [SalesReportController::class, 'AdminSalesReportPage'])->name('admin.sales.management.page');
+Route::post('/admin/sales/add-transaction', [SalesReportController::class, 'AdminTransactionAdd'])->name('admin.sales.request.transaction');
+Route::post('/admin/sales/report/archive/{id}', [SalesReportController::class, 'AdminTransactionArchive'])
+    ->name('admin.transaction.archive');
 
 // DELIVERY ROUTES
