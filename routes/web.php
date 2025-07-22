@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\ArchiveController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\DeliveryController;
 use App\Http\Controllers\admin\DeliveryStatusController;
@@ -46,16 +47,10 @@ Route::get('/reset-password/{token}', function ($token) {
     return view('auth.verify-otp', ['token' => $token, 'expired' => false]);
 })->name('reset.password.otp.form');
 
-
-// Handle OTP verification
 Route::post('/verify-otp', [AuthController::class, 'VerifyOtp'])->name('verify.otp');
-
-// Show password reset form after OTP verified
 Route::get('/reset-password-form', function () {
     return view('auth.reset-password');
 })->name('reset.password.form');
-
-// Handle final password update
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('reset.password');
 Route::post('/logout', [AuthController::class, 'LogoutRequest'])->name('logout.request');
 
@@ -137,5 +132,17 @@ Route::get('/admin/sales/report', [SalesReportController::class, 'AdminSalesRepo
 Route::post('/admin/sales/add-transaction', [SalesReportController::class, 'AdminTransactionAdd'])->name('admin.sales.request.transaction');
 Route::post('/admin/sales/report/archive/{id}', [SalesReportController::class, 'AdminTransactionArchive'])
     ->name('admin.transaction.archive');
+
+// ADMIN LOGS MANAGEMENT
+
+
+// ADMIN ARCHIVE MANAGEMENT
+Route::get('/admin/archive', [ArchiveController::class, 'AdminArchivePage'])->name('admin.archive.page');
+Route::post('/admin/employees/restore/{id}', [ArchiveController::class, 'AdminRestoreEmployee'])->name('admin.employees.restore');
+Route::get('/admin/archive/stocks', [ArchiveController::class, 'AdminArchiveStocksPage'])->name('admin.archive.stocks.page');
+Route::post('/admin/stocks/restore/{id}', [ArchiveController::class, 'AdminRestoreStocks'])->name('admin.stocks.restore');
+Route::get('/admin/archive/stock_in', [ArchiveController::class, 'AdminArchiveStockInPage'])->name('admin.archive.stock.in.page');
+Route::post('/admin/stockin/restore/{transact_id}', [ArchiveController::class, 'AdminRestoreStockIn'])->name('admin.stockin.restore');
+
 
 // DELIVERY ROUTES

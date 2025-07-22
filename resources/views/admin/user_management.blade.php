@@ -278,7 +278,6 @@
                                                 <td style="color: black;">{{ $employee->status }}</td>
                                                 <td>
                                                     <div class="d-flex gap-2">
-                                                        <!-- Update button triggers this user's modal -->
                                                         <button class="btn btn-outline-warning mr-2" data-toggle="modal" data-target="#updateUserModal{{ $employee->id }}">
                                                             Update
                                                         </button>
