@@ -64,7 +64,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.delivery.management.page') }}">Delivery Management</a></li>
+                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.delivery.management.page') }}">Delivery Management</a></li>
                             <li class="breadcrumb-item active">View Available Cars</li>
                         </ol>
                     </div>
@@ -76,7 +76,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4 class="card-title m-0" style="font-size: 20px; color: blueviolet;">
+                                <h4 class="card-title m-0" style="font-size: 20px; color: #D96F32;">
                                     View Available Cars
                                 </h4>
                             </div>
@@ -103,7 +103,7 @@
 
                                             <!-- Sort Dropdown -->
                                             <div class="dropdown">
-                                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                                     Sort
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="sortDropdown">
@@ -120,9 +120,9 @@
                                     <table class="table table-bordered table-responsive-sm">
                                         <thead>
                                             <tr>
-                                                <th style="color: #593bdb;">Car</th>
-                                                <th style="color: #593bdb;">Plate number</th>
-                                                <th style="color: #593bdb;">Availability</th>
+                                                <th style="color: #D96F32;">Car</th>
+                                                <th style="color: #D96F32;">Plate number</th>
+                                                <th style="color: #D96F32;">Availability</th>
                                             </tr>
                                         </thead>
                                         <tbody>

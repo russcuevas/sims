@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Delivery Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: blueviolet;">
+                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
                                     Delivery Management
                                 </h4>
                             </div>
@@ -88,16 +88,16 @@
                                 <!-- Status Buttons aligned to the right -->
                                 <div class="row mb-3 justify-content-center">
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-secondary" id="status_preparing">Preparing</a>
+                                        <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-primary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-secondary" id="status_to_ship">Return item</a>
+                                        <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-primary" id="status_to_ship">Return item</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.pending.management.page') }}" class="btn btn-outline-secondary" id="status_delivered">Pending delivery</a>
+                                        <a href="{{ route('admin.pending.management.page') }}" class="btn btn-outline-primary" id="status_delivered">Pending delivery</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.delivery.status.page') }}" class="btn btn-outline-secondary" id="status_return">Delivery Status</a>
+                                        <a href="{{ route('admin.delivery.status.page') }}" class="btn btn-outline-primary" id="status_return">Delivery Status</a>
                                     </div>
                                 </div>
                             </div>
@@ -108,20 +108,20 @@
                                     <!-- Add Store Buttons aligned to the right -->
                                     <div class="row mb-3 justify-content-end">
                                         <div class="col-md-2 text-end">
-                                        <a href="{{ route('admin.view.available.cars') }}" class="btn btn-outline-secondary w-100">
+                                        <a href="{{ route('admin.view.available.cars') }}" class="btn btn-outline-primary w-100">
                                             View available cars
                                         </a>
                                         </div>
                                         <div class="col-md-2 text-end">
                                             <button type="button" id="add_store_button"
-                                                class="btn btn-outline-secondary w-100"
+                                                class="btn btn-outline-primary w-100"
                                                 data-toggle="modal" data-target="#add_car">
                                                 Add car details
                                             </button>
                                         </div>
                                         <div class="col-md-2 text-end">
                                             <button type="button" id="add_store_button_2"
-                                                class="btn btn-outline-secondary w-100"
+                                                class="btn btn-outline-primary w-100"
                                                 data-toggle="modal" data-target="#add_store_modal">
                                                 Add store
                                             </button>
@@ -318,33 +318,33 @@
                                     @csrf                                    
                                     <div class="row mb-3 align-items-end">
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #593bdb;" for="memo" class="form-label">Memo</label>
+                                            <label style="color: #D96F32;" for="memo" class="form-label">Memo</label>
                                             <input type="text" id="memo" name="memo"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-3">
                                             <label for="process_date" class="form-label"
-                                                style="color: #593bdb;">Transaction Date</label>
+                                                style="color: #D96F32;">Transaction Date</label>
                                             <input type="date" id="transaction_date" name="transaction_date"
                                                 class="form-control">
                                         </div>
 
                                         <div class="col-md-3">
                                             <label for="process_date" class="form-label"
-                                                style="color: #593bdb;">Expected Delivery</label>
+                                                style="color: #D96F32;">Expected Delivery</label>
                                             <input type="date" id="expected_date" name="expected_date"
                                                 class="form-control">
                                         </div>
 
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #593bdb;" for="process_by" class="form-label">Process
+                                            <label style="color: #D96F32;" for="process_by" class="form-label">Process
                                                 by</label>
                                             <input type="text" id="process_by" name="process_by" class="form-control"
                                             value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
                                         </div>
 
                                         <div class="col-md-3 text-left" style="margin-top: 20px">
-                                            <label style="color: #593bdb;" for="approved_by" class="form-label">Approved by</label>
+                                            <label style="color: #D96F32;" for="approved_by" class="form-label">Approved by</label>
                                             <select id="approved_by" name="approved_by" class="form-control">
                                                 @foreach ($allEmployees as $employee)
                                                     @if ($employee->position_id == 1)  <!-- Approved by: Position 1 -->
@@ -357,7 +357,7 @@
                                         </div>
 
                                         <div class="col-md-3 text-left" style="margin-top: 20px">
-                                            <label style="color: #593bdb;" for="delivered_by" class="form-label">Delivered by</label>
+                                            <label style="color: #D96F32;" for="delivered_by" class="form-label">Delivered by</label>
                                             <select id="delivered_by" name="delivered_by" class="form-control">
                                                 @foreach ($allEmployees as $employee)
                                                     @if ($employee->position_id == 3)  <!-- Delivered by: Position 3 -->
@@ -371,7 +371,7 @@
 
 
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #593bdb;" for="car" class="form-label">Select Car</label>
+                                            <label style="color: #D96F32;" for="car" class="form-label">Select Car</label>
                                             <select id="car" name="car" class="form-control">
                                                 @foreach ($cars as $car)
                                                     <option value="{{ $car->id }}">
@@ -382,7 +382,7 @@
                                         </div>
 
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #593bdb;" for="store" class="form-label">Select Store</label>
+                                            <label style="color: #D96F32;" for="store" class="form-label">Select Store</label>
                                             <select id="store" name="store" class="form-control">
                                                 @foreach ($stores as $store)
                                                     <option value="{{ $store->id }}">
@@ -433,14 +433,14 @@
                                         <table class="table table-bordered table-responsive-sm">
                                         <thead>
                                             <tr>
-                                                <th style="color: #593bdb;">Product</th>
-                                                <th style="color: #593bdb;">Pack</th>
-                                                <th style="color: #593bdb;">Unit</th>
-                                                <th style="color: #593bdb;">Qty Ordered</th>
-                                                <th style="color: #593bdb;">Qty Received</th>
-                                                <th style="color: #593bdb;">Price</th>
-                                                <th style="color: #593bdb;">Amount</th>
-                                                <th style="color: #593bdb;">Action</th>
+                                                <th style="color: #D96F32;">Product</th>
+                                                <th style="color: #D96F32;">Pack</th>
+                                                <th style="color: #D96F32;">Unit</th>
+                                                <th style="color: #D96F32;">Qty Ordered</th>
+                                                <th style="color: #D96F32;">Qty Received</th>
+                                                <th style="color: #D96F32;">Price</th>
+                                                <th style="color: #D96F32;">Amount</th>
+                                                <th style="color: #D96F32;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -483,7 +483,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="4" class="text-end fw-bold" style="color: blueviolet;">
+                                                <td colspan="4" class="text-end fw-bold" style="color: #D96F32;">
                                                     Total Ordered:
                                                 </td>
                                                 <td colspan="5" id="total_amount" class="fw-bold" style="color: black;">
@@ -510,7 +510,7 @@
                                         <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto" placeholder="Search product here">
                                         <button type="submit" class="btn btn-primary mr-2">Search</button>
 
-                                        <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
+                                        <select name="process_by" class="btn btn-outline-primary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Filter by Processor</option>
                                             @foreach ($processors as $processor)
                                                 <option value="{{ $processor }}" {{ (request('process_by') == $processor) ? 'selected' : '' }}>
@@ -519,7 +519,7 @@
                                             @endforeach
                                         </select>
 
-                                        <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
+                                        <select name="sort" class="btn btn-outline-primary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Sort by Date</option>
                                             <option value="newest" {{ (request('sort') == 'newest') ? 'selected' : '' }}>Newest First</option>
                                             <option value="oldest" {{ (request('sort') == 'oldest') ? 'selected' : '' }}>Oldest First</option>
@@ -535,10 +535,10 @@
                                     <table class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
-                                                <th style="width: 10%; color: #593bdb;">Details</th>
-                                                <th style="width: 15%; color: #593bdb;">Transaction Date</th>
-                                                <th style="width: 20%; color: #593bdb;">Processed By</th>
-                                                <th style="width: 20%; color: #593bdb;">Actions</th>
+                                                <th style="width: 10%; color: #D96F32;">Details</th>
+                                                <th style="width: 15%; color: #D96F32;">Transaction Date</th>
+                                                <th style="width: 20%; color: #D96F32;">Processed By</th>
+                                                <th style="width: 20%; color: #D96F32;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>

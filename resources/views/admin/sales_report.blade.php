@@ -66,7 +66,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Sales Report Management</li>
                         </ol>
                     </div>
@@ -78,7 +78,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4 class="card-title m-0" style="font-size: 20px; color: blueviolet;">
+                                <h4 class="card-title m-0" style="font-size: 20px; color: #D96F32;">
                                     Sales Report Management
                                 </h4>
                             </div>
@@ -105,7 +105,7 @@
                                         
                                             {{-- Sort Dropdown --}}
                                             <div class="dropdown">
-                                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                                     Sort
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="sortDropdown">
@@ -220,14 +220,14 @@
                                     <table class="table table-bordered table-responsive-sm">
                                         <thead>
                                             <tr>
-                                                <th style="color: #593bdb;">Transaction date</th>
-                                                <th style="color: #593bdb;">Process by</th>
-                                                <th style="color: #593bdb;">Transaction type</th>
-                                                <th style="color: #593bdb;">Transaction ID</th>
-                                                <th style="color: #593bdb;">Debit</th>
-                                                <th style="color: #593bdb;">Credit</th>
-                                                <th style="color: #593bdb;">Balances</th>
-                                                <th style="color: #593bdb;">Action</th>
+                                                <th style="color: #D96F32;">Transaction date</th>
+                                                <th style="color: #D96F32;">Process by</th>
+                                                <th style="color: #D96F32;">Transaction type</th>
+                                                <th style="color: #D96F32;">Transaction ID</th>
+                                                <th style="color: #D96F32;">Debit</th>
+                                                <th style="color: #D96F32;">Credit</th>
+                                                <th style="color: #D96F32;">Balances</th>
+                                                <th style="color: #D96F32;">Action</th>
                                             </tr>
                                         </thead>
 
@@ -257,10 +257,10 @@
 
                                         <tfoot>
                                             <tr>
-                                                <th colspan="4" class="text-end" style="color: #593bdb;">Total:</th>
-                                                <th style="color: #593bdb;">₱{{ number_format($transactions->sum('debit'), 2) }}</th>
-                                                <th style="color: #593bdb;">₱{{ number_format($transactions->sum('credit'), 2) }}</th>
-                                                <th style="color: #593bdb;">₱{{ number_format($transactions->sum('balances'), 2) }}</th>
+                                                <th colspan="4" class="text-end" style="color: #D96F32;">Total:</th>
+                                                <th style="color: #D96F32;">₱{{ number_format($transactions->sum('debit'), 2) }}</th>
+                                                <th style="color: #D96F32;">₱{{ number_format($transactions->sum('credit'), 2) }}</th>
+                                                <th style="color: #D96F32;">₱{{ number_format($transactions->sum('balances'), 2) }}</th>
                                                 <th></th>
                                             </tr>
                                         </tfoot>

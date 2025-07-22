@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Archive Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: blueviolet;">
+                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
                                     Archive Management
                                 </h4>
                             </div>
@@ -88,22 +88,22 @@
                                 <!-- Status Buttons aligned to the right -->
                                 <div class="row mb-3 justify-content-center">
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.page') }}" class="btn btn-outline-secondary">Users</a>
+                                        <a href="{{ route('admin.archive.page') }}" class="btn btn-outline-primary">Users</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.stocks.page') }}" class="btn btn-secondary">Stocks</a>
+                                        <a href="{{ route('admin.archive.stocks.page') }}" class="btn btn-primary">Stocks</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.stock.in.page') }}" class="btn btn-outline-secondary">Stock In History</a>
+                                        <a href="{{ route('admin.archive.stock.in.page') }}" class="btn btn-outline-primary">Stock In History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.process.page') }}" class="btn btn-outline-secondary">Process History</a>
+                                        <a href="{{ route('admin.archive.process.page') }}" class="btn btn-outline-primary">Process History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.delivery.page') }}" class="btn btn-outline-secondary">Delivery History</a>
+                                        <a href="{{ route('admin.archive.delivery.page') }}" class="btn btn-outline-primary">Delivery History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.sales.page') }}" class="btn btn-outline-secondary">Sales Reports</a>
+                                        <a href="{{ route('admin.archive.sales.page') }}" class="btn btn-outline-primary">Sales Reports</a>
                                     </div>
                                 </div>
                             </div>
@@ -115,12 +115,12 @@
                                         <table id="example">
                                         <thead>
                                             <tr>
-                                                <th style="color: #593bdb;">Date</th>
-                                                <th style="color: #593bdb;">Quantity</th>
-                                                <th style="color: #593bdb;">Product</th>
-                                                <th style="color: #593bdb;">Unit</th>
-                                                <th style="color: #593bdb;">Category</th>
-                                                <th style="color: #593bdb;">Action</th>
+                                                <th style="color: #D96F32;">Date</th>
+                                                <th style="color: #D96F32;">Quantity</th>
+                                                <th style="color: #D96F32;">Product</th>
+                                                <th style="color: #D96F32;">Unit</th>
+                                                <th style="color: #D96F32;">Category</th>
+                                                <th style="color: #D96F32;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>

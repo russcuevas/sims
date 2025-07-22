@@ -40,7 +40,7 @@
                                             @csrf
                                             <input type="hidden" name="token" value="{{ $token }}" />
                                             <div class="form-group">
-                                                <label style="color: blueviolet;"><strong>Enter OTP:</strong></label>
+                                                <label style="color: #D96F32;"><strong>Enter OTP:</strong></label>
                                                 <input 
                                                     type="text" 
                                                     name="otp" 

@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Delivery Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: blueviolet;">
+                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
                                     Delivery Management
                                 </h4>
                             </div>
@@ -92,7 +92,7 @@
                                         <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto" placeholder="Search product here">
                                         <button type="submit" class="btn btn-primary mr-2">Search</button>
 
-                                        <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
+                                        <select name="process_by" class="btn btn-outline-primary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Filter by Processor</option>
                                             @foreach ($employees as $emp)
                                                 <option value="{{ $emp->id }}" {{ request('process_by') == $emp->id ? 'selected' : '' }}>
@@ -101,7 +101,7 @@
                                             @endforeach
                                         </select>
 
-                                        <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
+                                        <select name="sort" class="btn btn-outline-primary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Sort by Date</option>
                                             <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
                                             <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
@@ -113,16 +113,16 @@
                                 <!-- Status Buttons aligned to the right -->
                                 <div class="row mb-3 justify-content-center">
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-outline-secondary" id="status_preparing">Preparing</a>
+                                        <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-outline-primary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-secondary" id="status_to_ship">Return item</a>
+                                        <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-primary" id="status_to_ship">Return item</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.pending.management.page') }}" class="btn btn-outline-secondary" id="status_delivered">Pending delivery</a>
+                                        <a href="{{ route('admin.pending.management.page') }}" class="btn btn-outline-primary" id="status_delivered">Pending delivery</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.delivery.status.page') }}" class="btn btn-secondary" id="status_return">Delivery Status</a>
+                                        <a href="{{ route('admin.delivery.status.page') }}" class="btn btn-primary" id="status_return">Delivery Status</a>
                                     </div>
                                 </div>
 
@@ -133,12 +133,12 @@
                                     <table class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
-                                                <th style="width: 10%; color: #593bdb;">Details</th>
-                                                <th style="width: 15%; color: #593bdb;">Transaction Date</th>
-                                                <th style="width: 20%; color: #593bdb;">Delivered By</th>
-                                                <th style="width: 20%; color: #593bdb;">Upload image</th>
-                                                <th style="width: 20%; color: #593bdb;">Add notes</th>
-                                                <th style="width: 20%; color: #593bdb;">Actions</th>
+                                                <th style="width: 10%; color: #D96F32;">Details</th>
+                                                <th style="width: 15%; color: #D96F32;">Transaction Date</th>
+                                                <th style="width: 20%; color: #D96F32;">Delivered By</th>
+                                                <th style="width: 20%; color: #D96F32;">Upload image</th>
+                                                <th style="width: 20%; color: #D96F32;">Add notes</th>
+                                                <th style="width: 20%; color: #D96F32;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>

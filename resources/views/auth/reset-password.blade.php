@@ -32,12 +32,12 @@
                                 
                                     
                                         <div class="form-group">
-                                            <label style="color: blueviolet;"><strong>New Password:</strong></label>
+                                            <label style="color: #D96F32;"><strong>New Password:</strong></label>
                                             <input type="password" name="password" class="form-control" required />
                                         </div>
                                     
                                         <div class="form-group">
-                                            <label style="color: blueviolet;"><strong>Confirm Password:</strong></label>
+                                            <label style="color: #D96F32;"><strong>Confirm Password:</strong></label>
                                             <input type="password" name="password_confirmation" class="form-control" required />
                                         </div>
                                     

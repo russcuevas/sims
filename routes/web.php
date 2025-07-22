@@ -36,8 +36,6 @@ Route::get('/', [AuthController::class, 'LoginPage'])->name('login.page');
 Route::get('/login', [AuthController::class, 'LoginPage'])->name('login.page');
 Route::post('/login_request', [AuthController::class, 'LoginRequest'])->name('login.request');
 Route::get('/change_password', [AuthController::class, 'ChangePasswordPage'])->name('change.password.page');
-
-
 Route::post('/change_password/request', [AuthController::class, 'ChangePasswordRequest'])->name('change.password.request');
 Route::get('/reset-password/{token}', function ($token) {
     $record = DB::table('change_passwords')->where('link', $token)->first();
@@ -150,5 +148,6 @@ Route::get('/admin/archive/delivery', [ArchiveController::class, 'AdminArchiveDe
 Route::post('/admin/delivery/restore/{transact_id}', [ArchiveController::class, 'AdminRestoreDelivery'])->name('admin.delivery.restore');
 Route::get('/admin/archive/sales', [ArchiveController::class, 'AdminArchiveSalesPage'])->name('admin.archive.sales.page');
 Route::post('/admin/archive/sales/restore/{id}', [ArchiveController::class, 'AdminRestoreSales'])->name('admin.sales.restore');
+
 
 // DELIVERY ROUTES

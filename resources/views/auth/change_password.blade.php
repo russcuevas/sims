@@ -30,7 +30,7 @@
                                     <form method="POST" action="{{ route('change.password.request') }}">
                                         @csrf
                                         <div class="form-group">
-                                            <label style="color: blueviolet;"><strong>Enter registered email</strong></label>
+                                            <label style="color: #D96F32;"><strong>Enter registered email</strong></label>
                                             <input type="email" name="email" class="form-control" required>
                                         </div>
                                         <div class="text-center">

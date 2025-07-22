@@ -66,7 +66,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Stock Management</li>
                         </ol>
                     </div>
@@ -78,7 +78,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4 class="card-title m-0" style="font-size: 20px; color: blueviolet;">
+                                <h4 class="card-title m-0" style="font-size: 20px; color: #D96F32;">
                                     Stock Management
                                 </h4>
 
@@ -176,7 +176,7 @@
                                         
                                             {{-- Sort Dropdown --}}
                                             <div class="dropdown">
-                                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                                     Sort
                                                     @if(request('sort_by'))
                                                         : {{ ucfirst(str_replace('_', ' ', request('sort_by'))) }} {{ strtoupper(request('sort_dir', 'desc')) }}
@@ -212,12 +212,12 @@
                                     <table class="table table-bordered table-responsive-sm">
                                         <thead>
                                             <tr>
-                                                <th style="color: #593bdb;">Date</th>
-                                                <th style="color: #593bdb;">Quantity</th>
-                                                <th style="color: #593bdb;">Product</th>
-                                                <th style="color: #593bdb;">Unit</th>
-                                                <th style="color: #593bdb;">Category</th>
-                                                <th style="color: #593bdb;">Action</th>
+                                                <th style="color: #D96F32;">Date</th>
+                                                <th style="color: #D96F32;">Quantity</th>
+                                                <th style="color: #D96F32;">Product</th>
+                                                <th style="color: #D96F32;">Unit</th>
+                                                <th style="color: #D96F32;">Category</th>
+                                                <th style="color: #D96F32;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -225,7 +225,7 @@
                                                 <tr>
                                                     <td style="color: black;">{{ \Carbon\Carbon::parse($product->created_at)->format('m/d/Y') }}</td>
                                                     <td>
-                                                        <input style="border-color: #593bdb; background-color: gray; color: white;" type="number" 
+                                                        <input style="border-color: #D96F32; background-color: gray; color: white;" type="number" 
                                                             class="form-control input-rounded"
                                                             value="{{ $product->quantity ?? '' }}" readonly>
                                                     </td>

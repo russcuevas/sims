@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Delivery Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: blueviolet;">
+                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
                                     Activity Logs
                                 </h4>
                             </div>                     
@@ -90,10 +90,10 @@
                                         <table id="example">
                                         <thead>
                                             <tr>
-                                                <th style="color: #593bdb;">#</th>
-                                                <th style="color: #593bdb;">Action</th>
-                                                <th style="color: #593bdb;">Logs</th>
-                                                <th style="color: #593bdb;">Timestamp</th>
+                                                <th style="color: #D96F32;">#</th>
+                                                <th style="color: #D96F32;">Action</th>
+                                                <th style="color: #D96F32;">Logs</th>
+                                                <th style="color: #D96F32;">Timestamp</th>
                                             </tr>
                                         </thead>
                                             <tbody>
@@ -101,7 +101,7 @@
                                                 <tr>
                                                     <td style="color: black">{{ $index + 1 }}</td>
                                                     <td style="color: black">{{ ucfirst($log->action) }}</td>
-                                                    <td style="color: black"><strong style="color: #593bdb">{{ $log->employee_name ?? 'Unknown User' }}</strong> – {{ $log->description }}</td>
+                                                    <td style="color: black"><strong style="color: #D96F32">{{ $log->employee_name ?? 'Unknown User' }}</strong> – {{ $log->description }}</td>
                                                     <td style="color: black">{{ \Carbon\Carbon::parse($log->created_at)->format('F j, Y / h:i A') }}</td>
                                                 </tr>
                                                 @endforeach

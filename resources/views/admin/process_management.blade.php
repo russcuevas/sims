@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Process Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: blueviolet;">
+                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
                                     Process Management
                                 </h4>
                             </div>
@@ -105,11 +105,11 @@
                                             <table class="table table-bordered table-responsive-sm">
                                                 <thead>
                                                     <tr>
-                                                        <th style="color: #593bdb;">Current Quantity</th>
-                                                        <th style="color: #593bdb;">Quantity</th>
-                                                        <th style="color: #593bdb;">Product</th>
-                                                        <th style="color: #593bdb;">Unit</th>
-                                                        <th style="color: #593bdb;">Action</th>
+                                                        <th style="color: #D96F32;">Current Quantity</th>
+                                                        <th style="color: #D96F32;">Quantity</th>
+                                                        <th style="color: #D96F32;">Product</th>
+                                                        <th style="color: #D96F32;">Unit</th>
+                                                        <th style="color: #D96F32;">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -118,7 +118,7 @@
                                                             <td style="color: black;">{{ $product->quantity }}</td>
                                         
                                                             <td>
-                                                                <input style="border-color: #593bdb;" type="number" class="form-control input-rounded"
+                                                                <input style="border-color: #D96F32;" type="number" class="form-control input-rounded"
                                                                     name="quantities[{{ $product->id }}]" value="1" min="1">
                                                             </td>
                                                             
@@ -156,13 +156,13 @@
 
                                         <div class="col-md-3">
                                             <label for="process_date" class="form-label"
-                                                style="color: #593bdb;">Process Date</label>
+                                                style="color: #D96F32;">Process Date</label>
                                             <input type="date" id="process_date" name="process_date"
                                                 class="form-control">
                                         </div>
 
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #593bdb;" for="process_by" class="form-label">Process
+                                            <label style="color: #D96F32;" for="process_by" class="form-label">Process
                                                 by</label>
                                             <input type="text" id="process_by" name="process_by" class="form-control"
                                             value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
@@ -302,12 +302,12 @@
                                         <table class="table table-bordered table-responsive-sm">
                                             <thead>
                                                 <tr>
-                                                    <th style="color: #593bdb;">Quantity</th>
-                                                    <th style="color: #593bdb;">Product</th>
-                                                    <th style="color: #593bdb;">Unit</th>
-                                                    <th style="color: #593bdb;">Price</th>
-                                                    <th style="color: #593bdb;">Amount</th>
-                                                    <th style="color: #593bdb;">Action</th>
+                                                    <th style="color: #D96F32;">Quantity</th>
+                                                    <th style="color: #D96F32;">Product</th>
+                                                    <th style="color: #D96F32;">Unit</th>
+                                                    <th style="color: #D96F32;">Price</th>
+                                                    <th style="color: #D96F32;">Amount</th>
+                                                    <th style="color: #D96F32;">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -325,7 +325,7 @@
                                                                 value="{{ $product->quantity }}"
                                                                 class="form-control input-rounded quantity-input"
                                                                 data-id="{{ $product->id }}"
-                                                                style="border-color: #593bdb;" min="1" required>
+                                                                style="border-color: #D96F32;" min="1" required>
                                                         </td>
                                                         <td style="color: black;">{{ $product->product_name }}</td>
                                                         <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
@@ -335,7 +335,7 @@
                                                                 value="{{ $product->product_price }}"
                                                                 class="form-control input-rounded price-input"
                                                                 data-id="{{ $product->id }}"
-                                                                style="border-color: #593bdb;" min="0" required>
+                                                                style="border-color: #D96F32;" min="0" required>
                                                         </td>
                                                         <td style="color: black;">
                                                             <span id="amount-{{ $product->id }}">₱{{ number_format($amount, 2) }}</span>
@@ -356,7 +356,7 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan="4" class="text-end fw-bold" style="color: blueviolet;"></td>
+                                                    <td colspan="4" class="text-end fw-bold" style="color: #D96F32;"></td>
                                                     <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
                                                         <span style="color: red;">Total Amount: ₱{{ number_format($totalAmount, 2) }}</span>
                                                     </td>
@@ -387,7 +387,7 @@
                                         <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto" placeholder="Search product here">
                                         <button type="submit" class="btn btn-primary mr-2">Search</button>
                                     
-                                        <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
+                                        <select name="process_by" class="btn btn-outline-primary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Filter by Processor</option>
                                             @foreach($processors as $processor)
                                                 <option value="{{ $processor }}" {{ request('process_by') == $processor ? 'selected' : '' }}>
@@ -396,7 +396,7 @@
                                             @endforeach
                                         </select>
                                     
-                                        <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
+                                        <select name="sort" class="btn btn-outline-primary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Sort by Date</option>
                                             <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
                                             <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
@@ -411,10 +411,10 @@
                                     <table class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
-                                                <th style="width: 10%; color: #593bdb;">Details</th>
-                                                <th style="width: 15%; color: #593bdb;">Process Date</th>
-                                                <th style="width: 20%; color: #593bdb;">Processed By</th>
-                                                <th style="width: 20%; color: #593bdb;">Actions</th>
+                                                <th style="width: 10%; color: #D96F32;">Details</th>
+                                                <th style="width: 15%; color: #D96F32;">Process Date</th>
+                                                <th style="width: 20%; color: #D96F32;">Processed By</th>
+                                                <th style="width: 20%; color: #D96F32;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -466,11 +466,11 @@
 
                                                                     <div class="mt-4">
                                                                         <div class="row fw-bold border-bottom pb-2">
-                                                                            <div class="col-2" style="color: #593bdb; font-weight:900">Qty</div>
-                                                                            <div class="col-4" style="color: #593bdb; font-weight:900">Product</div>
-                                                                            <div class="col-2" style="color: #593bdb; font-weight:900">Unit</div>
-                                                                            <div class="col-2 text-end" style="color: #593bdb; font-weight:900">Price</div>
-                                                                            <div class="col-2 text-end" style="color: #593bdb; font-weight:900">Amount</div>
+                                                                            <div class="col-2" style="color: #D96F32; font-weight:900">Qty</div>
+                                                                            <div class="col-4" style="color: #D96F32; font-weight:900">Product</div>
+                                                                            <div class="col-2" style="color: #D96F32; font-weight:900">Unit</div>
+                                                                            <div class="col-2 text-end" style="color: #D96F32; font-weight:900">Price</div>
+                                                                            <div class="col-2 text-end" style="color: #D96F32; font-weight:900">Amount</div>
                                                                         </div>
 
                                                                         @foreach ($records as $item)

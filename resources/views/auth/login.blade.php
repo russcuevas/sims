@@ -30,11 +30,11 @@
                                     <form action="{{ route('login.request') }}" method="POST">
                                         @csrf
                                         <div class="form-group">
-                                            <label style="color: blueviolet;"><strong>Username</strong></label>
+                                            <label style="color: #D96F32;"><strong>Username</strong></label>
                                             <input type="text" name="username" class="form-control" required>
                                         </div>
                                         <div class="form-group">
-                                            <label style="color: blueviolet;"><strong>Password</strong></label>
+                                            <label style="color: #D96F32;"><strong>Password</strong></label>
                                             <input type="password" name="password" class="form-control" required>
                                         </div>
                                         <div class="text-center">
