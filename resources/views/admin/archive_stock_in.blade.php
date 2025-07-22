@@ -97,13 +97,13 @@
                                         <a href="{{ route('admin.archive.stock.in.page') }}" class="btn btn-secondary">Stock In History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-secondary">Process History</a>
+                                        <a href="{{ route('admin.archive.process.page') }}" class="btn btn-outline-secondary">Process History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-secondary">Delivery History</a>
+                                        <a href="{{ route('admin.archive.delivery.page') }}" class="btn btn-outline-secondary">Delivery History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-secondary">Sales Reports</a>
+                                        <a href="{{ route('admin.archive.sales.page') }}" class="btn btn-outline-secondary">Sales Reports</a>
                                     </div>
                                 </div>
                             </div>
@@ -135,10 +135,10 @@
                                                         <a href="#" data-toggle="modal" data-target="#viewRawHistory{{ $transactId }}" class="btn btn-outline-primary btn-sm">View</a>
                                                     </td>
                                                     <td style="color: black">
-                                                        {{ \Carbon\Carbon::parse($first->created_at)->toDateString() }}"
+                                                        {{ \Carbon\Carbon::parse($first->created_at)->toDateString() }}
                                                     </td>
                                                     <td style="color: black">
-                                                        {{ \Carbon\Carbon::parse($first->received_date)->toDateString() }}"
+                                                        {{ \Carbon\Carbon::parse($first->received_date)->toDateString() }}
                                                     </td>
                                                     <td style="color: black">
                                                         {{ $first->process_by }}

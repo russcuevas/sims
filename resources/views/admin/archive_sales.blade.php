@@ -91,7 +91,7 @@
                                         <a href="{{ route('admin.archive.page') }}" class="btn btn-outline-secondary">Users</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.stocks.page') }}" class="btn btn-secondary">Stocks</a>
+                                        <a href="{{ route('admin.archive.stocks.page') }}" class="btn btn-outline-secondary">Stocks</a>
                                     </div>
                                     <div class="col-auto px-1">
                                         <a href="{{ route('admin.archive.stock.in.page') }}" class="btn btn-outline-secondary">Stock In History</a>
@@ -103,7 +103,7 @@
                                         <a href="{{ route('admin.archive.delivery.page') }}" class="btn btn-outline-secondary">Delivery History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.sales.page') }}" class="btn btn-outline-secondary">Sales Reports</a>
+                                        <a href="{{ route('admin.archive.sales.page') }}" class="btn btn-secondary">Sales Reports</a>
                                     </div>
                                 </div>
                             </div>
@@ -115,36 +115,39 @@
                                         <table id="example">
                                         <thead>
                                             <tr>
-                                                <th style="color: #593bdb;">Date</th>
-                                                <th style="color: #593bdb;">Quantity</th>
-                                                <th style="color: #593bdb;">Product</th>
-                                                <th style="color: #593bdb;">Unit</th>
-                                                <th style="color: #593bdb;">Category</th>
+                                                <th style="color: #593bdb;">Transaction date</th>
+                                                <th style="color: #593bdb;">Process by</th>
+                                                <th style="color: #593bdb;">Transaction type</th>
+                                                <th style="color: #593bdb;">Transaction ID</th>
+                                                <th style="color: #593bdb;">Debit</th>
+                                                <th style="color: #593bdb;">Credit</th>
+                                                <th style="color: #593bdb;">Balances</th>
                                                 <th style="color: #593bdb;">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                        @forelse($archivedStocks as $stock)
-                                            <tr>
-                                                <td style="color: black;">{{ \Carbon\Carbon::parse($stock->created_at)->format('Y-m-d') }}</td>
-                                                <td style="color: black;">{{ $stock->quantity }}</td>
-                                                <td style="color: black;">{{ $stock->product_name }}</td>
-                                                <td style="color: black;">{{ $stock->stock_unit_id }}</td>
-                                                <td style="color: black; text-transform: capitalize"> {{ $stock->category }}</td>
-                                                <td>
-                                                    <form action="{{ route('admin.stocks.restore', $stock->id) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-outline-success btn-sm">Restore</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="6" class="text-center text-muted">No archived stock items found.</td>
-                                            </tr>
-                                        @endforelse
-                                        </tbody>
-
+                                            <tbody>
+                                                @forelse ($transactions as $transaction)
+                                                    <tr>
+                                                        <td style="color: black;">{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y') }}</td>
+                                                        <td style="color: black;">{{ $transaction->process_by }}</td>
+                                                        <td style="color: black;">{{ ucfirst($transaction->transaction_type) }}</td>
+                                                        <td style="color: black;">{{ $transaction->transaction_id }}</td>
+                                                        <td style="color: black;">₱{{ number_format($transaction->debit, 2) }}</td>
+                                                        <td style="color: black;">₱{{ number_format($transaction->credit, 2) }}</td>
+                                                        <td style="color: black;">₱{{ number_format($transaction->balances, 2) }}</td>
+                                                        <td>
+                                                            <form method="POST" action="{{ route('admin.sales.restore', $transaction->id) }}">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-outline-success btn-sm">Restore</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="8" class="text-center text-muted">No archived transactions found.</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
                                         </table>                                    
                                     </div>
                                 </div>

@@ -143,6 +143,11 @@ Route::get('/admin/archive/stocks', [ArchiveController::class, 'AdminArchiveStoc
 Route::post('/admin/stocks/restore/{id}', [ArchiveController::class, 'AdminRestoreStocks'])->name('admin.stocks.restore');
 Route::get('/admin/archive/stock_in', [ArchiveController::class, 'AdminArchiveStockInPage'])->name('admin.archive.stock.in.page');
 Route::post('/admin/stockin/restore/{transact_id}', [ArchiveController::class, 'AdminRestoreStockIn'])->name('admin.stockin.restore');
-
+Route::get('/admin/archive/process', [ArchiveController::class, 'AdminArchiveProcessPage'])->name('admin.archive.process.page');
+Route::post('/admin/process/restore/{transact_id}', [ArchiveController::class, 'AdminRestoreProcess'])->name('admin.process.restore');
+Route::get('/admin/archive/delivery', [ArchiveController::class, 'AdminArchiveDeliveryPage'])->name('admin.archive.delivery.page');
+Route::post('/admin/delivery/restore/{transact_id}', [ArchiveController::class, 'AdminRestoreDelivery'])->name('admin.delivery.restore');
+Route::get('/admin/archive/sales', [ArchiveController::class, 'AdminArchiveSalesPage'])->name('admin.archive.sales.page');
+Route::post('/admin/archive/sales/restore/{id}', [ArchiveController::class, 'AdminRestoreSales'])->name('admin.sales.restore');
 
 // DELIVERY ROUTES

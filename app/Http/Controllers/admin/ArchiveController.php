@@ -133,4 +133,113 @@ class ArchiveController extends Controller
 
         return redirect()->back()->with('success', 'Stock-in record restored successfully.');
     }
+    public function AdminArchiveProcessPage()
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
+        }
+
+        $user = Auth::guard('employees')->user();
+        $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
+
+        $lowFinishedProducts = DB::table('product_details')
+            ->where('category', 'finish product')
+            ->where('quantity', '<', 1000)
+            ->where('is_archived', 0)
+            ->get();
+
+        $archivedHistory = DB::table('history_finish_products')
+            ->where('is_archived', 1)
+            ->orderBy('process_date', 'desc')
+            ->get()
+            ->groupBy('transact_id');
+
+        return view('admin.archive_process', compact(
+            'role',
+            'user',
+            'lowFinishedProducts',
+            'archivedHistory'
+        ));
+    }
+
+    public function AdminRestoreProcess($transact_id)
+    {
+        DB::table('history_finish_products')
+            ->where('transact_id', $transact_id)
+            ->update(['is_archived' => 0]);
+
+        return redirect()->back()->with('success', 'Process history restored successfully.');
+    }
+
+    public function AdminArchiveDeliveryPage()
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
+        }
+
+        $user = Auth::guard('employees')->user();
+        $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
+
+        $deliveryOrders = DB::table('delivery_orders')
+            ->where('is_archived', 1)
+            ->orderBy('transaction_date', 'desc')
+            ->get()
+            ->groupBy('transact_id');
+
+        $lowFinishedProducts = DB::table('product_details')
+            ->where('category', 'finish product')
+            ->where('quantity', '<', 1000)
+            ->where('is_archived', 0)
+            ->get();
+
+        return view('admin.archive_delivery', compact(
+            'role',
+            'user',
+            'lowFinishedProducts',
+            'deliveryOrders'
+        ));
+    }
+
+    public function AdminRestoreDelivery($transact_id)
+    {
+        DB::table('delivery_orders')
+            ->where('transact_id', $transact_id)
+            ->update(['is_archived' => 0]);
+
+        return redirect()->back()->with('success', 'Delivery order restored successfully.');
+    }
+
+    public function AdminArchiveSalesPage()
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
+        }
+
+        $user = Auth::guard('employees')->user();
+        $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
+
+        $lowFinishedProducts = DB::table('product_details')
+            ->where('category', 'finish product')
+            ->where('quantity', '<', 1000)
+            ->where('is_archived', 0)
+            ->get();
+
+        $transactions = DB::table('transactions')
+            ->where('is_archived', 1)
+            ->orderBy('transaction_date', 'desc')
+            ->get();
+
+        return view('admin.archive_sales', compact(
+            'role',
+            'user',
+            'lowFinishedProducts',
+            'transactions',
+        ));
+    }
+
+    public function AdminRestoreSales($id)
+    {
+        DB::table('transactions')->where('id', $id)->update(['is_archived' => 0]);
+        return redirect()->back()->with('success', 'Sales transaction restored successfully.');
+    }
 }

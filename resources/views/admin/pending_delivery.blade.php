@@ -89,25 +89,25 @@
                             <div class="container my-4">
                                 <!-- Search bar and actions -->
                                 <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
-<form method="GET" action="" class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="filterSortForm">
-    <input type="text" name="search" value="{{ old('search', $search ?? '') }}" class="form-control w-auto" placeholder="Search product here">
-    <button type="submit" class="btn btn-primary mr-2">Search</button>
+                                <form method="GET" action="" class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="filterSortForm">
+                                    <input type="text" name="search" value="{{ old('search', $search ?? '') }}" class="form-control w-auto" placeholder="Search product here">
+                                    <button type="submit" class="btn btn-primary mr-2">Search</button>
 
-    <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
-        <option value="">Filter by Processor</option>
-        @foreach ($processors as $processor)
-            <option value="{{ $processor->id }}" {{ (isset($processBy) && $processBy == $processor->id) ? 'selected' : '' }}>
-                {{ $processor->full_name }}
-            </option>
-        @endforeach
-    </select>
+                                    <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
+                                        <option value="">Filter by Processor</option>
+                                        @foreach ($processors as $processor)
+                                            <option value="{{ $processor->id }}" {{ (isset($processBy) && $processBy == $processor->id) ? 'selected' : '' }}>
+                                                {{ $processor->full_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
 
-    <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
-        <option value="">Sort by Date</option>
-        <option value="newest" {{ (isset($sort) && $sort == 'newest') ? 'selected' : '' }}>Newest First</option>
-        <option value="oldest" {{ (isset($sort) && $sort == 'oldest') ? 'selected' : '' }}>Oldest First</option>
-    </select>
-</form>
+                                    <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
+                                        <option value="">Sort by Date</option>
+                                        <option value="newest" {{ (isset($sort) && $sort == 'newest') ? 'selected' : '' }}>Newest First</option>
+                                        <option value="oldest" {{ (isset($sort) && $sort == 'oldest') ? 'selected' : '' }}>Oldest First</option>
+                                    </select>
+                                </form>
 
                                 </div>
 

@@ -97,13 +97,13 @@
                                         <a href="{{ route('admin.archive.stock.in.page') }}" class="btn btn-outline-secondary">Stock In History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-secondary">Process History</a>
+                                        <a href="{{ route('admin.archive.process.page') }}" class="btn btn-outline-secondary">Process History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-secondary">Delivery History</a>
+                                        <a href="{{ route('admin.archive.delivery.page') }}" class="btn btn-outline-secondary">Delivery History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-secondary">Sales Reports</a>
+                                        <a href="{{ route('admin.archive.sales.page') }}" class="btn btn-outline-secondary">Sales Reports</a>
                                     </div>
                                 </div>
                             </div>
