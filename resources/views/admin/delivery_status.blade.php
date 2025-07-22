@@ -87,20 +87,27 @@
                             
 
                             <div class="container my-4">
-                                <!-- Search bar and actions -->
                                 <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
                                     <form method="GET" action="" class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="filterSortForm">
-                                        <input type="text" name="search" value="" class="form-control w-auto" placeholder="Search product here">
+                                        <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto" placeholder="Search product here">
                                         <button type="submit" class="btn btn-primary mr-2">Search</button>
+
                                         <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Filter by Processor</option>
+                                            @foreach ($employees as $emp)
+                                                <option value="{{ $emp->id }}" {{ request('process_by') == $emp->id ? 'selected' : '' }}>
+                                                    {{ $emp->employee_firstname }} {{ $emp->employee_lastname }}
+                                                </option>
+                                            @endforeach
                                         </select>
+
                                         <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Sort by Date</option>
-                                            <option value="newest">Newest First</option>
-                                            <option value="oldest">Oldest First</option>
+                                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
                                         </select>
                                     </form>
+
                                 </div>
 
                                 <!-- Status Buttons aligned to the right -->

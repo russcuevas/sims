@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReturnItemController extends Controller
 {
-    public function AdminReturnItemPage()
+    public function AdminReturnItemPage(Request $request)
     {
         if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
             return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
@@ -41,21 +41,35 @@ class ReturnItemController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-
-        $historyReturns = DB::table('history_return_items')
-            ->leftJoin('products', 'history_return_items.product', '=', 'products.id')
+        $query = DB::table('history_return_items')
             ->leftJoin('employees', 'history_return_items.picked_up_by', '=', 'employees.id')
             ->select(
                 'history_return_items.*',
-                'products.product_name',
                 'employees.employee_firstname',
                 'employees.employee_lastname'
-            )
-            ->orderBy('history_return_items.transaction_date', 'desc')
-            ->get()
-            ->groupBy('transact_id');
+            );
 
 
+        if ($request->has('search') && $request->search != '') {
+            $query->where('history_return_items.product', 'like', '%' . $request->search . '%');
+        }
+
+
+        if ($request->has('process_by') && $request->process_by != '') {
+            $query->where('history_return_items.process_by', $request->process_by);
+        }
+
+        if ($request->has('sort')) {
+            if ($request->sort == 'newest') {
+                $query->orderBy('history_return_items.transaction_date', 'desc');
+            } elseif ($request->sort == 'oldest') {
+                $query->orderBy('history_return_items.transaction_date', 'asc');
+            }
+        } else {
+            $query->orderBy('history_return_items.transaction_date', 'desc');
+        }
+
+        $historyReturns = $query->get()->groupBy('transact_id');
 
         return view('admin.return_item', compact(
             'role',
@@ -68,6 +82,7 @@ class ReturnItemController extends Controller
             'historyReturns'
         ));
     }
+
 
     public function AdminBatchReturnProductSubmit(Request $request)
     {

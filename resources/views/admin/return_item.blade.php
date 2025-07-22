@@ -197,7 +197,9 @@
                                                     <input type="hidden" name="amount[]" value="">
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('admin.batch-return-item.delete', $item->id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Remove</a>
+                                                    <a href="{{ route('admin.batch-return-item.delete', $item->id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">
+                                                                <i class="fa fa-close"></i> Remove
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @empty
@@ -228,23 +230,28 @@
                                 <!-- Search bar and actions -->
                                 <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
                                     <form method="GET" action="" class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="filterSortForm">
-
-                                        <input type="text" name="search" value="" class="form-control w-auto" placeholder="Search product here">
+                                        <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto" placeholder="Search product here">
                                         <button type="submit" class="btn btn-primary mr-2">Search</button>
-                                    
+
                                         <select name="process_by" class="btn btn-outline-secondary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Filter by Processor</option>
+                                            @foreach ($allEmployees as $employee)
+                                                @php
+                                                    $fullName = $employee->employee_firstname . ' ' . $employee->employee_lastname;
+                                                @endphp
+                                                <option value="{{ $fullName }}" {{ request('process_by') == $fullName ? 'selected' : '' }}>
+                                                    {{ $fullName }}
+                                                </option>
+                                            @endforeach
                                         </select>
-                                    
+
                                         <select name="sort" class="btn btn-outline-secondary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
                                             <option value="">Sort by Date</option>
-                                            <option value="newest">Newest First</option>
-                                            <option value="oldest">Oldest First</option>
+                                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
                                         </select>
-                                    
                                     </form>
-                                    
-                                    
+
                                 </div>
 
                                 <div class="table-responsive">
@@ -315,7 +322,7 @@
                                                                         @foreach($group as $item)
                                                                             <div class="row py-2 border-bottom">
                                                                                 <div class="col-2" style="color: black;">{{ $item->quantity }}</div>
-                                                                                <div class="col-4" style="color: black;">{{ $item->product_name }}</div>
+                                                                                <div class="col-4" style="color: black;">{{ $item->product }}</div>
                                                                                 <div class="col-2" style="color: black;">{{ $item->unit }}</div>
                                                                                 <div class="col-2 text-end" style="color: black;">₱{{ number_format($item->price, 2) }}</div>
                                                                                 <div class="col-2 text-end" style="color: black;">₱{{ number_format($item->amount, 2) }}</div>
