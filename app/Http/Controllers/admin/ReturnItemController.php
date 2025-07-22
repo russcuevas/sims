@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductDetail;
@@ -157,6 +158,13 @@ class ReturnItemController extends Controller
                 'updated_at' => now(),
             ]);
         }
+
+        ActivityLogger::log(
+            $user->id,
+            'added',
+            'return_items',
+            "Submitted return items transaction {$transactId}"
+        );
 
         // Clear batch
         DB::table('batch_return_item_products')->truncate();

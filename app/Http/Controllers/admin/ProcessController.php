@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use App\Models\BatchProductMultipleUnits;
@@ -305,6 +306,13 @@ class ProcessController extends Controller
 
         DB::table('batch_finish_products')->where('employee_id', $employee->id)->delete();
         DB::table('batch_fetch_raw_products')->where('employee_id', $employee->id)->delete();
+
+        ActivityLogger::log(
+            $employee->id,
+            'created',
+            'finish_products',
+            "Processed finished product submission with transaction ID: {$transactId}"
+        );
 
         return redirect()->route('admin.process.management.page')->with('success', 'Finished products submitted successfully');
     }

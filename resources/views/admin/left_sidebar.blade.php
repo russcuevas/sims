@@ -36,7 +36,7 @@
                         class="nav-text">Sales
                         Report</span></a>
             </li>
-            <li><a href="logs.html" aria-expanded="false"><i class="fa-solid fa-receipt"></i><span
+            <li><a href="{{ route('admin.logs.page') }}" aria-expanded="false"><i class="fa-solid fa-receipt"></i><span
                         class="nav-text">Logs
                     </span></a>
             </li>

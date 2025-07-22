@@ -4,6 +4,7 @@ use App\Http\Controllers\admin\ArchiveController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\DeliveryController;
 use App\Http\Controllers\admin\DeliveryStatusController;
+use App\Http\Controllers\admin\LogsController;
 use App\Http\Controllers\admin\PendingDeliveryController;
 use App\Http\Controllers\admin\ProcessController;
 use App\Http\Controllers\admin\ReturnItemController;
@@ -134,7 +135,7 @@ Route::post('/admin/sales/report/archive/{id}', [SalesReportController::class, '
     ->name('admin.transaction.archive');
 
 // ADMIN LOGS MANAGEMENT
-
+Route::get('/admin/logs', [LogsController::class, 'AdminLogsPage'])->name('admin.logs.page');
 
 // ADMIN ARCHIVE MANAGEMENT
 Route::get('/admin/archive', [ArchiveController::class, 'AdminArchivePage'])->name('admin.archive.page');

@@ -68,7 +68,7 @@
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Archive Management</li>
+                            <li class="breadcrumb-item active">Delivery Management</li>
                         </ol>
                     </div>
                 </div>
@@ -80,34 +80,9 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title" style="font-size: 20px; color: blueviolet;">
-                                    Archive Management
+                                    Activity Logs
                                 </h4>
-                            </div>
-
-                            <div class="container my-4">
-                                <!-- Status Buttons aligned to the right -->
-                                <div class="row mb-3 justify-content-center">
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.page') }}" class="btn btn-outline-secondary">Users</a>
-                                    </div>
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.stocks.page') }}" class="btn btn-outline-secondary">Stocks</a>
-                                    </div>
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.stock.in.page') }}" class="btn btn-outline-secondary">Stock In History</a>
-                                    </div>
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.process.page') }}" class="btn btn-outline-secondary">Process History</a>
-                                    </div>
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.delivery.page') }}" class="btn btn-secondary">Delivery History</a>
-                                    </div>
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.sales.page') }}" class="btn btn-outline-secondary">Sales Reports</a>
-                                    </div>
-                                </div>
-                            </div>
-                        
+                            </div>                     
 
                             <div class="card-body">
                                 <div class="container my-4">
@@ -115,37 +90,22 @@
                                         <table id="example">
                                         <thead>
                                             <tr>
-                                                <th style="width: 10%; color: #593bdb;">Details</th>
-                                                <th style="width: 15%; color: #593bdb;">Transaction Date</th>
-                                                <th style="width: 20%; color: #593bdb;">Processed By</th>
-                                                <th style="width: 20%; color: #593bdb;">Actions</th>
+                                                <th style="color: #593bdb;">#</th>
+                                                <th style="color: #593bdb;">Action</th>
+                                                <th style="color: #593bdb;">Logs</th>
+                                                <th style="color: #593bdb;">Timestamp</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            @forelse($deliveryOrders as $transactId => $orders)
-                                                @php $first = $orders->first(); @endphp
+                                            <tbody>
+                                                @foreach($logs as $index => $log)
                                                 <tr>
-                                                    <td>
-                                                        <a target="_blank" href="{{ route('admin.delivery.view', $transactId) }}" class="btn btn-outline-primary btn-sm">View</a>
-                                                    </td>
-                                                    <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
-                                                    <td style="color: black">{{ $first->process_by }}</td>
-                                                    <td>
-                                                        <form method="POST" action="{{ route('admin.delivery.restore', $transactId) }}">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-outline-success btn-sm">Restore</button>
-                                                        </form>
-                                                    </td>
+                                                    <td style="color: black">{{ $index + 1 }}</td>
+                                                    <td style="color: black">{{ ucfirst($log->action) }}</td>
+                                                    <td style="color: black"><strong style="color: #593bdb">{{ $log->employee_name ?? 'Unknown User' }}</strong> – {{ $log->description }}</td>
+                                                    <td style="color: black">{{ \Carbon\Carbon::parse($log->created_at)->format('F j, Y / h:i A') }}</td>
                                                 </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="4" class="text-center text-muted">
-                                                        No archived delivery orders
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-
+                                                @endforeach
+                                            </tbody>
                                         </table>                                    
                                     </div>
                                 </div>

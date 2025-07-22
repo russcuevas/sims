@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -322,6 +323,13 @@ class StockInController extends Controller
         DB::table('history_raw_materials')->insert($historyData);
         DB::table('product_details')->insert($productDetailsData);
         DB::table('batch_product_details')->where('employee_id', $employee->id)->delete();
+
+        ActivityLogger::log(
+            $employee->id,
+            'created',
+            'raw_materials',
+            "Processed raw materials with transaction ID: {$transactId}"
+        );
 
         return redirect()->route('admin.stock.in.page')->with('success', 'Raw stocks saved successfully!');
     }

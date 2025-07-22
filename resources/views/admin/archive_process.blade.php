@@ -68,7 +68,7 @@
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a style="color: blueviolet;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Delivery Management</li>
+                            <li class="breadcrumb-item active">Archive Management</li>
                         </ol>
                     </div>
                 </div>

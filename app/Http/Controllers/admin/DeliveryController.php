@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Models\BatchFetchFinishProducts;
 use Illuminate\Http\Request;
@@ -48,7 +49,7 @@ class DeliveryController extends Controller
             $query->orderBy('transaction_date', 'desc');
         }
 
-        $deliveryOrders = $query->get()->groupBy('transact_id');
+        $deliveryOrders = $query->where('status', 'pending')->get()->groupBy('transact_id');
 
         $processors = DB::table('delivery_orders')->select('process_by')->distinct()->pluck('process_by');
 
@@ -178,6 +179,7 @@ class DeliveryController extends Controller
             return redirect()->route('admin.delivery.management.page')->with('error', 'Product not found.');
         }
     }
+
     public function AdminDeliveryAdd(Request $request)
     {
         $validated = $request->validate([
@@ -265,6 +267,13 @@ class DeliveryController extends Controller
                 ->delete();
         }
 
+        ActivityLogger::log(
+            $user->id,
+            'created',
+            'delivery_orders',
+            "Created delivery order {$transactId} with " . count($deliveryOrders) . " product(s)"
+        );
+
 
         // Redirect with success message
         return redirect()->route('admin.delivery.management.page')
@@ -319,6 +328,13 @@ class DeliveryController extends Controller
             ->update(['is_archived' => 1]);
 
         if ($updated) {
+            ActivityLogger::log(
+                Auth::guard('employees')->user()->id,
+                'archived',
+                'delivery_orders',
+                "Archived delivery order {$transact_id}"
+            );
+
             return redirect()->back()->with('success', 'Delivery order archived successfully.');
         } else {
             return redirect()->back()->with('error', 'Failed to archive delivery order.');

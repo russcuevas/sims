@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -89,9 +90,8 @@ class PendingDeliveryController extends Controller
             $image = $request->file('upload_image');
             $imageName = $image->hashName();
             $image->storeAs('public/upload_images', $imageName);
-            $dataToUpdate['upload_image'] = $imageName;
+            $imagePath = $imageName;
         }
-
 
         if ($request->has('completed')) {
             $status = 'completed';
@@ -109,6 +109,14 @@ class PendingDeliveryController extends Controller
                 'upload_notes' => $request->upload_notes,
                 'updated_at' => now(),
             ]);
+
+        $user = Auth::guard('employees')->user();
+        ActivityLogger::log(
+            $user->id,
+            'updated',
+            'delivery_orders',
+            "Marked delivery {$transact_id} as {$status}"
+        );
 
         return redirect()->back()->with('success', "Delivery marked as {$status}.");
     }
