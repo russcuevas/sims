@@ -137,9 +137,6 @@
                                                 <th style="width: 10%; color: #A16D28;">Details</th>
                                                 <th style="width: 15%; color: #A16D28;">Transaction Date</th>
                                                 <th style="width: 20%; color: #A16D28;">Delivered By</th>
-                                                <th style="width: 20%; color: #A16D28;">Upload image</th>
-                                                <th style="width: 20%; color: #A16D28;">Add notes</th>
-                                                <th style="width: 20%; color: #A16D28;">Actions</th>
                                             </tr>
                                         </thead>
                                             <tbody>
@@ -153,7 +150,7 @@
                                                         </td>
                                                         <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
                                                         <td style="color: black">{{ $first->delivered_by_name ?? 'N/A' }}</td>
-                                                        <form id="form-{{ $transactId }}" method="POST" action="{{ route('admin.delivery.mark.status', $transactId) }}" enctype="multipart/form-data">
+                                                        {{-- <form id="form-{{ $transactId }}" method="POST" action="{{ route('admin.delivery.mark.status', $transactId) }}" enctype="multipart/form-data">
                                                             @csrf
                                                         <td>
                                                             <input type="file" name="upload_image" class="form-control form-control-sm">
@@ -167,7 +164,7 @@
                                                                 <button type="button" onclick="confirmReturn('{{ $transactId }}')" class="btn btn-outline-danger btn-sm">Returned</button>
                                                             </div>
                                                         </td>
-                                                        </form>
+                                                        </form> --}}
                                                     </tr>
                                                 @empty
                                                     <tr>
