@@ -314,16 +314,41 @@ class StockInController extends Controller
                 'quantity'       => $item->quantity,
                 'stock_unit_id'  => $item->stock_unit_id,
                 'category'       => 'raw materials',
+                'is_archived'    => 0,
                 'created_at'     => $now,
                 'updated_at'     => $now,
             ];
         }
 
-
+        // Insert history
         DB::table('history_raw_materials')->insert($historyData);
-        DB::table('product_details')->insert($productDetailsData);
+
+        // Merge with existing product_details if product_name + unit exists
+        foreach ($productDetailsData as $data) {
+            $existing = DB::table('product_details')
+                ->where('product_name', $data['product_name'])
+                ->where('stock_unit_id', $data['stock_unit_id'])
+                ->where('category', 'raw materials')
+                ->first();
+
+            if ($existing) {
+                // Update quantity
+                DB::table('product_details')
+                    ->where('id', $existing->id)
+                    ->update([
+                        'quantity'   => $existing->quantity + $data['quantity'],
+                        'updated_at' => $now,
+                    ]);
+            } else {
+                // Insert new product detail
+                DB::table('product_details')->insert($data);
+            }
+        }
+
+        // Clear the batch items
         DB::table('batch_product_details')->where('employee_id', $employee->id)->delete();
 
+        // Log the action
         ActivityLogger::log(
             $employee->id,
             'created',
@@ -333,6 +358,7 @@ class StockInController extends Controller
 
         return redirect()->route('admin.stock.in.page')->with('success', 'Raw stocks saved successfully!');
     }
+
 
     public function ArchiveRawStock($transactId)
     {

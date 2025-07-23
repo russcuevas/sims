@@ -301,9 +301,32 @@ class ProcessController extends Controller
             }
         }
 
+        // Save to history
         DB::table('history_finish_products')->insert($historyData);
-        DB::table('product_details')->insert($productDetailsData);
 
+        // Insert or update into product_details (category = finish product)
+        foreach ($productDetailsData as $data) {
+            $existing = DB::table('product_details')
+                ->where('product_name', $data['product_name'])
+                ->where('stock_unit_id', $data['stock_unit_id'])
+                ->where('category', 'finish product')
+                ->first();
+
+            if ($existing) {
+                // Add quantity to existing
+                DB::table('product_details')
+                    ->where('id', $existing->id)
+                    ->update([
+                        'quantity'   => $existing->quantity + $data['quantity'],
+                        'updated_at' => $now,
+                    ]);
+            } else {
+                // Insert as new finish product
+                DB::table('product_details')->insert($data);
+            }
+        }
+
+        // Clean up
         DB::table('batch_finish_products')->where('employee_id', $employee->id)->delete();
         DB::table('batch_fetch_raw_products')->where('employee_id', $employee->id)->delete();
 
@@ -316,6 +339,7 @@ class ProcessController extends Controller
 
         return redirect()->route('admin.process.management.page')->with('success', 'Finished products submitted successfully');
     }
+
 
     public function AdminRemoveFinishProduct($id)
     {

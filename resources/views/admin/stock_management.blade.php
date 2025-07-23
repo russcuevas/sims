@@ -223,7 +223,7 @@
                                         <tbody>
                                             @forelse ($productDetails as $product)
                                                 <tr>
-                                                    <td style="color: black;">{{ \Carbon\Carbon::parse($product->created_at)->format('m/d/Y') }}</td>
+                                                    <td style="color: black;">{{ \Carbon\Carbon::parse($product->updated_at)->format('m/d/Y') }}</td>
                                                     <td>
                                                         <input style="border-color: #D96F32; background-color: gray; color: white;" type="number" 
                                                             class="form-control input-rounded"

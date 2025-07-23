@@ -260,8 +260,13 @@
                                                 <th colspan="4" class="text-end" style="color: #D96F32;">Total:</th>
                                                 <th style="color: #D96F32;">₱{{ number_format($transactions->sum('debit'), 2) }}</th>
                                                 <th style="color: #D96F32;">₱{{ number_format($transactions->sum('credit'), 2) }}</th>
-                                                <th style="color: #D96F32;">₱{{ number_format($transactions->sum('balances'), 2) }}</th>
-                                                <th></th>
+                                                <td style="color: {{ $transaction->balances < 0 ? '#D96F32' : '#D96F32' }};">
+                                                    @if ($transaction->balances < 0)
+                                                        ₱-{{ number_format(abs($transaction->balances), 2) }}
+                                                    @else
+                                                        ₱{{ number_format($transaction->balances, 2) }}
+                                                    @endif
+                                                </td>
                                             </tr>
                                         </tfoot>
                                     </table>
