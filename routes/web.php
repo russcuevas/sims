@@ -15,6 +15,8 @@ use App\Http\Controllers\admin\StockInController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\ViewAvailableCarsController;
 use App\Http\Controllers\auth\AuthController;
+use App\Http\Controllers\delivery\DeliveryDashboardController;
+use App\Http\Controllers\delivery\DeliveryDeliveryStatusController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -159,3 +161,12 @@ Route::get('/admin/profile/update', [ProfileManagement::class, 'AdminProfileMana
 Route::post('/admin/profile/update/request', [ProfileManagement::class, 'AdminUpdateProfile'])->name('admin.profile.update.request');
 
 // DELIVERY ROUTES
+
+// DELIVERY PENDING MANAGEMENT
+Route::get('/delivery/dashboard', [DeliveryDashboardController::class, 'DeliveryPendingDeliveryPage'])->name('delivery.dashboard.page');
+Route::post('/delivery/pending/marked-status/{transact_id}', [DeliveryDashboardController::class, 'DeliveryMarkStatusDelivery'])->name('delivery.delivery.mark.status');
+Route::get('/delivery/delivery/view/{transact_id}', [DeliveryDashboardController::class, 'DeliveryViewDeliveryOrder'])->name('delivery.delivery.view');
+
+
+// DELIVERY DELIVERY STATUS
+Route::get('/delivery/delivery_status', [DeliveryDeliveryStatusController::class, 'DeliveryDeliveryStatusPage'])->name('delivery.delivery.status.page');
