@@ -19,6 +19,7 @@ use App\Http\Controllers\delivery\DeliveryDashboardController;
 use App\Http\Controllers\delivery\DeliveryDeliveryStatusController;
 use App\Http\Controllers\delivery\DeliveryProfileManagement;
 use App\Http\Controllers\manager\ManagerDashboardController;
+use App\Http\Controllers\manager\ManagerStockInController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -168,6 +169,18 @@ Route::get('/manager/monthly-sales', [ManagerDashboardController::class, 'Manage
     ->name('manager.monthly.sales');
 Route::get('/manager/available-products', [ManagerDashboardController::class, 'ManagerGetAvailableProductsByType'])
     ->name('manager.get.available.product');
+
+
+// MANAGER STOCK IN
+Route::get('/manager/stock_in', [ManagerStockInController::class, 'ManagerStockInPage'])->name('manager.stock.in.page');
+Route::post('/manager/stock_in/add_product', [ManagerStockInController::class, 'ManagerAddProduct'])->name('manager.stock.in.add.product');
+Route::post('/manager/stock_in/add_supplier', [ManagerStockInController::class, 'ManagerAddSupplier'])->name('manager.stock.in.add.supplier');
+Route::post('/manager/stock_in/add_batch_product_details', [ManagerStockInController::class, 'ManagerAddBatchProductDetails'])->name('manager.stock.in.add.batch.product.details');
+Route::post('/manager/batch-product-details/{id}/quantity', [ManagerStockInController::class, 'ManagerupdateQuantity']);
+Route::post('/manager/products/{productId}/update-price', [ManagerStockInController::class, 'ManagerUpdateProductPrice'])->name('manager.product.update.price');
+Route::get('/manager/batch-product-details/delete/{id}', [ManagerStockInController::class, 'ManagerRemoveBatchProduct'])->name('manager.batch.product.remove');
+Route::post('/manager/raw-stocks-request', [ManagerStockInController::class, 'ManagerRawStocksRequest'])->name('manager.raw.stocks.request');
+Route::post('/manager/archive-raw-stock/{transactId}', [ManagerStockInController::class, 'ManagerArchiveRawStock'])->name('manager.archive.raw.stock');
 
 // DELIVERY ROUTES
 
