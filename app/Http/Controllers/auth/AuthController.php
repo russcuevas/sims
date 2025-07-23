@@ -49,7 +49,7 @@ class AuthController extends Controller
                     case 1:
                         return redirect()->route('admin.dashboard.page');
                     case 2:
-                        return redirect()->route('some.other.page');
+                        return redirect()->route('manager.dashboard.page');
                     case 3:
                         return redirect()->route('delivery.dashboard.page');
                     default:

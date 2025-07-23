@@ -18,6 +18,7 @@ use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\delivery\DeliveryDashboardController;
 use App\Http\Controllers\delivery\DeliveryDeliveryStatusController;
 use App\Http\Controllers\delivery\DeliveryProfileManagement;
+use App\Http\Controllers\manager\ManagerDashboardController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -160,6 +161,13 @@ Route::post('/admin/archive/sales/restore/{id}', [ArchiveController::class, 'Adm
 // ADMIN EDIT PROFILE
 Route::get('/admin/profile/update', [ProfileManagement::class, 'AdminProfileManagementPage'])->name('admin.profile.page');
 Route::post('/admin/profile/update/request', [ProfileManagement::class, 'AdminUpdateProfile'])->name('admin.profile.update.request');
+
+// MANAGER ROUTES
+Route::get('/manager/dashboard', [ManagerDashboardController::class, 'ManagerDashboardPage'])->name('manager.dashboard.page');
+Route::get('/manager/monthly-sales', [ManagerDashboardController::class, 'ManagerGetMonthlySales'])
+    ->name('manager.monthly.sales');
+Route::get('/manager/available-products', [ManagerDashboardController::class, 'ManagerGetAvailableProductsByType'])
+    ->name('manager.get.available.product');
 
 // DELIVERY ROUTES
 
