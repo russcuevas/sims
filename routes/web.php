@@ -7,6 +7,7 @@ use App\Http\Controllers\admin\DeliveryStatusController;
 use App\Http\Controllers\admin\LogsController;
 use App\Http\Controllers\admin\PendingDeliveryController;
 use App\Http\Controllers\admin\ProcessController;
+use App\Http\Controllers\admin\ProfileManagement;
 use App\Http\Controllers\admin\ReturnItemController;
 use App\Http\Controllers\admin\SalesReportController;
 use App\Http\Controllers\admin\StockController;
@@ -149,5 +150,8 @@ Route::post('/admin/delivery/restore/{transact_id}', [ArchiveController::class, 
 Route::get('/admin/archive/sales', [ArchiveController::class, 'AdminArchiveSalesPage'])->name('admin.archive.sales.page');
 Route::post('/admin/archive/sales/restore/{id}', [ArchiveController::class, 'AdminRestoreSales'])->name('admin.sales.restore');
 
+// ADMIN EDIT PROFILE
+Route::get('/admin/profile/update', [ProfileManagement::class, 'AdminProfileManagementPage'])->name('admin.profile.page');
+Route::post('/admin/profile/update/request', [ProfileManagement::class, 'AdminUpdateProfile'])->name('admin.profile.update.request');
 
 // DELIVERY ROUTES
