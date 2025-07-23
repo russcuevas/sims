@@ -64,11 +64,11 @@
                         class="nav-text">Delivery
                         Management</span></a>
             </li>
-            <li><a href="d" aria-expanded="false"><i class="icon icon-chart-bar-33"></i><span
+            <li><a href="{{ route('manager.sales.management.page') }}" aria-expanded="false"><i class="icon icon-chart-bar-33"></i><span
                         class="nav-text">Sales
                         Report</span></a>
             </li>
-            <li><a href="e" aria-expanded="false"><i class="icon icon-card-update"></i><span
+            <li><a href="{{ route('manager.archive.page') }}" aria-expanded="false"><i class="icon icon-card-update"></i><span
                         class="nav-text">Archive
                     </span></a>
             </li>

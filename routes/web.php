@@ -1,5 +1,6 @@
 <?php
 
+// ADMIN CONTROLLER
 use App\Http\Controllers\admin\ArchiveController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\DeliveryController;
@@ -15,13 +16,19 @@ use App\Http\Controllers\admin\StockInController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\ViewAvailableCarsController;
 use App\Http\Controllers\auth\AuthController;
+
+// DELIVERY CONTROLLER
 use App\Http\Controllers\delivery\DeliveryDashboardController;
 use App\Http\Controllers\delivery\DeliveryDeliveryStatusController;
 use App\Http\Controllers\delivery\DeliveryProfileManagement;
+use App\Http\Controllers\manager\ManagerArchiveController;
+// MANAGER CONTROLLER
 use App\Http\Controllers\manager\ManagerDashboardController;
 use App\Http\Controllers\manager\ManagerDeliveryStatusController;
 use App\Http\Controllers\manager\ManagerPendingDeliveryController;
 use App\Http\Controllers\manager\ManagerProcessController;
+use App\Http\Controllers\manager\ManagerProfileManagement;
+use App\Http\Controllers\manager\ManagerSalesReportController;
 use App\Http\Controllers\manager\ManagerStockController;
 use App\Http\Controllers\manager\ManagerStockInController;
 use Illuminate\Support\Facades\DB;
@@ -167,6 +174,15 @@ Route::post('/admin/archive/sales/restore/{id}', [ArchiveController::class, 'Adm
 Route::get('/admin/profile/update', [ProfileManagement::class, 'AdminProfileManagementPage'])->name('admin.profile.page');
 Route::post('/admin/profile/update/request', [ProfileManagement::class, 'AdminUpdateProfile'])->name('admin.profile.update.request');
 
+
+
+
+
+
+
+
+
+
 // MANAGER ROUTES
 Route::get('/manager/dashboard', [ManagerDashboardController::class, 'ManagerDashboardPage'])->name('manager.dashboard.page');
 Route::get('/manager/monthly-sales', [ManagerDashboardController::class, 'ManagerGetMonthlySales'])
@@ -215,6 +231,31 @@ Route::get('/manager/view/{transact_id}', [ManagerPendingDeliveryController::cla
 
 // MANAGER DELIVERY STATUS MANAGEMENT
 Route::get('/manager/delivery_status', [ManagerDeliveryStatusController::class, 'ManagerDeliveryStatusPage'])->name('manager.delivery.status.page');
+
+// MANAGER SALES REPORT MANAGEMENT
+Route::get('/manager/sales/report', [ManagerSalesReportController::class, 'ManagerSalesReportPage'])->name('manager.sales.management.page');
+Route::post('/manager/sales/add-transaction', [ManagerSalesReportController::class, 'ManagerTransactionAdd'])->name('manager.sales.request.transaction');
+Route::post('/manager/sales/report/archive/{id}', [ManagerSalesReportController::class, 'ManagerTransactionArchive'])
+    ->name('manager.transaction.archive');
+
+
+// MANAGER ARCHIVE MANAGEMENT
+Route::get('/manager/archive', [ManagerArchiveController::class, 'ManagerArchivePage'])->name('manager.archive.page');
+Route::post('/manager/employees/restore/{id}', [ManagerArchiveController::class, 'ManagerRestoreEmployee'])->name('manager.employees.restore');
+Route::get('/manager/archive/stocks', [ManagerArchiveController::class, 'ManagerArchiveStocksPage'])->name('manager.archive.stocks.page');
+Route::post('/manager/stocks/restore/{id}', [ManagerArchiveController::class, 'ManagerRestoreStocks'])->name('manager.stocks.restore');
+Route::get('/manager/archive/stock_in', [ManagerArchiveController::class, 'ManagerArchiveStockInPage'])->name('manager.archive.stock.in.page');
+Route::post('/manager/stockin/restore/{transact_id}', [ManagerArchiveController::class, 'ManagerRestoreStockIn'])->name('manager.stockin.restore');
+Route::get('/manager/archive/process', [ManagerArchiveController::class, 'ManagerArchiveProcessPage'])->name('manager.archive.process.page');
+Route::post('/manager/process/restore/{transact_id}', [ManagerArchiveController::class, 'ManagerRestoreProcess'])->name('manager.process.restore');
+Route::get('/manager/archive/delivery', [ManagerArchiveController::class, 'ManagerArchiveDeliveryPage'])->name('manager.archive.delivery.page');
+Route::post('/manager/delivery/restore/{transact_id}', [ManagerArchiveController::class, 'ManagerRestoreDelivery'])->name('manager.delivery.restore');
+Route::get('/manager/archive/sales', [ManagerArchiveController::class, 'ManagerArchiveSalesPage'])->name('manager.archive.sales.page');
+Route::post('/manager/archive/sales/restore/{id}', [ManagerArchiveController::class, 'ManagerRestoreSales'])->name('manager.sales.restore');
+
+// MANAGER EDIT PROFILE
+Route::get('/manager/profile/update', [ManagerProfileManagement::class, 'ManagerProfileManagementPage'])->name('manager.profile.page');
+Route::post('/manager/profile/update/request', [ManagerProfileManagement::class, 'ManagerUpdateProfile'])->name('manager.profile.update.request');
 
 
 
