@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Archive Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
+                                <h4 class="card-title" style="font-size: 20px; color: #A16D28;">
                                     Archive Management
                                 </h4>
                             </div>
@@ -115,14 +115,14 @@
                                         <table id="example">
                                         <thead>
                                             <tr>
-                                                <th style="color: #D96F32;">Transaction date</th>
-                                                <th style="color: #D96F32;">Process by</th>
-                                                <th style="color: #D96F32;">Transaction type</th>
-                                                <th style="color: #D96F32;">Transaction ID</th>
-                                                <th style="color: #D96F32;">Debit</th>
-                                                <th style="color: #D96F32;">Credit</th>
-                                                <th style="color: #D96F32;">Balances</th>
-                                                <th style="color: #D96F32;">Action</th>
+                                                <th style="color: #A16D28;">Transaction date</th>
+                                                <th style="color: #A16D28;">Process by</th>
+                                                <th style="color: #A16D28;">Transaction type</th>
+                                                <th style="color: #A16D28;">Transaction ID</th>
+                                                <th style="color: #A16D28;">Debit</th>
+                                                <th style="color: #A16D28;">Credit</th>
+                                                <th style="color: #A16D28;">Balances</th>
+                                                <th style="color: #A16D28;">Action</th>
                                             </tr>
                                         </thead>
                                             <tbody>

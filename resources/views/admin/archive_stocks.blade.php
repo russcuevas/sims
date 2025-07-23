@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Archive Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
+                                <h4 class="card-title" style="font-size: 20px; color: #A16D28;">
                                     Archive Management
                                 </h4>
                             </div>
@@ -115,12 +115,12 @@
                                         <table id="example">
                                         <thead>
                                             <tr>
-                                                <th style="color: #D96F32;">Date</th>
-                                                <th style="color: #D96F32;">Quantity</th>
-                                                <th style="color: #D96F32;">Product</th>
-                                                <th style="color: #D96F32;">Unit</th>
-                                                <th style="color: #D96F32;">Category</th>
-                                                <th style="color: #D96F32;">Action</th>
+                                                <th style="color: #A16D28;">Date</th>
+                                                <th style="color: #A16D28;">Quantity</th>
+                                                <th style="color: #A16D28;">Product</th>
+                                                <th style="color: #A16D28;">Unit</th>
+                                                <th style="color: #A16D28;">Category</th>
+                                                <th style="color: #A16D28;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>

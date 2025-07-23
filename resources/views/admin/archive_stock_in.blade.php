@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Archive Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
+                                <h4 class="card-title" style="font-size: 20px; color: #A16D28;">
                                     Archive Management
                                 </h4>
                             </div>
@@ -115,11 +115,11 @@
                                         <table id="example">
                                         <thead>
                                             <tr>
-                                                <th style="color: #D96F32;">Details</th>
-                                                <th style="color: #D96F32;">Process Date</th>
-                                                <th style="color: #D96F32;">Received Date</th>
-                                                <th style="color: #D96F32;">Processed By</th>
-                                                <th style="color: #D96F32;">Action</th>
+                                                <th style="color: #A16D28;">Details</th>
+                                                <th style="color: #A16D28;">Process Date</th>
+                                                <th style="color: #A16D28;">Received Date</th>
+                                                <th style="color: #A16D28;">Processed By</th>
+                                                <th style="color: #A16D28;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -179,11 +179,11 @@
 
                                                                     <div class="mt-4">
                                                                         <div class="row fw-bold border-bottom pb-2">
-                                                                            <div style="color: #D96F32; font-weight: 900;" class="col-2">Qty</div>
-                                                                            <div style="color: #D96F32; font-weight: 900;" class="col-4">Product</div>
-                                                                            <div style="color: #D96F32; font-weight: 900;" class="col-2">Unit</div>
-                                                                            <div style="color: #D96F32; font-weight: 900;" class="col-2 text-end">Price</div>
-                                                                            <div style="color: #D96F32; font-weight: 900;" class="col-2 text-end">Amount</div>
+                                                                            <div style="color: #A16D28; font-weight: 900;" class="col-2">Qty</div>
+                                                                            <div style="color: #A16D28; font-weight: 900;" class="col-4">Product</div>
+                                                                            <div style="color: #A16D28; font-weight: 900;" class="col-2">Unit</div>
+                                                                            <div style="color: #A16D28; font-weight: 900;" class="col-2 text-end">Price</div>
+                                                                            <div style="color: #A16D28; font-weight: 900;" class="col-2 text-end">Amount</div>
                                                                         </div>
 
                                                                         @foreach ($group as $item)

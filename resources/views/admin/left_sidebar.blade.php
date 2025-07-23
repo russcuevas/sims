@@ -9,7 +9,7 @@
         position: absolute;
         left: 0;
         top: 0;
-        background-color: #D96F32 !important;
+        background-color: #A16D28 !important;
         transition: all .2s ease;
         z-index: 4;
     }
@@ -21,7 +21,7 @@
         top: 5rem 80px;
         padding-top: 0;
         z-index: 2;
-        background-color: #D96F32 !important;
+        background-color: #A16D28 !important;
         color: black !important;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         transition: all .2s ease;

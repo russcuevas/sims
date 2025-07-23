@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Delivery Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
+                                <h4 class="card-title" style="font-size: 20px; color: #A16D28;">
                                     Delivery Management
                                 </h4>
                             </div>
@@ -134,12 +134,12 @@
                                     <table class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
-                                                <th style="width: 10%; color: #D96F32;">Details</th>
-                                                <th style="width: 15%; color: #D96F32;">Transaction Date</th>
-                                                <th style="width: 20%; color: #D96F32;">Delivered By</th>
-                                                <th style="width: 20%; color: #D96F32;">Upload image</th>
-                                                <th style="width: 20%; color: #D96F32;">Add notes</th>
-                                                <th style="width: 20%; color: #D96F32;">Actions</th>
+                                                <th style="width: 10%; color: #A16D28;">Details</th>
+                                                <th style="width: 15%; color: #A16D28;">Transaction Date</th>
+                                                <th style="width: 20%; color: #A16D28;">Delivered By</th>
+                                                <th style="width: 20%; color: #A16D28;">Upload image</th>
+                                                <th style="width: 20%; color: #A16D28;">Add notes</th>
+                                                <th style="width: 20%; color: #A16D28;">Actions</th>
                                             </tr>
                                         </thead>
                                             <tbody>

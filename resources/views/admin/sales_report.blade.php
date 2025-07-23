@@ -66,7 +66,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Sales Report Management</li>
                         </ol>
                     </div>
@@ -78,7 +78,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4 class="card-title m-0" style="font-size: 20px; color: #D96F32;">
+                                <h4 class="card-title m-0" style="font-size: 20px; color: #A16D28;">
                                     Sales Report Management
                                 </h4>
                             </div>
@@ -220,14 +220,14 @@
                                     <table class="table table-bordered table-responsive-sm">
                                         <thead>
                                             <tr>
-                                                <th style="color: #D96F32;">Transaction date</th>
-                                                <th style="color: #D96F32;">Process by</th>
-                                                <th style="color: #D96F32;">Transaction type</th>
-                                                <th style="color: #D96F32;">Transaction ID</th>
-                                                <th style="color: #D96F32;">Debit</th>
-                                                <th style="color: #D96F32;">Credit</th>
-                                                <th style="color: #D96F32;">Balances</th>
-                                                <th style="color: #D96F32;">Action</th>
+                                                <th style="color: #A16D28;">Transaction date</th>
+                                                <th style="color: #A16D28;">Process by</th>
+                                                <th style="color: #A16D28;">Transaction type</th>
+                                                <th style="color: #A16D28;">Transaction ID</th>
+                                                <th style="color: #A16D28;">Debit</th>
+                                                <th style="color: #A16D28;">Credit</th>
+                                                <th style="color: #A16D28;">Balances</th>
+                                                <th style="color: #A16D28;">Action</th>
                                             </tr>
                                         </thead>
 
@@ -257,14 +257,14 @@
 
                                         <tfoot>
                                             <tr>
-                                                <th colspan="4" class="text-end" style="color: #D96F32;">Total:</th>
-                                                <th style="color: #D96F32;">₱{{ number_format($transactions->sum('debit'), 2) }}</th>
-                                                <th style="color: #D96F32;">₱{{ number_format($transactions->sum('credit'), 2) }}</th>
+                                                <th colspan="4" class="text-end" style="color: #A16D28;">Total:</th>
+                                                <th style="color: #A16D28;">₱{{ number_format($transactions->sum('debit'), 2) }}</th>
+                                                <th style="color: #A16D28;">₱{{ number_format($transactions->sum('credit'), 2) }}</th>
                                                 <td style="color: 
                                                     @if(isset($transaction) && $transaction->balances < 0) 
-                                                        #D96F32
+                                                        #A16D28
                                                     @elseif(isset($transaction)) 
-                                                        #D96F32
+                                                        #A16D28
                                                     @else 
                                                         inherit
                                                     @endif
@@ -276,7 +276,7 @@
                                                             ₱{{ number_format($transaction->balances, 2) }}
                                                         @endif
                                                     @else
-                                                            <span style="color: #D96F32; font-weight: 900">₱0.00</span>
+                                                            <span style="color: #A16D28; font-weight: 900">₱0.00</span>
                                                     @endif
                                                 </td>
                                             </tr>

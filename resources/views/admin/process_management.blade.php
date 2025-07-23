@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Process Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
+                                <h4 class="card-title" style="font-size: 20px; color: #A16D28;">
                                     Process Management
                                 </h4>
                             </div>
@@ -105,11 +105,11 @@
                                             <table class="table table-bordered table-responsive-sm">
                                                 <thead>
                                                     <tr>
-                                                        <th style="color: #D96F32;">Current Quantity</th>
-                                                        <th style="color: #D96F32;">Quantity</th>
-                                                        <th style="color: #D96F32;">Product</th>
-                                                        <th style="color: #D96F32;">Unit</th>
-                                                        <th style="color: #D96F32;">Action</th>
+                                                        <th style="color: #A16D28;">Current Quantity</th>
+                                                        <th style="color: #A16D28;">Quantity</th>
+                                                        <th style="color: #A16D28;">Product</th>
+                                                        <th style="color: #A16D28;">Unit</th>
+                                                        <th style="color: #A16D28;">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -118,7 +118,7 @@
                                                             <td style="color: black;">{{ $product->quantity }}</td>
                                         
                                                             <td>
-                                                                <input style="border-color: #D96F32;" type="number" class="form-control input-rounded"
+                                                                <input style="border-color: #A16D28;" type="number" class="form-control input-rounded"
                                                                     name="quantities[{{ $product->id }}]" value="1" min="1">
                                                             </td>
                                                             
@@ -156,13 +156,13 @@
 
                                         <div class="col-md-3">
                                             <label for="process_date" class="form-label"
-                                                style="color: #D96F32;">Process Date</label>
+                                                style="color: #A16D28;">Process Date</label>
                                             <input type="date" id="process_date" name="process_date"
                                                 class="form-control">
                                         </div>
 
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #D96F32;" for="process_by" class="form-label">Process
+                                            <label style="color: #A16D28;" for="process_by" class="form-label">Process
                                                 by</label>
                                             <input type="text" id="process_by" name="process_by" class="form-control"
                                             value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
@@ -302,12 +302,12 @@
                                         <table class="table table-bordered table-responsive-sm">
                                             <thead>
                                                 <tr>
-                                                    <th style="color: #D96F32;">Quantity</th>
-                                                    <th style="color: #D96F32;">Product</th>
-                                                    <th style="color: #D96F32;">Unit</th>
-                                                    <th style="color: #D96F32;">Price</th>
-                                                    <th style="color: #D96F32;">Amount</th>
-                                                    <th style="color: #D96F32;">Action</th>
+                                                    <th style="color: #A16D28;">Quantity</th>
+                                                    <th style="color: #A16D28;">Product</th>
+                                                    <th style="color: #A16D28;">Unit</th>
+                                                    <th style="color: #A16D28;">Price</th>
+                                                    <th style="color: #A16D28;">Amount</th>
+                                                    <th style="color: #A16D28;">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -325,7 +325,7 @@
                                                                 value="{{ $product->quantity }}"
                                                                 class="form-control input-rounded quantity-input"
                                                                 data-id="{{ $product->id }}"
-                                                                style="border-color: #D96F32;" min="1" required>
+                                                                style="border-color: #A16D28;" min="1" required>
                                                         </td>
                                                         <td style="color: black;">{{ $product->product_name }}</td>
                                                         <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
@@ -335,7 +335,7 @@
                                                                 value="{{ $product->product_price }}"
                                                                 class="form-control input-rounded price-input"
                                                                 data-id="{{ $product->id }}"
-                                                                style="border-color: #D96F32;" min="0" required>
+                                                                style="border-color: #A16D28;" min="0" required>
                                                         </td>
                                                         <td style="color: black;">
                                                             <span id="amount-{{ $product->id }}">₱{{ number_format($amount, 2) }}</span>
@@ -356,7 +356,7 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan="4" class="text-end fw-bold" style="color: #D96F32;"></td>
+                                                    <td colspan="4" class="text-end fw-bold" style="color: #A16D28;"></td>
                                                     <td colspan="2" id="total_amount" class="fw-bold" style="color: black;">
                                                         <span style="color: red;">Total Amount: ₱{{ number_format($totalAmount, 2) }}</span>
                                                     </td>
@@ -411,10 +411,10 @@
                                     <table class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
-                                                <th style="width: 10%; color: #D96F32;">Details</th>
-                                                <th style="width: 15%; color: #D96F32;">Process Date</th>
-                                                <th style="width: 20%; color: #D96F32;">Processed By</th>
-                                                <th style="width: 20%; color: #D96F32;">Actions</th>
+                                                <th style="width: 10%; color: #A16D28;">Details</th>
+                                                <th style="width: 15%; color: #A16D28;">Process Date</th>
+                                                <th style="width: 20%; color: #A16D28;">Processed By</th>
+                                                <th style="width: 20%; color: #A16D28;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -466,11 +466,11 @@
 
                                                                     <div class="mt-4">
                                                                         <div class="row fw-bold border-bottom pb-2">
-                                                                            <div class="col-2" style="color: #D96F32; font-weight:900">Qty</div>
-                                                                            <div class="col-4" style="color: #D96F32; font-weight:900">Product</div>
-                                                                            <div class="col-2" style="color: #D96F32; font-weight:900">Unit</div>
-                                                                            <div class="col-2 text-end" style="color: #D96F32; font-weight:900">Price</div>
-                                                                            <div class="col-2 text-end" style="color: #D96F32; font-weight:900">Amount</div>
+                                                                            <div class="col-2" style="color: #A16D28; font-weight:900">Qty</div>
+                                                                            <div class="col-4" style="color: #A16D28; font-weight:900">Product</div>
+                                                                            <div class="col-2" style="color: #A16D28; font-weight:900">Unit</div>
+                                                                            <div class="col-2 text-end" style="color: #A16D28; font-weight:900">Price</div>
+                                                                            <div class="col-2 text-end" style="color: #A16D28; font-weight:900">Amount</div>
                                                                         </div>
 
                                                                         @foreach ($records as $item)

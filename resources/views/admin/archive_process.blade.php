@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Archive Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
+                                <h4 class="card-title" style="font-size: 20px; color: #A16D28;">
                                     Archive Management
                                 </h4>
                             </div>
@@ -115,10 +115,10 @@
                                         <table id="example">
                                         <thead>
                                             <tr>
-                                                <th style="width: 10%; color: #D96F32;">Details</th>
-                                                <th style="width: 15%; color: #D96F32;">Process Date</th>
-                                                <th style="width: 20%; color: #D96F32;">Processed By</th>
-                                                <th style="width: 20%; color: #D96F32;">Actions</th>
+                                                <th style="width: 10%; color: #A16D28;">Details</th>
+                                                <th style="width: 15%; color: #A16D28;">Process Date</th>
+                                                <th style="width: 20%; color: #A16D28;">Processed By</th>
+                                                <th style="width: 20%; color: #A16D28;">Actions</th>
                                             </tr>
                                         </thead>
                                             <tbody>
@@ -169,11 +169,11 @@
 
                                                                         <div class="mt-4">
                                                                             <div class="row fw-bold border-bottom pb-2">
-                                                                                <div class="col-2" style="color: #D96F32; font-weight:900">Qty</div>
-                                                                                <div class="col-4" style="color: #D96F32; font-weight:900">Product</div>
-                                                                                <div class="col-2" style="color: #D96F32; font-weight:900">Unit</div>
-                                                                                <div class="col-2 text-end" style="color: #D96F32; font-weight:900">Price</div>
-                                                                                <div class="col-2 text-end" style="color: #D96F32; font-weight:900">Amount</div>
+                                                                                <div class="col-2" style="color: #A16D28; font-weight:900">Qty</div>
+                                                                                <div class="col-4" style="color: #A16D28; font-weight:900">Product</div>
+                                                                                <div class="col-2" style="color: #A16D28; font-weight:900">Unit</div>
+                                                                                <div class="col-2 text-end" style="color: #A16D28; font-weight:900">Price</div>
+                                                                                <div class="col-2 text-end" style="color: #A16D28; font-weight:900">Amount</div>
                                                                             </div>
 
                                                                             @foreach ($records as $item)

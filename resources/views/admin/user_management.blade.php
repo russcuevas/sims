@@ -60,7 +60,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">User Management</li>
                         </ol>
                     </div>
@@ -72,7 +72,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">User Management</h4>
+                                <h4 class="card-title" style="font-size: 20px; color: #A16D28;">User Management</h4>
                                 <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
                                     <button id="add_user_button" class="btn btn-outline-primary me-2 mr-2"
                                         data-toggle="modal" data-target=".add-users-modal-lg">+ Add
@@ -250,16 +250,16 @@
                                     <table id="example" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
-                                                <th style="color: #D96F32;">Image</th>
-                                                <th style="color: #D96F32;">Name</th>
-                                                <th style="color: #D96F32;">Role</th>
-                                                <th style="color: #D96F32;">Contract</th>
-                                                <th style="color: #D96F32;">Email</th>
-                                                <th style="color: #D96F32;">Username</th>
-                                                <th style="color: #D96F32;">Pin</th>
-                                                <th style="color: #D96F32;">Attempt</th>
-                                                <th style="color: #D96F32;">Status</th>
-                                                <th style="color: #D96F32;">Action</th>
+                                                <th style="color: #A16D28;">Image</th>
+                                                <th style="color: #A16D28;">Name</th>
+                                                <th style="color: #A16D28;">Role</th>
+                                                <th style="color: #A16D28;">Contract</th>
+                                                <th style="color: #A16D28;">Email</th>
+                                                <th style="color: #A16D28;">Username</th>
+                                                <th style="color: #A16D28;">Pin</th>
+                                                <th style="color: #A16D28;">Attempt</th>
+                                                <th style="color: #A16D28;">Status</th>
+                                                <th style="color: #A16D28;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>

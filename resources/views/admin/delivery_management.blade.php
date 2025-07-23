@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #D96F32;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Delivery Management</li>
                         </ol>
                     </div>
@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: #D96F32;">
+                                <h4 class="card-title" style="font-size: 20px; color: #A16D28;">
                                     Delivery Management
                                 </h4>
                             </div>
@@ -318,33 +318,33 @@
                                     @csrf                                    
                                     <div class="row mb-3 align-items-end">
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #D96F32;" for="memo" class="form-label">Memo</label>
+                                            <label style="color: #A16D28;" for="memo" class="form-label">Memo</label>
                                             <input type="text" id="memo" name="memo"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-3">
                                             <label for="process_date" class="form-label"
-                                                style="color: #D96F32;">Transaction Date</label>
+                                                style="color: #A16D28;">Transaction Date</label>
                                             <input type="date" id="transaction_date" name="transaction_date"
                                                 class="form-control">
                                         </div>
 
                                         <div class="col-md-3">
                                             <label for="process_date" class="form-label"
-                                                style="color: #D96F32;">Expected Delivery</label>
+                                                style="color: #A16D28;">Expected Delivery</label>
                                             <input type="date" id="expected_date" name="expected_date"
                                                 class="form-control">
                                         </div>
 
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #D96F32;" for="process_by" class="form-label">Process
+                                            <label style="color: #A16D28;" for="process_by" class="form-label">Process
                                                 by</label>
                                             <input type="text" id="process_by" name="process_by" class="form-control"
                                             value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
                                         </div>
 
                                         <div class="col-md-3 text-left" style="margin-top: 20px">
-                                            <label style="color: #D96F32;" for="approved_by" class="form-label">Approved by</label>
+                                            <label style="color: #A16D28;" for="approved_by" class="form-label">Approved by</label>
                                             <select id="approved_by" name="approved_by" class="form-control">
                                                 @foreach ($allEmployees as $employee)
                                                     @if ($employee->position_id == 1)  <!-- Approved by: Position 1 -->
@@ -357,7 +357,7 @@
                                         </div>
 
                                         <div class="col-md-3 text-left" style="margin-top: 20px">
-                                            <label style="color: #D96F32;" for="delivered_by" class="form-label">Delivered by</label>
+                                            <label style="color: #A16D28;" for="delivered_by" class="form-label">Delivered by</label>
                                             <select id="delivered_by" name="delivered_by" class="form-control">
                                                 @foreach ($allEmployees as $employee)
                                                     @if ($employee->position_id == 3)  <!-- Delivered by: Position 3 -->
@@ -371,7 +371,7 @@
 
 
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #D96F32;" for="car" class="form-label">Select Car</label>
+                                            <label style="color: #A16D28;" for="car" class="form-label">Select Car</label>
                                             <select id="car" name="car" class="form-control">
                                                 @foreach ($cars as $car)
                                                     <option value="{{ $car->id }}">
@@ -382,7 +382,7 @@
                                         </div>
 
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #D96F32;" for="store" class="form-label">Select Store</label>
+                                            <label style="color: #A16D28;" for="store" class="form-label">Select Store</label>
                                             <select id="store" name="store" class="form-control">
                                                 @foreach ($stores as $store)
                                                     <option value="{{ $store->id }}">
@@ -433,14 +433,14 @@
                                         <table class="table table-bordered table-responsive-sm">
                                         <thead>
                                             <tr>
-                                                <th style="color: #D96F32;">Product</th>
-                                                <th style="color: #D96F32;">Pack</th>
-                                                <th style="color: #D96F32;">Unit</th>
-                                                <th style="color: #D96F32;">Qty Ordered</th>
-                                                <th style="color: #D96F32;">Qty Received</th>
-                                                <th style="color: #D96F32;">Price</th>
-                                                <th style="color: #D96F32;">Amount</th>
-                                                <th style="color: #D96F32;">Action</th>
+                                                <th style="color: #A16D28;">Product</th>
+                                                <th style="color: #A16D28;">Pack</th>
+                                                <th style="color: #A16D28;">Unit</th>
+                                                <th style="color: #A16D28;">Qty Ordered</th>
+                                                <th style="color: #A16D28;">Qty Received</th>
+                                                <th style="color: #A16D28;">Price</th>
+                                                <th style="color: #A16D28;">Amount</th>
+                                                <th style="color: #A16D28;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -483,7 +483,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="4" class="text-end fw-bold" style="color: #D96F32;">
+                                                <td colspan="4" class="text-end fw-bold" style="color: #A16D28;">
                                                     Total Ordered:
                                                 </td>
                                                 <td colspan="5" id="total_amount" class="fw-bold" style="color: black;">
@@ -535,10 +535,10 @@
                                     <table class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
-                                                <th style="width: 10%; color: #D96F32;">Details</th>
-                                                <th style="width: 15%; color: #D96F32;">Transaction Date</th>
-                                                <th style="width: 20%; color: #D96F32;">Processed By</th>
-                                                <th style="width: 20%; color: #D96F32;">Actions</th>
+                                                <th style="width: 10%; color: #A16D28;">Details</th>
+                                                <th style="width: 15%; color: #A16D28;">Transaction Date</th>
+                                                <th style="width: 20%; color: #A16D28;">Processed By</th>
+                                                <th style="width: 20%; color: #A16D28;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
