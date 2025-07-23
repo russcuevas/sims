@@ -17,6 +17,7 @@ use App\Http\Controllers\admin\ViewAvailableCarsController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\delivery\DeliveryDashboardController;
 use App\Http\Controllers\delivery\DeliveryDeliveryStatusController;
+use App\Http\Controllers\delivery\DeliveryProfileManagement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -170,3 +171,8 @@ Route::get('/delivery/delivery/view/{transact_id}', [DeliveryDashboardController
 
 // DELIVERY DELIVERY STATUS
 Route::get('/delivery/delivery_status', [DeliveryDeliveryStatusController::class, 'DeliveryDeliveryStatusPage'])->name('delivery.delivery.status.page');
+
+
+// DELIVERY EDIT PROFILE
+Route::get('/delivery/profile/update', [DeliveryProfileManagement::class, 'DeliveryProfileManagementPage'])->name('delivery.profile.page');
+Route::post('/delivery/profile/update/request', [DeliveryProfileManagement::class, 'DeliveryUpdateProfile'])->name('delivery.profile.update.request');
