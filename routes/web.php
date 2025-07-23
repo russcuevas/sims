@@ -19,6 +19,10 @@ use App\Http\Controllers\delivery\DeliveryDashboardController;
 use App\Http\Controllers\delivery\DeliveryDeliveryStatusController;
 use App\Http\Controllers\delivery\DeliveryProfileManagement;
 use App\Http\Controllers\manager\ManagerDashboardController;
+use App\Http\Controllers\manager\ManagerDeliveryStatusController;
+use App\Http\Controllers\manager\ManagerPendingDeliveryController;
+use App\Http\Controllers\manager\ManagerProcessController;
+use App\Http\Controllers\manager\ManagerStockController;
 use App\Http\Controllers\manager\ManagerStockInController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -181,6 +185,39 @@ Route::post('/manager/products/{productId}/update-price', [ManagerStockInControl
 Route::get('/manager/batch-product-details/delete/{id}', [ManagerStockInController::class, 'ManagerRemoveBatchProduct'])->name('manager.batch.product.remove');
 Route::post('/manager/raw-stocks-request', [ManagerStockInController::class, 'ManagerRawStocksRequest'])->name('manager.raw.stocks.request');
 Route::post('/manager/archive-raw-stock/{transactId}', [ManagerStockInController::class, 'ManagerArchiveRawStock'])->name('manager.archive.raw.stock');
+
+
+// MANAGER STOCK MANAGEMENT
+Route::get('/manager/stock_management', [ManagerStockController::class, 'ManagerStockManagementPage'])->name('manager.stock.management.page');
+Route::post('/manager/stock/archive-product/{id}', [ManagerStockController::class, 'ManagerStockArchiveProduct'])->name('manager.stock.archive.product');
+Route::post('/manager/stock/update-product/{id}', [ManagerStockController::class, 'ManagerStockUpdateProduct'])->name('manager.stock.update.product');
+Route::get('/manager/purchase-order', [ManagerStockController::class, 'ManagerStockPurchaseOrderPage'])->name('manager.purchase.order.page');
+Route::post('/manager/submit/purchase-order', [ManagerStockController::class, 'ManagerStockSubmitPO'])->name('manager.stock.submit.po');
+Route::get('/manager/purchase-order/view/{po_number}', [ManagerStockController::class, 'ManagerViewPO'])
+    ->name('manager.view.po');
+
+// MANAGER PROCESS MANAGEMENT
+Route::get('/manager/process_management', [ManagerProcessController::class, 'ManagerProcessManagementPage'])->name('manager.process.management.page');
+Route::post('/manager/batch/add-raw-products', [ManagerProcessController::class, 'ManagerAddBatchFetchRawProducts'])
+    ->name('manager.batch.add.raw.products');
+Route::get('/manager/batch-product-raw-details/delete/{id}', [ManagerProcessController::class, 'ManagerRemoveBatchRawProduct'])->name('manager.batch.raw.product.remove');
+Route::post('/manager/add-batch-multiple-product', [ManagerProcessController::class, 'ManagerAddBatchMultipleProduct'])->name('manager.add.batch.multiple.product');
+Route::post('/manager/add-batch-finish-product', [ManagerProcessController::class, 'ManagerAddBatchFinishProduct'])->name('manager.batch.finish.product');
+Route::post('/manager/submit-finish-products', [ManagerProcessController::class, 'ManagerFinishProductSubmit'])->name('manager.finish.product.submit');
+Route::get('/manager/batch-product-finish/delete/{id}', [ManagerProcessController::class, 'ManagerRemoveFinishProduct'])->name('manager.batch.finish.product.remove');
+Route::post('/manager/archive-history-finish-product/{transactId}', [ManagerProcessController::class, 'ManagerArchiveHistoryFinishProduct'])->name('manager.archive.history.finish.product');
+
+
+// MANAGER DELIVERY PENDING MANAGEMENT
+Route::get('/manager/pending_delivery', [ManagerPendingDeliveryController::class, 'ManagerPendingDeliveryPage'])->name('manager.pending.management.page');
+Route::post('/manager/pending/marked-status/{transact_id}', [ManagerPendingDeliveryController::class, 'ManagerMarkStatusDelivery'])->name('manager.delivery.mark.status');
+Route::get('/manager/view/{transact_id}', [ManagerPendingDeliveryController::class, 'ManagerViewDeliveryOrder'])->name('manager.delivery.view');
+
+// MANAGER DELIVERY STATUS MANAGEMENT
+Route::get('/manager/delivery_status', [ManagerDeliveryStatusController::class, 'ManagerDeliveryStatusPage'])->name('manager.delivery.status.page');
+
+
+
 
 // DELIVERY ROUTES
 

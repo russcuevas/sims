@@ -54,13 +54,13 @@
             <li><a href="{{ route('manager.stock.in.page') }}" aria-expanded="false"><i class="icon icon-form"></i><span
                         class="nav-text">Stock In</span></a>
             </li>
-            <li><a href="a" aria-expanded="false"><i class="icon icon-layout-25"></i><span
+            <li><a href="{{ route('manager.stock.management.page') }}" aria-expanded="false"><i class="icon icon-layout-25"></i><span
                         class="nav-text">Stock Management</span></a>
             </li>
-            <li><a href="b" aria-expanded="false"><i class="icon icon-app-store"></i><span
+            <li><a href="{{ route('manager.process.management.page') }}" aria-expanded="false"><i class="icon icon-app-store"></i><span
                         class="nav-text">Process Management</span></a>
             </li>
-            <li><a href="c" aria-expanded="false"><i class="fa-solid fa-truck-fast"></i><span
+            <li><a href="{{ route('manager.pending.management.page') }}" aria-expanded="false"><i class="fa-solid fa-truck-fast"></i><span
                         class="nav-text">Delivery
                         Management</span></a>
             </li>
