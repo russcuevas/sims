@@ -260,11 +260,23 @@
                                                 <th colspan="4" class="text-end" style="color: #D96F32;">Total:</th>
                                                 <th style="color: #D96F32;">₱{{ number_format($transactions->sum('debit'), 2) }}</th>
                                                 <th style="color: #D96F32;">₱{{ number_format($transactions->sum('credit'), 2) }}</th>
-                                                <td style="color: {{ $transaction->balances < 0 ? '#D96F32' : '#D96F32' }};">
-                                                    @if ($transaction->balances < 0)
-                                                        ₱-{{ number_format(abs($transaction->balances), 2) }}
+                                                <td style="color: 
+                                                    @if(isset($transaction) && $transaction->balances < 0) 
+                                                        #D96F32
+                                                    @elseif(isset($transaction)) 
+                                                        #D96F32
+                                                    @else 
+                                                        inherit
+                                                    @endif
+                                                ">
+                                                    @if(isset($transaction) && $transaction->balances !== null)
+                                                        @if($transaction->balances < 0)
+                                                            ₱-{{ number_format(abs($transaction->balances), 2) }}
+                                                        @else
+                                                            ₱{{ number_format($transaction->balances, 2) }}
+                                                        @endif
                                                     @else
-                                                        ₱{{ number_format($transaction->balances, 2) }}
+                                                            <span style="color: #D96F32; font-weight: 900">₱0.00</span>
                                                     @endif
                                                 </td>
                                             </tr>

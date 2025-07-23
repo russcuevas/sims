@@ -49,7 +49,7 @@ class DeliveryController extends Controller
             $query->orderBy('transaction_date', 'desc');
         }
 
-        $deliveryOrders = $query->where('status', 'pending')->get()->groupBy('transact_id');
+        $deliveryOrders = $query->get()->groupBy('transact_id');
 
         $processors = DB::table('delivery_orders')->select('process_by')->distinct()->pluck('process_by');
 

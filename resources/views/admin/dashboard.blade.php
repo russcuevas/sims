@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Sales & Inventory Management System </title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="">
@@ -48,7 +49,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
                                     <h4 class="mb-1 text-white">Pending Orders</h4>
-                                    <h2 class="mb-0 text-white">12</h2>
+                                    <h2 class="mb-0 text-white">{{ $pendingOrders }}</h2>
                                 </div>
                                 <div class="icon">
                                     <i class="fa fa-hourglass-half fa-2x"></i>
@@ -63,7 +64,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
                                     <h4 class="mb-1 text-white">Completed Orders</h4>
-                                    <h2 class="mb-0 text-white">12</h2>
+                                    <h2 class="mb-0 text-white">{{ $completedOrders }}</h2>
                                 </div>
                                 <div class="icon">
                                     <i class="fa fa-check-circle fa-2x"></i>
@@ -78,7 +79,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
                                     <h4 class="mb-1 text-white">Return Orders</h4>
-                                    <h2 class="mb-0 text-white">12</h2>
+                                    <h2 class="mb-0 text-white">{{ $returnOrders }}</h2>
                                 </div>
                                 <div class="icon">
                                     <i class="fa fa-undo fa-2x"></i>
@@ -86,6 +87,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="row mt-4">
@@ -117,7 +119,14 @@
                             <div class="card-header bg-primary text-white">
                                 <h5 class="mb-3 text-white">Available Product</h5>
                             </div>
-                            <div class="card-body">
+                                <div class="card-body">
+                                    <div class="mb-3 float-right">
+                                    <label for="productType" class="form-label" style="color: black">Select Type: </label>
+                                    <select id="productType" class="form-select form-select-sm w-auto bg-white text-dark border-0 shadow-sm">
+                                        <option value="raw materials">Raw Materials</option>
+                                        <option value="finish product">Finish Product</option>
+                                    </select>
+                                </div>
                                 <canvas id="productPieChart" height="200"></canvas>
                             </div>
                         </div>
@@ -178,70 +187,156 @@
 
     <script src="{{ asset('partials/js/dashboard/dashboard-1.js') }}"></script>
     <script>
-        const ctx = document.getElementById('salesBarChart').getContext('2d');
-        const salesBarChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Sales',
-                    data: [5000, 7000, 3000, 8000, 6500, 9000],
-                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1,
-                    borderRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: 'Monthly Sales Overview'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('salesBarChart').getContext('2d');
+            const yearSelect = document.getElementById('salesYear');
 
-    <script>
-    const productCtx = document.getElementById('productPieChart').getContext('2d');
-    const productPieChart = new Chart(productCtx, {
-        type: 'doughnut',
+            const chartConfig = {
+        type: 'bar',
         data: {
-            labels: ['Product A', 'Product B', 'Product C', 'Product D'],
+            labels: [],
             datasets: [{
-                label: 'Product Availability',
-                data: [30, 20, 25, 25], // replace with real data
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.7)',
-                    'rgba(54, 162, 235, 0.7)',
-                    'rgba(255, 206, 86, 0.7)',
-                    'rgba(75, 192, 192, 0.7)'
-                ],
-                borderColor: '#fff',
-                borderWidth: 2
+                label: '',  // will be set dynamically
+                data: [],
+                backgroundColor: 'rgba(199, 138, 59, 0.7)', // C78A3B with 0.7 opacity
+                borderColor: 'rgba(199, 138, 59, 1)',       // solid color
+                borderWidth: 1,
+                borderRadius: 5
             }]
         },
         options: {
             responsive: true,
             plugins: {
+                legend: { display: false },
                 title: {
                     display: true,
-                    text: 'Product Availability'
-                },
-                legend: {
-                    position: 'bottom'
+                    text: 'Monthly Sales Overview'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
         }
+    };
+
+
+        const salesChart = new Chart(ctx, chartConfig);
+
+        function getCSRFToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        function loadData(year) {
+            fetch(`/admin/monthly-sales?year=${year}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': getCSRFToken(),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Network error');
+                return res.json();
+            })
+            .then(json => {
+                salesChart.data.labels = json.labels;
+                salesChart.data.datasets[0].data = json.data;
+                salesChart.data.datasets[0].label = `Sales for ${year}`; // dynamic label here
+                salesChart.update();
+            })
+            .catch(err => {
+                console.error('Failed to load sales data:', err);
+                alert('Error loading sales data');
+            });
+        }
+
+        yearSelect.addEventListener('change', () => {
+            loadData(yearSelect.value);
+        });
+
+        // Initial load
+        loadData(yearSelect.value);
     });
+    </script>
+
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const productCtx = document.getElementById('productPieChart').getContext('2d');
+        const productTypeSelect = document.getElementById('productType');
+
+        const productChartConfig = {
+            type: 'doughnut',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Product Availability',
+                    data: [],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Product Availability'
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        };
+
+        const productPieChart = new Chart(productCtx, productChartConfig);
+
+        function getCSRFToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        function loadProductData(type) {
+            fetch(`/admin/available-products?type=${encodeURIComponent(type)}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': getCSRFToken(),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Network error');
+                return res.json();
+            })
+            .then(json => {
+                productPieChart.data.labels = json.labels;
+                productPieChart.data.datasets[0].data = json.data;
+                productPieChart.update();
+            })
+            .catch(err => {
+                console.error('Failed to load product data:', err);
+                alert('Error loading product data');
+            });
+        }
+
+        productTypeSelect.addEventListener('change', () => {
+            loadProductData(productTypeSelect.value);
+        });
+
+        loadProductData(productTypeSelect.value);
+    });
+
 </script>
 
 

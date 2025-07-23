@@ -58,6 +58,10 @@ Route::post('/logout', [AuthController::class, 'LogoutRequest'])->name('logout.r
 
 // ADMIN ROUTES
 Route::get('/admin/dashboard', [DashboardController::class, 'AdminDashboardPage'])->name('admin.dashboard.page');
+Route::get('/admin/monthly-sales', [DashboardController::class, 'AdminGetMonthlySales'])
+    ->name('admin.monthly.sales');
+Route::get('/admin/available-products', [DashboardController::class, 'AdminGetAvailableProductsByType'])
+    ->name('admin.get.available.product');
 
 // ADMIN USER MANAGEMENT
 Route::get('/admin/user_management', [UserController::class, 'AdminUserManagementPage'])->name('admin.user.management.page');
