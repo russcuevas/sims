@@ -31,8 +31,17 @@ use App\Http\Controllers\manager\ManagerProfileManagement;
 use App\Http\Controllers\manager\ManagerSalesReportController;
 use App\Http\Controllers\manager\ManagerStockController;
 use App\Http\Controllers\manager\ManagerStockInController;
+use App\Http\Controllers\supervisor\SupervisorArchiveController;
 use App\Http\Controllers\supervisor\SupervisorDashboardController;
+use App\Http\Controllers\supervisor\SupervisorDeliveryController;
+use App\Http\Controllers\supervisor\SupervisorDeliveryStatusController;
+use App\Http\Controllers\supervisor\SupervisorPendingDeliveryController;
+use App\Http\Controllers\supervisor\SupervisorProcessController;
+use App\Http\Controllers\supervisor\SupervisorProfileManagement;
+use App\Http\Controllers\supervisor\SupervisorReturnItemController;
+use App\Http\Controllers\supervisor\SupervisorSalesReportController;
 use App\Http\Controllers\supervisor\SupervisorStockController;
+use App\Http\Controllers\supervisor\SupervisorViewAvailableCarsController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -260,6 +269,12 @@ Route::get('/manager/profile/update', [ManagerProfileManagement::class, 'Manager
 Route::post('/manager/profile/update/request', [ManagerProfileManagement::class, 'ManagerUpdateProfile'])->name('manager.profile.update.request');
 
 
+
+
+
+
+
+
 // SUPERVISOR ROUTE
 Route::get('/supervisor/dashboard', [SupervisorDashboardController::class, 'SupervisorDashboardPage'])->name('supervisor.dashboard.page');
 Route::get('/supervisor/monthly-sales', [SupervisorDashboardController::class, 'SupervisorGetMonthlySales'])
@@ -275,6 +290,76 @@ Route::get('/supervisor/purchase-order', [SupervisorStockController::class, 'Sup
 Route::post('/supervisor/submit/purchase-order', [SupervisorStockController::class, 'SupervisorStockSubmitPO'])->name('supervisor.stock.submit.po');
 Route::get('/supervisor/purchase-order/view/{po_number}', [SupervisorStockController::class, 'SupervisorViewPO'])
     ->name('supervisor.view.po');
+
+// SUPERVISOR PROCESS MANAGEMENT
+Route::get('/supervisor/process_management', [SupervisorProcessController::class, 'SupervisorProcessManagementPage'])->name('supervisor.process.management.page');
+Route::post('/supervisor/batch/add-raw-products', [SupervisorProcessController::class, 'SupervisorAddBatchFetchRawProducts'])
+    ->name('supervisor.batch.add.raw.products');
+Route::get('/supervisor/batch-product-raw-details/delete/{id}', [SupervisorProcessController::class, 'SupervisorRemoveBatchRawProduct'])->name('supervisor.batch.raw.product.remove');
+Route::post('/supervisor/add-batch-multiple-product', [SupervisorProcessController::class, 'SupervisorAddBatchMultipleProduct'])->name('supervisor.add.batch.multiple.product');
+Route::post('/supervisor/add-batch-finish-product', [SupervisorProcessController::class, 'SupervisorAddBatchFinishProduct'])->name('supervisor.batch.finish.product');
+Route::post('/supervisor/submit-finish-products', [SupervisorProcessController::class, 'SupervisorFinishProductSubmit'])->name('supervisor.finish.product.submit');
+Route::get('/supervisor/batch-product-finish/delete/{id}', [SupervisorProcessController::class, 'SupervisorRemoveFinishProduct'])->name('supervisor.batch.finish.product.remove');
+Route::post('/supervisor/archive-history-finish-product/{transactId}', [SupervisorProcessController::class, 'SupervisorArchiveHistoryFinishProduct'])->name('supervisor.archive.history.finish.product');
+
+// SUPERVISOR DELIVERY PREPARING MANAGEMENT
+Route::get('/supervisor/delivery_management', [SupervisorDeliveryController::class, 'SupervisorDeliveryPage'])->name('supervisor.delivery.management.page');
+Route::post('/supervisor/delivery/add-store', [SupervisorDeliveryController::class, 'SupervisorDeliveryAddStore'])->name('supervisor.delivery.add.store');
+Route::post('/supervisor/delivery/add-car', [SupervisorDeliveryController::class, 'SupervisorAddCar'])->name('supervisor.delivery.add.car');
+Route::post('/supervisor/delivery/add-multiple-finish/', [SupervisorDeliveryController::class, 'SupervisorDeliverySubmitBatch'])->name('supervisor.delivery.submit.batch');
+Route::get('/supervisor/delivery/remove-product/{id}', [SupervisorDeliveryController::class, 'SupervisorDeliveryRemoveProduct'])
+    ->name('supervisor.delivery.remove.product');
+Route::post('/supervisor/delivery/add', [SupervisorDeliveryController::class, 'SupervisorDeliveryAdd'])->name('supervisor.delivery.add');
+Route::get('supervisor/delivery/view/{transact_id}', [SupervisorDeliveryController::class, 'SupervisorViewDeliveryOrder'])->name('supervisor.delivery.view');
+Route::post('/supervisor/delivery/archive/{transact_id}', [SupervisorDeliveryController::class, 'SupervisorArchiveDeliveryOrder'])->name('supervisor.delivery.archive');
+
+
+// SUPERVISOR VIEW AVAILABLE CARS
+Route::get('/supervisor/view/available-cars', [SupervisorViewAvailableCarsController::class, 'SupervisorViewAvailableCarsPage'])->name('supervisor.view.available.cars');
+
+
+// SUPERVISOR DELIVERY PENDING MANAGEMENT
+Route::get('/supervisor/pending_delivery', [SupervisorPendingDeliveryController::class, 'SupervisorPendingDeliveryPage'])->name('supervisor.pending.management.page');
+Route::post('/supervisor/pending/marked-status/{transact_id}', [SupervisorPendingDeliveryController::class, 'SupervisorMarkStatusDelivery'])->name('supervisor.delivery.mark.status');
+
+// SUPERVISOR DELIVERY STATUS MANAGEMENT
+Route::get('/supervisor/delivery_status', [SupervisorDeliveryStatusController::class, 'SupervisorDeliveryStatusPage'])->name('supervisor.delivery.status.page');
+
+// SUPERVISOR EDIT PROFILE
+Route::get('/supervisor/profile/update', [SupervisorProfileManagement::class, 'SupervisorProfileManagementPage'])->name('supervisor.profile.page');
+Route::post('/supervisor/profile/update/request', [SupervisorProfileManagement::class, 'SupervisorUpdateProfile'])->name('supervisor.profile.update.request');
+
+
+// SUPERVISOR RETURN ITEM MANAGEMENT
+Route::get('/supervisor/return_item', [SupervisorReturnItemController::class, 'SupervisorReturnItemPage'])->name('supervisor.return.item.page');
+Route::post('/supervisor//return/add-multiple-finish', [SupervisorReturnItemController::class, 'SupervisorBatchReturnProductSubmit'])->name('supervisor.return.submit.item');
+Route::post('/supervisor/return/submit-items', [SupervisorReturnItemController::class, 'SupervisorAddReturnItem'])->name('supervisor.return.submit');
+Route::get('/supervisor/return/delete/{id}', [SupervisorReturnItemController::class, 'SupervisorDeleteBatchReturnProduct'])->name('supervisor.batch-return-item.delete');
+
+
+// SUPERVISOR SALES REPORT MANAGEMENT
+Route::get('/supervisor/sales/report', [SupervisorSalesReportController::class, 'SupervisorSalesReportPage'])->name('supervisor.sales.management.page');
+Route::post('/supervisor/sales/add-transaction', [SupervisorSalesReportController::class, 'SupervisorTransactionAdd'])->name('supervisor.sales.request.transaction');
+Route::post('/supervisor/sales/report/archive/{id}', [SupervisorSalesReportController::class, 'SupervisorTransactionArchive'])
+    ->name('supervisor.transaction.archive');
+
+
+// SUPERVISOR ARCHIVE MANAGEMENT
+Route::get('/supervisor/archive', [SupervisorArchiveController::class, 'SupervisorArchivePage'])->name('supervisor.archive.page');
+Route::post('/supervisor/employees/restore/{id}', [SupervisorArchiveController::class, 'SupervisorRestoreEmployee'])->name('supervisor.employees.restore');
+Route::get('/supervisor/archive/stocks', [SupervisorArchiveController::class, 'SupervisorArchiveStocksPage'])->name('supervisor.archive.stocks.page');
+Route::post('/supervisor/stocks/restore/{id}', [SupervisorArchiveController::class, 'SupervisorRestoreStocks'])->name('supervisor.stocks.restore');
+Route::get('/supervisor/archive/stock_in', [SupervisorArchiveController::class, 'SupervisorArchiveStockInPage'])->name('supervisor.archive.stock.in.page');
+Route::post('/supervisor/stockin/restore/{transact_id}', [SupervisorArchiveController::class, 'SupervisorRestoreStockIn'])->name('supervisor.stockin.restore');
+Route::get('/supervisor/archive/process', [SupervisorArchiveController::class, 'SupervisorArchiveProcessPage'])->name('supervisor.archive.process.page');
+Route::post('/supervisor/process/restore/{transact_id}', [SupervisorArchiveController::class, 'SupervisorRestoreProcess'])->name('supervisor.process.restore');
+Route::get('/supervisor/archive/delivery', [SupervisorArchiveController::class, 'SupervisorArchiveDeliveryPage'])->name('supervisor.archive.delivery.page');
+Route::post('/supervisor/delivery/restore/{transact_id}', [SupervisorArchiveController::class, 'SupervisorRestoreDelivery'])->name('supervisor.delivery.restore');
+Route::get('/supervisor/archive/sales', [SupervisorArchiveController::class, 'SupervisorArchiveSalesPage'])->name('supervisor.archive.sales.page');
+Route::post('/supervisor/archive/sales/restore/{id}', [SupervisorArchiveController::class, 'SupervisorRestoreSales'])->name('supervisor.sales.restore');
+
+
+
 
 // DELIVERY ROUTES
 

@@ -47,11 +47,11 @@
         ***********************************-->
     <div id="main-wrapper">
         {{-- right sidebar --}}
-        @include('manager.right_sidebar')
+        @include('supervisor.right_sidebar')
         {{-- end right sidebar --}}
         
         {{-- left sidebar --}}
-        @include('manager.left_sidebar')
+        @include('supervisor.left_sidebar')
         {{-- left sidebar end --}}
 
         <!--**********************************
@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('manager.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('supervisor.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Archive Management</li>
                         </ol>
                     </div>
@@ -88,22 +88,22 @@
                                 <!-- Status Buttons aligned to the right -->
                                 <div class="row mb-3 justify-content-center">
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.page') }}" class="btn btn-primary">Users</a>
+                                        <a href="{{ route('supervisor.archive.page') }}" class="btn btn-outline-primary">Users</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.stocks.page') }}" class="btn btn-outline-primary">Stocks</a>
+                                        <a href="{{ route('supervisor.archive.stocks.page') }}" class="btn btn-outline-primary">Stocks</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.stock.in.page') }}" class="btn btn-outline-primary">Stock In History</a>
+                                        <a href="{{ route('supervisor.archive.stock.in.page') }}" class="btn btn-outline-primary">Stock In History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.process.page') }}" class="btn btn-outline-primary">Process History</a>
+                                        <a href="{{ route('supervisor.archive.process.page') }}" class="btn btn-outline-primary">Process History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.delivery.page') }}" class="btn btn-outline-primary">Delivery History</a>
+                                        <a href="{{ route('supervisor.archive.delivery.page') }}" class="btn btn-primary">Delivery History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.sales.page') }}" class="btn btn-outline-primary">Sales Reports</a>
+                                        <a href="{{ route('supervisor.archive.sales.page') }}" class="btn btn-outline-primary">Sales Reports</a>
                                     </div>
                                 </div>
                             </div>
@@ -115,53 +115,37 @@
                                         <table id="example">
                                         <thead>
                                             <tr>
-                                                <th style="color: #A16D28;">Image</th>
-                                                <th style="color: #A16D28;">Name</th>
-                                                <th style="color: #A16D28;">Role</th>
-                                                <th style="color: #A16D28;">Contract</th>
-                                                <th style="color: #A16D28;">Email</th>
-                                                <th style="color: #A16D28;">Username</th>
-                                                <th style="color: #A16D28;">Pin</th>
-                                                <th style="color: #A16D28;">Attempt</th>
-                                                <th style="color: #A16D28;">Status</th>
-                                                <th style="color: #A16D28;">Action</th>
+                                                <th style="width: 10%; color: #A16D28;">Details</th>
+                                                <th style="width: 15%; color: #A16D28;">Transaction Date</th>
+                                                <th style="width: 20%; color: #A16D28;">Processed By</th>
+                                                <th style="width: 20%; color: #A16D28;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse($archivedEmployees as $employee)
+                                            @forelse($deliveryOrders as $transactId => $orders)
+                                                @php $first = $orders->first(); @endphp
                                                 <tr>
-                                                    <td style="color: black;">
-                                                        <img src="https://images.rawpixel.com/image_png_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvdjkzNy1hZXctMTY1LnBuZw.png?s=b4SEVfKYcskH9PiGnSKmpM9SloVv-yAI_PKnNBsL-3o" alt="Default Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
-                                                    </td>
-                                                    <td style="color: black;">{{ $employee->employee_firstname }} {{ $employee->employee_lastname }}</td>
-                                                    <td style="color: black;">{{ $employee->position_name ?? 'N/A' }}</td>
-                                                    <td style="color: black;">{{ $employee->contract ?? 'N/A' }}</td>
-                                                    <td style="color: black;">{{ $employee->email }}</td>
-                                                    <td style="color: black;">{{ $employee->username }}</td>
-                                                    <td style="color: black;">{{ $employee->pin }}</td>
-                                                    <td style="color: black;">{{ $employee->login_attempts }}</td>
-                                                    <td style="color: black;">
-                                                        @if($employee->status == 'active')
-                                                            <span class="badge bg-success">Active</span>
-                                                        @else
-                                                            <span class="badge bg-warning">Inactive</span>
-                                                        @endif
-                                                    </td>
                                                     <td>
-                                                        <form action="{{ route('manager.employees.restore', $employee->id) }}" method="POST">
+                                                        <a target="_blank" href="{{ route('supervisor.delivery.view', $transactId) }}" class="btn btn-outline-primary btn-sm">View</a>
+                                                    </td>
+                                                    <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
+                                                    <td style="color: black">{{ $first->process_by }}</td>
+                                                    <td>
+                                                        <form method="POST" action="{{ route('supervisor.delivery.restore', $transactId) }}">
                                                             @csrf
-                                                            <button type="submit" class="btn btn-outline-success btn-sm">
-                                                                Restore
-                                                            </button>
+                                                            <button type="submit" class="btn btn-outline-success btn-sm">Restore</button>
                                                         </form>
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="10" class="text-center text-muted">No archived employees found.</td>
+                                                    <td colspan="4" class="text-center text-muted">
+                                                        No archived delivery orders
+                                                    </td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
+
                                         </table>                                    
                                     </div>
                                 </div>

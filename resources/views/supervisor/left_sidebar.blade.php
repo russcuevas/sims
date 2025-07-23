@@ -54,18 +54,18 @@
             <li><a href="{{ route('supervisor.stock.management.page') }}" aria-expanded="false"><i class="icon icon-layout-25"></i><span
                         class="nav-text">Stock Management</span></a>
             </li>
-            <li><a href="a" aria-expanded="false"><i class="icon icon-app-store"></i><span
+            <li><a href="{{ route('supervisor.process.management.page') }}" aria-expanded="false"><i class="icon icon-app-store"></i><span
                         class="nav-text">Process Management</span></a>
             </li>
-            <li><a href="d" aria-expanded="false"><i class="fa-solid fa-truck-fast"></i><span
+            <li><a href="{{ route('supervisor.delivery.management.page') }}" aria-expanded="false"><i class="fa-solid fa-truck-fast"></i><span
                         class="nav-text">Delivery
                         Management</span></a>
             </li>
-            <li><a href="b" aria-expanded="false"><i class="icon icon-chart-bar-33"></i><span
+            <li><a href="{{ route('supervisor.sales.management.page') }}" aria-expanded="false"><i class="icon icon-chart-bar-33"></i><span
                         class="nav-text">Sales
                         Report</span></a>
             </li>
-            <li><a href="e" aria-expanded="false"><i class="icon icon-card-update"></i><span
+            <li><a href="{{ route('supervisor.archive.page') }}" aria-expanded="false"><i class="icon icon-card-update"></i><span
                         class="nav-text">Archive
                     </span></a>
             </li>

@@ -47,11 +47,11 @@
         ***********************************-->
     <div id="main-wrapper">
         {{-- right sidebar --}}
-        @include('manager.right_sidebar')
+        @include('supervisor.right_sidebar')
         {{-- end right sidebar --}}
         
         {{-- left sidebar --}}
-        @include('manager.left_sidebar')
+        @include('supervisor.left_sidebar')
         {{-- left sidebar end --}}
 
         <!--**********************************
@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('manager.dashboard.page')}}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('supervisor.dashboard.page')}}">Dashboard</a></li>
                             <li class="breadcrumb-item active">Archive Management</li>
                         </ol>
                     </div>
@@ -88,22 +88,22 @@
                                 <!-- Status Buttons aligned to the right -->
                                 <div class="row mb-3 justify-content-center">
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.page') }}" class="btn btn-outline-primary">Users</a>
+                                        <a href="{{ route('supervisor.archive.page') }}" class="btn btn-outline-primary">Users</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.stocks.page') }}" class="btn btn-outline-primary">Stocks</a>
+                                        <a href="{{ route('supervisor.archive.stocks.page') }}" class="btn btn-primary">Stocks</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.stock.in.page') }}" class="btn btn-outline-primary">Stock In History</a>
+                                        <a href="{{ route('supervisor.archive.stock.in.page') }}" class="btn btn-outline-primary">Stock In History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.process.page') }}" class="btn btn-outline-primary">Process History</a>
+                                        <a href="{{ route('supervisor.archive.process.page') }}" class="btn btn-outline-primary">Process History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.delivery.page') }}" class="btn btn-outline-primary">Delivery History</a>
+                                        <a href="{{ route('supervisor.archive.delivery.page') }}" class="btn btn-outline-primary">Delivery History</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="{{ route('manager.archive.sales.page') }}" class="btn btn-primary">Sales Reports</a>
+                                        <a href="{{ route('supervisor.archive.sales.page') }}" class="btn btn-outline-primary">Sales Reports</a>
                                     </div>
                                 </div>
                             </div>
@@ -115,39 +115,36 @@
                                         <table id="example">
                                         <thead>
                                             <tr>
-                                                <th style="color: #A16D28;">Transaction date</th>
-                                                <th style="color: #A16D28;">Process by</th>
-                                                <th style="color: #A16D28;">Transaction type</th>
-                                                <th style="color: #A16D28;">Transaction ID</th>
-                                                <th style="color: #A16D28;">Debit</th>
-                                                <th style="color: #A16D28;">Credit</th>
-                                                <th style="color: #A16D28;">Balances</th>
+                                                <th style="color: #A16D28;">Date</th>
+                                                <th style="color: #A16D28;">Quantity</th>
+                                                <th style="color: #A16D28;">Product</th>
+                                                <th style="color: #A16D28;">Unit</th>
+                                                <th style="color: #A16D28;">Category</th>
                                                 <th style="color: #A16D28;">Action</th>
                                             </tr>
                                         </thead>
-                                            <tbody>
-                                                @forelse ($transactions as $transaction)
-                                                    <tr>
-                                                        <td style="color: black;">{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y') }}</td>
-                                                        <td style="color: black;">{{ $transaction->process_by }}</td>
-                                                        <td style="color: black;">{{ ucfirst($transaction->transaction_type) }}</td>
-                                                        <td style="color: black;">{{ $transaction->transaction_id }}</td>
-                                                        <td style="color: black;">₱{{ number_format($transaction->debit, 2) }}</td>
-                                                        <td style="color: black;">₱{{ number_format($transaction->credit, 2) }}</td>
-                                                        <td style="color: black;">₱{{ number_format($transaction->balances, 2) }}</td>
-                                                        <td>
-                                                            <form method="POST" action="{{ route('manager.sales.restore', $transaction->id) }}">
-                                                                @csrf
-                                                                <button type="submit" class="btn btn-outline-success btn-sm">Restore</button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="8" class="text-center text-muted">No archived transactions found.</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
+                                        <tbody>
+                                        @forelse($archivedStocks as $stock)
+                                            <tr>
+                                                <td style="color: black;">{{ \Carbon\Carbon::parse($stock->created_at)->format('Y-m-d') }}</td>
+                                                <td style="color: black;">{{ $stock->quantity }}</td>
+                                                <td style="color: black;">{{ $stock->product_name }}</td>
+                                                <td style="color: black;">{{ $stock->stock_unit_id }}</td>
+                                                <td style="color: black; text-transform: capitalize"> {{ $stock->category }}</td>
+                                                <td>
+                                                    <form action="{{ route('supervisor.stocks.restore', $stock->id) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-outline-success btn-sm">Restore</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">No archived stock items found.</td>
+                                            </tr>
+                                        @endforelse
+                                        </tbody>
+
                                         </table>                                    
                                     </div>
                                 </div>
