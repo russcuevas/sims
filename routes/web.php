@@ -31,6 +31,8 @@ use App\Http\Controllers\manager\ManagerProfileManagement;
 use App\Http\Controllers\manager\ManagerSalesReportController;
 use App\Http\Controllers\manager\ManagerStockController;
 use App\Http\Controllers\manager\ManagerStockInController;
+use App\Http\Controllers\supervisor\SupervisorDashboardController;
+use App\Http\Controllers\supervisor\SupervisorStockController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -258,7 +260,21 @@ Route::get('/manager/profile/update', [ManagerProfileManagement::class, 'Manager
 Route::post('/manager/profile/update/request', [ManagerProfileManagement::class, 'ManagerUpdateProfile'])->name('manager.profile.update.request');
 
 
+// SUPERVISOR ROUTE
+Route::get('/supervisor/dashboard', [SupervisorDashboardController::class, 'SupervisorDashboardPage'])->name('supervisor.dashboard.page');
+Route::get('/supervisor/monthly-sales', [SupervisorDashboardController::class, 'SupervisorGetMonthlySales'])
+    ->name('supervisor.monthly.sales');
+Route::get('/supervisor/available-products', [SupervisorDashboardController::class, 'SupervisorGetAvailableProductsByType'])
+    ->name('supervisor.get.available.product');
 
+// SUPERVISOR STOCK MANAGEMENT
+Route::get('/supervisor/stock_management', [SupervisorStockController::class, 'SupervisorStockManagementPage'])->name('supervisor.stock.management.page');
+Route::post('/supervisor/stock/archive-product/{id}', [SupervisorStockController::class, 'SupervisorStockArchiveProduct'])->name('supervisor.stock.archive.product');
+Route::post('/supervisor/stock/update-product/{id}', [SupervisorStockController::class, 'SupervisorStockUpdateProduct'])->name('supervisor.stock.update.product');
+Route::get('/supervisor/purchase-order', [SupervisorStockController::class, 'SupervisorStockPurchaseOrderPage'])->name('supervisor.purchase.order.page');
+Route::post('/supervisor/submit/purchase-order', [SupervisorStockController::class, 'SupervisorStockSubmitPO'])->name('supervisor.stock.submit.po');
+Route::get('/supervisor/purchase-order/view/{po_number}', [SupervisorStockController::class, 'SupervisorViewPO'])
+    ->name('supervisor.view.po');
 
 // DELIVERY ROUTES
 
