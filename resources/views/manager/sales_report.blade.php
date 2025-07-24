@@ -116,6 +116,11 @@
                                         
                                         </form>
                                     </div>
+                                    <a href="{{ route('manager.sales.report.print') }}" target="_blank"
+                                            class="btn btn-outline-primary float-right ml-2 mb-2">
+                                        Print Sales
+                                    </a>
+
                                     <button id="add_supplier_button"
                                             data-toggle="modal" data-target="#add_transaction_modal" 
                                             class="btn btn-outline-primary float-right mb-2">

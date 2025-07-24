@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\manager;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -167,13 +168,13 @@ class ManagerStockController extends Controller
         $poNumber = 'PO-RHEA-' . $date . $nextSequence;
 
 
-        $managers = DB::table('employees')
+        $admins = DB::table('employees')
             ->where('position_id', 1)
             ->get();
 
         $suppliers = DB::table('suppliers')->get();
 
-        return view('manager.purchase_order', compact('lowStockProducts', 'poNumber', 'user', 'managers', 'suppliers'));
+        return view('manager.purchase_order', compact('lowStockProducts', 'poNumber', 'user', 'admins', 'suppliers'));
     }
 
 
@@ -253,5 +254,31 @@ class ManagerStockController extends Controller
         $supplier = DB::table('suppliers')->where('id', $supplier_id)->first();
 
         return view('manager.history.view_po_history', compact('purchaseOrderItems', 'po_number', 'supplier'));
+    }
+
+    public function ManagerValidatePin(Request $request)
+    {
+        $user = Auth::guard('employees')->user();
+
+        if (!$user || !$request->has('pin')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if ((int)$user->pin === (int)$request->input('pin')) {
+            if ($request->has('po_number')) {
+                $poNumber = $request->input('po_number');
+
+                ActivityLogger::log(
+                    $user->id,
+                    'print',
+                    'purchase_orders',
+                    "Generate report purchase order transaction {$poNumber}"
+                );
+            }
+
+            return response()->json(['message' => 'PIN verified']);
+        }
+
+        return response()->json(['message' => 'Invalid PIN'], 403);
     }
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Delivery Order</title>
     <style>
         body {
@@ -103,6 +104,12 @@
 </head>
 <body>
 
+    <div id="deliveryOrderContent"> 
+    <div style="text-align: right; margin:20px;">
+        <button id="btn-validate-pin" style="padding: 8px 20px; font-size: 14px;">Print</button>
+    </div>
+
+
     <div class="header" style="text-align: center; margin-bottom: 30px;">
         <h2>{{ $first->store_name ?? 'Store Name' }}</h2>
         <p>{{ $first->store_address ?? 'Store Address' }}</p>
@@ -142,40 +149,45 @@
     </div>
 
     <table class="product-table">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Pack</th>
-                <th>Unit</th>
-                <th>Qty Ord</th>
-                <th>Qty Rcvd</th>
-                <th>Price</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($delivery as $item)
-            <tr>
-                <td>{{ $item->product_name }}</td>
-                <td>{{ $item->pack }}</td>
-                <td>{{ $item->unit }}</td>
-                <td>{{ $item->quantity_ordered }}</td>
-                <td>{{ $item->quantity_received ?? '' }}</td>
-                <td>{{ number_format($item->price, 2) }}</td>
-                <td>{{ number_format($item->amount, 2) }}</td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="8"><em>No delivery data available</em></td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Pack</th>
+            <th>Unit</th>
+            <th>Qty Ord</th>
+            <th>Qty Rcvd</th>
+            <th>Price</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse ($delivery as $item)
+        <tr>
+            <td>{{ $item->product_name }}</td>
+            <td>{{ $item->pack }}</td>
+            <td>{{ $item->unit }}</td>
+            <td>{{ $item->quantity_ordered }}</td>
+            <td>{{ $item->quantity_received ?? '' }}</td>
+            <td>₱{{ number_format($item->price, 2) }}</td>
+            <td>₱{{ number_format($item->amount, 2) }}</td>
+        </tr>
+        @empty
+        <tr>
+            <td colspan="8"><em>No delivery data available</em></td>
+        </tr>
+        @endforelse
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" style="border: none;"></td>
+            <td style="border:none ; font-weight: bold;">Total Ordered: {{ $delivery->sum('quantity_ordered') }}</td>
+            <td style="border: none;"></td>
+            <td style="border: none;"></td>
+            <td style="border:none ; font-weight: bold;">Total Amount: ₱{{ number_format($delivery->sum('amount'), 2) }}</td>
+        </tr>
+    </tfoot>
+</table>
 
-    <div class="totals-section">
-        <div><strong>Total order:</strong> {{ $delivery->sum('quantity_ordered') }}</div>
-        <div><strong>Total amount:</strong> ₱{{ number_format($delivery->sum('amount'), 2) }}</div>
-    </div>
 
     <div class="signatures-section">
         <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px;">
@@ -211,6 +223,74 @@
             <li class="highlight">WE WILL PRIORITIZE SEGREGATED INVOICES FOR DELIVERY.</li>
         </ul>
     </div>
+    </div>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- html2pdf.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    document.getElementById('btn-validate-pin').addEventListener('click', async function () {
+        const doNumber = `{{ $first->transact_id ?? 'SAVMGMALL-yymmdd0001' }}`;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        Swal.fire({
+            title: 'Enter Your PIN',
+            input: 'password',
+            inputAttributes: {
+                maxlength: 6,
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Verify',
+            cancelButtonText: 'Cancel',
+            showLoaderOnConfirm: true,
+            preConfirm: (pin) => {
+                return fetch('/manager/validate-pin-delivery', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({ 
+                        pin: pin,
+                        do_number: doNumber
+                    })
+                })
+                .then(async (response) => {
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Invalid PIN');
+                    }
+                    return response.json();
+                })
+                .catch((error) => {
+                    Swal.showValidationMessage(`PIN validation failed: ${error.message}`);
+                });
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed && result.value?.message === 'PIN verified') {
+                const button = document.getElementById('btn-validate-pin');
+                const element = document.getElementById('deliveryOrderContent') || document.body;
+                button.style.display = 'none';
+
+                const opt = {
+                    margin: 0.5,
+                    filename: `${doNumber}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+
+                html2pdf().from(element).set(opt).save().then(() => {
+                    button.style.display = 'inline-block';
+                });
+            }
+        });
+    });
+</script>
+
 
 </body>
 </html>

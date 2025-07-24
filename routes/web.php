@@ -118,6 +118,7 @@ Route::get('/admin/purchase-order/view/{po_number}', [StockController::class, 'A
     ->name('admin.view.po');
 
 
+
 // ADMIN PROCESS MANAGEMENT
 Route::get('/admin/process_management', [ProcessController::class, 'ProcessManagementPage'])->name('admin.process.management.page');
 Route::post('/admin/batch/add-raw-products', [ProcessController::class, 'AdminAddBatchFetchRawProducts'])
@@ -152,6 +153,7 @@ Route::post('/admin/pending/marked-status/{transact_id}', [PendingDeliveryContro
 // ADMIN DELIVERY STATUS MANAGEMENT
 Route::get('/admin/delivery_status', [DeliveryStatusController::class, 'AdminDeliveryStatusPage'])->name('admin.delivery.status.page');
 
+
 // ADMIN RETURN ITEM MANAGEMENT
 Route::get('/admin/return_item', [ReturnItemController::class, 'AdminReturnItemPage'])->name('admin.return.item.page');
 Route::post('/admin//return/add-multiple-finish', [ReturnItemController::class, 'AdminBatchReturnProductSubmit'])->name('admin.return.submit.item');
@@ -163,6 +165,9 @@ Route::get('/admin/sales/report', [SalesReportController::class, 'AdminSalesRepo
 Route::post('/admin/sales/add-transaction', [SalesReportController::class, 'AdminTransactionAdd'])->name('admin.sales.request.transaction');
 Route::post('/admin/sales/report/archive/{id}', [SalesReportController::class, 'AdminTransactionArchive'])
     ->name('admin.transaction.archive');
+
+
+
 
 // ADMIN LOGS MANAGEMENT
 Route::get('/admin/logs', [LogsController::class, 'AdminLogsPage'])->name('admin.logs.page');
@@ -185,7 +190,15 @@ Route::post('/admin/archive/sales/restore/{id}', [ArchiveController::class, 'Adm
 Route::get('/admin/profile/update', [ProfileManagement::class, 'AdminProfileManagementPage'])->name('admin.profile.page');
 Route::post('/admin/profile/update/request', [ProfileManagement::class, 'AdminUpdateProfile'])->name('admin.profile.update.request');
 
-
+// ADMIN NEW EXPORTING GENERATING LOGS
+// PURCHASE ORDER
+Route::post('/admin/validate-pin', [StockController::class, 'AdminValidatePin']);
+// DELIVERY PO
+Route::post('/admin/validate-pin-delivery', [DeliveryController::class, 'AdminValidatePinDelivery'])
+    ->name('admin.validate.pin.delivery');
+// SALES TRANSACTION
+Route::get('/admin/sales-report/print', [SalesReportController::class, 'AdminViewPrintSalesHistoryPage'])->name('admin.sales.report.print');
+Route::post('/admin/sales/validate-pin', [SalesReportController::class, 'AdminValidatePinSales'])->name('admin.validate.pin.sales');
 
 
 
@@ -269,7 +282,15 @@ Route::get('/manager/profile/update', [ManagerProfileManagement::class, 'Manager
 Route::post('/manager/profile/update/request', [ManagerProfileManagement::class, 'ManagerUpdateProfile'])->name('manager.profile.update.request');
 
 
-
+// MANAGER NEW EXPORTING GENERATING LOGS
+// PURCHASE ORDER
+Route::post('/manager/validate-pin', [ManagerStockController::class, 'ManagerValidatePin']);
+// DELIVERY PO
+Route::post('/manager/validate-pin-delivery', [ManagerPendingDeliveryController::class, 'ManagerValidatePinDelivery'])
+    ->name('manager.validate.pin.delivery');
+// SALES TRANSACTION
+Route::get('/manager/sales-report/print', [ManagerSalesReportController::class, 'ManagerViewPrintSalesHistoryPage'])->name('manager.sales.report.print');
+Route::post('/manager/sales/validate-pin', [ManagerSalesReportController::class, 'ManagerValidatePinSales'])->name('manager.validate.pin.sales');
 
 
 
@@ -358,6 +379,9 @@ Route::post('/supervisor/delivery/restore/{transact_id}', [SupervisorArchiveCont
 Route::get('/supervisor/archive/sales', [SupervisorArchiveController::class, 'SupervisorArchiveSalesPage'])->name('supervisor.archive.sales.page');
 Route::post('/supervisor/archive/sales/restore/{id}', [SupervisorArchiveController::class, 'SupervisorRestoreSales'])->name('supervisor.sales.restore');
 
+// DELIVERY PO
+Route::post('/supervisor/validate-pin-delivery', [SupervisorDeliveryController::class, 'SupervisorValidatePinDelivery'])
+    ->name('supervisor.validate.pin.delivery');
 
 
 
@@ -376,3 +400,9 @@ Route::get('/delivery/delivery_status', [DeliveryDeliveryStatusController::class
 // DELIVERY EDIT PROFILE
 Route::get('/delivery/profile/update', [DeliveryProfileManagement::class, 'DeliveryProfileManagementPage'])->name('delivery.profile.page');
 Route::post('/delivery/profile/update/request', [DeliveryProfileManagement::class, 'DeliveryUpdateProfile'])->name('delivery.profile.update.request');
+
+
+// DELIVERY NEW EXPORTING GENERATING LOGS
+// DELIVERY PO
+Route::post('/delivery/validate-pin-delivery', [DeliveryDashboardController::class, 'DeliveryValidatePinDelivery'])
+    ->name('delivery.validate.pin.delivery');

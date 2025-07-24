@@ -340,4 +340,32 @@ class DeliveryController extends Controller
             return redirect()->back()->with('error', 'Failed to archive delivery order.');
         }
     }
+
+    public function AdminValidatePinDelivery(Request $request)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
+        }
+
+        $user = Auth::guard('employees')->user();
+
+        if (!$user || !$request->has('pin')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if ((int)$user->pin === (int)$request->input('pin')) {
+            $doNumber = $request->input('do_number', 'UNKNOWN_DO');
+
+            ActivityLogger::log(
+                $user->id,
+                'print',
+                'delivery_orders',
+                "Generate reports delivery orders transaction - {$doNumber}"
+            );
+
+            return response()->json(['message' => 'PIN verified']);
+        }
+
+        return response()->json(['message' => 'Invalid PIN'], 403);
+    }
 }

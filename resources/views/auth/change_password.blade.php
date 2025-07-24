@@ -22,7 +22,7 @@
                             <div class="col-xl-12">
                                 <div class="auth-form">
                                     <h4 class="text-center mb-4">
-                                        <img src="https://images.freecreatives.com/wp-content/uploads/2015/04/logo033.png"
+                                        <img src=""
                                             alt="" style="width: 150px;">
                                         <br>
                                         Forgot Password
