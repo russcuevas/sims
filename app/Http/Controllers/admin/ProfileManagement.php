@@ -38,12 +38,14 @@ class ProfileManagement extends Controller
             'email' => 'required|email|unique:employees,email,' . $user->id,
             'username' => 'required|string|unique:employees,username,' . $user->id,
             'password' => 'nullable|string|min:6|confirmed',
+            'pin' => 'required|string|max:4'
         ]);
 
         DB::table('employees')->where('id', $user->id)->update([
             'email' => $request->email,
             'username' => $request->username,
             'password' => $request->password ? Hash::make($request->password) : $user->password,
+            'pin' => $request->pin,
             'updated_at' => now(),
         ]);
 

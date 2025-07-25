@@ -65,6 +65,12 @@
                                     </div>
 
                                     <div class="form-group">
+                                        <label style="color: black" for="pin" class="form-label">Pin</label>
+                                        <input type="text" name="pin" class="form-control" id="pin"
+                                            value="{{ old('pin', $user->pin) }}" required>
+                                    </div>
+
+                                    <div class="form-group">
                                         <label style="color: black" for="password" class="form-label">New Password <small style="color: red !important" class="text-muted">(Leave blank to keep current)</small></label>
                                         <input type="password" name="password" class="form-control" id="password">
                                     </div>

@@ -21,7 +21,7 @@ use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\delivery\DeliveryDashboardController;
 use App\Http\Controllers\delivery\DeliveryDeliveryStatusController;
 use App\Http\Controllers\delivery\DeliveryProfileManagement;
-use App\Http\Controllers\manager\ManagerArchiveController;
+
 // MANAGER CONTROLLER
 use App\Http\Controllers\manager\ManagerDashboardController;
 use App\Http\Controllers\manager\ManagerDeliveryStatusController;
@@ -31,6 +31,9 @@ use App\Http\Controllers\manager\ManagerProfileManagement;
 use App\Http\Controllers\manager\ManagerSalesReportController;
 use App\Http\Controllers\manager\ManagerStockController;
 use App\Http\Controllers\manager\ManagerStockInController;
+use App\Http\Controllers\manager\ManagerArchiveController;
+
+// SUPERVISOR CONTROLLER
 use App\Http\Controllers\supervisor\SupervisorArchiveController;
 use App\Http\Controllers\supervisor\SupervisorDashboardController;
 use App\Http\Controllers\supervisor\SupervisorDeliveryController;
