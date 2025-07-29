@@ -44,7 +44,7 @@
                 <h1>Dashboard</h1>
                 <div class="row">
                     <!-- Pending Orders -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card text-white bg-warning shadow">
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
@@ -59,7 +59,7 @@
                     </div>
 
                     <!-- Completed Orders -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card text-white bg-success shadow">
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
@@ -74,12 +74,26 @@
                     </div>
 
                     <!-- Return Orders -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card text-white bg-danger shadow">
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
                                     <h4 class="mb-1 text-white">Return Orders</h4>
                                     <h2 class="mb-0 text-white">{{ $returnOrders }}</h2>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-undo fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card text-white bg-primary shadow">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="mb-1 text-white">Return Items</h4>
+                                    <h2 class="mb-0 text-white">{{ $returnItems }}</h2>
                                 </div>
                                 <div class="icon">
                                     <i class="fa fa-undo fa-2x"></i>

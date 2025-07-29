@@ -110,7 +110,7 @@
                                                             @forelse($purchaseOrders as $order)
                                                                 <tr>
                                                                     <td style="color: black">
-                                                                        <a target="_blank" href="{{ route('admin.view.po', $order->po_number) }}" class="btn btn-primary">
+                                                                        <a  href="{{ route('admin.view.po', $order->po_number) }}" class="btn btn-primary">
                                                                             View
                                                                         </a>
                                                                     </td>
@@ -132,7 +132,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="{{ route('admin.purchase.order.page') }}" target="_blank" class="btn btn-primary position-relative">
+                                    <a href="{{ route('admin.purchase.order.page') }}"  class="btn btn-primary position-relative">
                                         View P.O
                                         @if($lowRawMaterialsCount > 0)
                                             <span class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger">

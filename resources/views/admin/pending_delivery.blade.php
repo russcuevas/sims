@@ -146,7 +146,7 @@
                                                     @endphp
                                                     <tr>
                                                         <td>
-                                                            <a target="_blank" href="{{ route('admin.delivery.view', $transactId) }}" class="btn btn-outline-primary btn-sm">View</a>
+                                                            <a  href="{{ route('admin.delivery.view', $transactId) }}" class="btn btn-outline-primary btn-sm">View</a>
                                                         </td>
                                                         <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
                                                         <td style="color: black">{{ $first->delivered_by_name ?? 'N/A' }}</td>

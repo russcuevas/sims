@@ -39,7 +39,12 @@ class SupervisorDashboardController extends Controller
             ->count('transact_id');
 
         $returnOrders = DB::table('delivery_orders')
-            ->where('status', 'return')
+            ->where('status', 'returned')
+            ->where('is_archived', 0)
+            ->distinct('transact_id')
+            ->count('transact_id');
+
+        $returnItems = DB::table('history_return_items')
             ->where('is_archived', 0)
             ->distinct('transact_id')
             ->count('transact_id');
@@ -51,7 +56,8 @@ class SupervisorDashboardController extends Controller
             'lowFinishedProducts',
             'pendingOrders',
             'completedOrders',
-            'returnOrders'
+            'returnOrders',
+            'returnItems'
         ));
     }
 

@@ -4,3 +4,13 @@ then the password the default must combination of lastname and year of birthday 
 
 Forgot Password - working
 
+Dashboard
+Return
+Return Item
+Available Product - All color if many products 
+Raw Materials - All color if many products
+
+Process
+Align total amount to Amount
+Add Raw Materials - in View Modal
+Quantity minus to current quantity

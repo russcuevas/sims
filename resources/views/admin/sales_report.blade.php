@@ -117,7 +117,7 @@
                                         </form>
                                     </div>
 
-                                    <a href="{{ route('admin.sales.report.print') }}" target="_blank"
+                                    <a href="{{ route('admin.sales.report.print') }}" 
                                             class="btn btn-outline-primary float-right ml-2 mb-2">
                                         Print Sales
                                     </a>
