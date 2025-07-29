@@ -117,9 +117,17 @@
                                                         <tr>
                                                             <td style="color: black;">{{ $product->quantity }}</td>
                                         
+                                                            {{-- changes --}}
                                                             <td>
-                                                                <input style="border-color: #A16D28;" type="number" class="form-control input-rounded"
-                                                                    name="quantities[{{ $product->id }}]" value="1" min="1">
+                                                                <input style="border-color: #A16D28;" 
+                                                                    type="number" 
+                                                                    class="form-control input-rounded quantity-input" 
+                                                                    name="quantities[{{ $product->id }}]" 
+                                                                    id="quantity_{{ $product->id }}"
+                                                                    data-id="{{ $product->id }}"
+                                                                    data-raw-id="{{ $product->id }}"
+                                                                    value="1"
+                                                                    min="1">
                                                             </td>
                                                             
                                         
@@ -365,9 +373,21 @@
 
                                         </table>
                                     
-                                        {{-- Hidden for batch_fetch_raw_products --}}
+                                        {{-- changes --}}
                                         @foreach($batchProducts as $product)
-                                            <input type="hidden" name="raw_quantities[{{ $product->id }}]" value="1">
+                                            <input type="hidden" 
+                                                name="raw_quantities[{{ $product->id }}]" 
+                                                id="raw_quantity_{{ $product->id }}" 
+                                                value="1"> 
+                                            <input type="hidden" 
+                                                name="raw_current_quantities[{{ $product->id }}]"
+                                                value="{{ $product->quantity }}">
+                                            <input type="hidden" 
+                                                name="raw_product_name[{{ $product->id }}]"
+                                                value="{{ $product->product_name }}">
+                                            <input type="hidden" 
+                                                name="raw_product_unit[{{ $product->id }}]"
+                                                value="{{ $product->stock_unit_id }}"><br>                                                                                                                     
                                         @endforeach
                                     
                                         <button type="submit" class="btn btn-primary float-right">Submit Product</button>
@@ -418,10 +438,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {{-- changes --}}
                                             @forelse ($historyRecords as $transactId => $records)
                                                 @php
                                                     $first = $records->first();
                                                     $totalAmount = $records->sum('amount');
+                                                    $rawRecords = $rawHistoryRecords->get($transactId, collect());
                                                 @endphp
 
                                                 <tr>
@@ -464,32 +486,53 @@
                                                                         </div>
                                                                     </div>
 
-                                                                    <div class="mt-4">
+                                                                    {{-- Raw Materials Table --}}
+                                                                    <h5 class="mt-5" style="color: #A16D28; font-weight: 900;">Raw Materials</h5>
+
+                                                                    @if($rawRecords->isEmpty())
+                                                                        <p style="color: black">No raw material history for this transaction.</p>
+                                                                    @else
                                                                         <div class="row fw-bold border-bottom pb-2">
-                                                                            <div class="col-2" style="color: #A16D28; font-weight:900">Qty</div>
-                                                                            <div class="col-4" style="color: #A16D28; font-weight:900">Product</div>
-                                                                            <div class="col-2" style="color: #A16D28; font-weight:900">Unit</div>
-                                                                            <div class="col-2 text-end" style="color: #A16D28; font-weight:900">Price</div>
-                                                                            <div class="col-2 text-end" style="color: #A16D28; font-weight:900">Amount</div>
+                                                                            <div style="color: black" class="col-2">Qty Used</div>
+                                                                            <div style="color: black" class="col-4">Product</div>
+                                                                            <div style="color: black" class="col-2">Unit</div>
+                                                                            <div style="color: black" class="col-2">Current Qty</div>
                                                                         </div>
 
-                                                                        @foreach ($records as $item)
+                                                                        @foreach ($rawRecords as $raw)
                                                                             <div class="row py-2 border-bottom">
-                                                                                <div class="col-2" style="color: black">{{ $item->quantity }}</div>
-                                                                                <div class="col-4" style="color: black">{{ $item->product_name }}</div>
-                                                                                <div class="col-2" style="color: black">{{ $item->unit }}</div>
-                                                                                <div class="col-2 text-end" style="color: black">₱{{ number_format($item->price, 2) }}</div>
-                                                                                <div class="col-2 text-end" style="color: black">₱{{ number_format($item->amount, 2) }}</div>
+                                                                                <div style="color: black" class="col-2">{{ $raw->quantity }}</div>
+                                                                                <div style="color: black" class="col-4">{{ $raw->product_name }}</div>
+                                                                                <div style="color: black" class="col-2">{{ $raw->unit }}</div>
+                                                                                <div style="color: black" class="col-2">{{ $raw->current_quantity }}</div>
                                                                             </div>
                                                                         @endforeach
+                                                                    @endif
+
+                                                                    {{-- Finished Products Table --}}
+                                                                    <h5 class="mt-4" style="color: #A16D28; font-weight: 900;">Finished Products</h5>
+                                                                    <div class="row fw-bold border-bottom pb-2">
+                                                                        <div style="color: black" class="col-2">Qty</div>
+                                                                        <div style="color: black" class="col-4">Product</div>
+                                                                        <div style="color: black" class="col-2">Unit</div>
+                                                                        <div style="color: black" class="col-2 text-end">Price</div>
+                                                                        <div style="color: black" class="col-2 text-end">Amount</div>
                                                                     </div>
 
-                                                                    <div class="row mt-4">
-                                                                        <div class="col-md-6"></div>
-                                                                        <div class="col-md-6 text-end">
-                                                                            <p style="color: black"><strong>Total Amount:</strong> ₱{{ number_format($totalAmount, 2) }}</p>
+                                                                    @foreach ($records as $item)
+                                                                        <div class="row py-2 border-bottom">
+                                                                            <div style="color: black" class="col-2">{{ $item->quantity }}</div>
+                                                                            <div style="color: black" class="col-4">{{ $item->product_name }}</div>
+                                                                            <div style="color: black" class="col-2">{{ $item->unit }}</div>
+                                                                            <div style="color: black" class="col-2 text-end">₱{{ number_format($item->price, 2) }}</div>
+                                                                            <div style="color: black" class="col-2 text-end">₱{{ number_format($item->amount, 2) }}</div>
                                                                         </div>
-                                                                    </div>
+                                                                    @endforeach
+
+                                                                    <div class="row mt-2">
+                                                                        <div class="col-9"></div>
+                                                                        <div style="color: black; font-weight: 900;" class="col-3 text-end"><strong style="color: black; font-weight: 900;">Total Amount:</strong> ₱{{ number_format($totalAmount, 2) }}</div>
+                                                                    </div>                                                                    
                                                                 </div>
                                                             </div>
 
@@ -507,6 +550,7 @@
                                                     </td>
                                                 </tr>
                                             @endforelse
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -771,6 +815,23 @@
                 searchPlaceholder: "Search product...",
                 search: ""
             }
+        });
+    });
+</script>
+
+{{-- changes --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputs = document.querySelectorAll('.quantity-input');
+
+        inputs.forEach(input => {
+            input.addEventListener('input', function () {
+                const id = this.dataset.rawId;
+                const rawInput = document.getElementById(`raw_quantity_${id}`);
+                if (rawInput) {
+                    rawInput.value = this.value;
+                }
+            });
         });
     });
 </script>

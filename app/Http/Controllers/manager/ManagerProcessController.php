@@ -269,6 +269,8 @@ class ManagerProcessController extends Controller
             ];
         }
 
+        $rawHistoryData = [];
+
         // Handle raw material deduction
         foreach ($request->input('raw_quantities', []) as $batchId => $deductQty) {
             $rawProduct = DB::table('batch_fetch_raw_products')->where('id', $batchId)->first();
@@ -297,11 +299,25 @@ class ManagerProcessController extends Controller
                         ]);
                     }
                 }
+
+                $currentQty = $request->input('raw_current_quantities.' . $batchId, $rawProduct->quantity);
+
+
+                $rawHistoryData[] = [
+                    'transact_id'   => $transactId,
+                    'product_name'  => $rawProduct->product_name,
+                    'quantity'         => $deductQty,
+                    'current_quantity' => $currentQty,
+                    'unit'          => $rawProduct->stock_unit_id,
+                    'created_at'    => $now,
+                    'updated_at'    => $now,
+                ];
             }
         }
 
         // Save to history
         DB::table('history_finish_products')->insert($historyData);
+        DB::table('history_finish_product_raws')->insert($rawHistoryData);
 
         // Insert or update into product_details (category = finish product)
         foreach ($productDetailsData as $data) {

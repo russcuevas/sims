@@ -320,6 +320,11 @@
             return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         }
 
+        function generateColor(index, total) {
+            const hue = (index / total) * 360;
+            return `hsl(${hue}, 70%, 60%)`;
+        }
+
         function loadProductData(type) {
             fetch(`/admin/available-products?type=${encodeURIComponent(type)}`, {
                 method: 'GET',
@@ -333,8 +338,12 @@
                 return res.json();
             })
             .then(json => {
+                const total = json.data.length;
+                const colors = json.data.map((_, index) => generateColor(index, total));
+
                 productPieChart.data.labels = json.labels;
                 productPieChart.data.datasets[0].data = json.data;
+                productPieChart.data.datasets[0].backgroundColor = colors;
                 productPieChart.update();
             })
             .catch(err => {
@@ -342,7 +351,6 @@
                 alert('Error loading product data');
             });
         }
-
         productTypeSelect.addEventListener('change', () => {
             loadProductData(productTypeSelect.value);
         });
