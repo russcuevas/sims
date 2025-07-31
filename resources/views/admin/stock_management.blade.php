@@ -209,7 +209,7 @@
                                         </form>
                                         
                                     </div>
-                                    <table class="table table-bordered table-responsive-sm">
+                                    <table  class="table table-bordered table-responsive-sm">
                                         <thead>
                                             <tr>
                                                 <th style="color: #A16D28;">Date</th>
@@ -462,6 +462,19 @@
             @endforeach
         @endif
     </script>
+    <script>
+        $(document).ready(function () {
+            $('#stock-table').DataTable({
+                "pageLength": 10,
+                "searching": false, // ✅ disables the search box
+                "order": [], // disable initial sort
+                "columnDefs": [
+                    { "orderable": false, "targets": 5 } // disable sort on Action column
+                ]
+            });
+        });
+    </script>
+
 
 
 </body>

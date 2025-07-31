@@ -88,9 +88,10 @@ class SupervisorPendingDeliveryController extends Controller
         if ($request->hasFile('upload_image')) {
             $image = $request->file('upload_image');
             $imageName = $image->hashName();
-            $image->storeAs('public/upload_images', $imageName);
+            $image->move(public_path('upload_images'), $imageName); // Moves directly to public/upload_images
             $imagePath = $imageName;
         }
+
 
         if ($request->has('completed')) {
             $status = 'completed';

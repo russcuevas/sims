@@ -68,6 +68,33 @@
                 <ul class="navbar-nav header-right">
 
                     <li class="nav-item dropdown header-notification">
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <div class="dropdown-header">
+                                <h6 class="text-muted">Notifications</h6>
+                            </div>
+
+                            <div id="notifications-list">
+                                @if(count($lowFinishedProducts) > 0)
+                                    @foreach ($lowFinishedProducts as $product)
+                                        <div class="notification-item">
+                                            <div>
+                                                <span class="mr-2">{{ $product->product_name }}:</span>
+                                                <span class="text-danger">Low stock: {{ $product->quantity }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="text-center">No notification</div>
+                                @endif
+                            </div>
+
+                            {{-- <a href="#" class="dropdown-item text-center text-primary">
+                                View All Notifications
+                            </a> --}}
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown header-notification">
                         <a class="nav-link" href="#" role="button" data-toggle="dropdown">
                             <i class="mdi mdi-bell-outline"></i>
                         <span class="badge badge-danger">

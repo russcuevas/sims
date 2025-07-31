@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\ArchiveController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\DeliveryController;
 use App\Http\Controllers\admin\DeliveryStatusController;
+use App\Http\Controllers\admin\EmailController;
 use App\Http\Controllers\admin\LogsController;
 use App\Http\Controllers\admin\PendingDeliveryController;
 use App\Http\Controllers\admin\ProcessController;
@@ -409,3 +410,13 @@ Route::post('/delivery/profile/update/request', [DeliveryProfileManagement::clas
 // DELIVERY PO
 Route::post('/delivery/validate-pin-delivery', [DeliveryDashboardController::class, 'DeliveryValidatePinDelivery'])
     ->name('delivery.validate.pin.delivery');
+
+
+
+// CHANGES NEW
+Route::get('/admin/email', [EmailController::class, 'AdminEmailPage'])->name('admin.email.management.page');
+Route::post('/admin/email/send', [EmailController::class, 'SendEmail'])->name('admin.email.send');
+Route::post('/admin/email/bulk-delete', [EmailController::class, 'EmailBulkDelete'])->name('admin.email.bulkDelete');
+Route::get('/admin/email/trash', [EmailController::class, 'AdminEmailTrash'])->name('admin.email.trash');
+Route::post('/admin/email/bulk-restore', [EmailController::class, 'EmailBulkRestore'])->name('admin.email.bulkRestore');
+Route::post('/admin/email/bulk-delete-permanent', [EmailController::class, 'EmailBulkDeletePermanent'])->name('admin.email.bulkDeletePermanent');

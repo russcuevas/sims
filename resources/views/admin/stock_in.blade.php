@@ -520,6 +520,12 @@
     <script src="{{ asset('partials/js/custom.min.js') }}"></script>
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+    <!-- Bootstrap 5 JS + Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <!-- JQUERY VALIDATION -->
+    <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
@@ -766,6 +772,19 @@
         });
     </script>
         
+
+    <script>
+        $(document).ready(function () {
+            $('#history-table').DataTable({
+                pageLength: 10,
+                searching: false, // remove search box
+                order: [], // disable initial ordering
+                columnDefs: [
+                    { orderable: false, targets: [0, 4] } // disable sort for "Details" and "Actions"
+                ]
+            });
+        });
+    </script>
 
 </body>
 

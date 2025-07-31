@@ -63,7 +63,7 @@
                     &>a {
                         display: flex;
                         justify-content: space-between;
-    
+
                         &>i {
                             order: 1;
                         }
@@ -78,7 +78,7 @@
                             position: absolute;
                             content: "\f764";
                             right: 1.75rem;
-                            font-family:"Material Design Icons";
+                            font-family: "Material Design Icons";
                             font-size: 13px;
 
                             @at-root [direction="rtl"]#{&} {
@@ -106,20 +106,20 @@
 
             .nav-header {
                 width: 17.1875rem;
-    
+
                 .brand-logo {
                     padding-left: 1.6rem;
-    
+
                     .logo-abbr {
                         display: none;
                     }
-    
+
                     .brand-title {
                         display: block;
                     }
                 }
             }
-    
+
             .header {
                 padding-left: 4.38rem;
 

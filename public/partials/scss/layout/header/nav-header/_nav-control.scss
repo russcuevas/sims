@@ -34,19 +34,24 @@
     background-color: #343957;
     transition: all .2s ease;
     z-index: 4;
+
     // border-bottom: 1px solid $border;
     .logo-abbr {
         max-width: 30px;
     }
+
     .logo-compact {
         display: none;
     }
+
     @include respond('big-desktop') {
         left: 3.125rem;
     }
+
     @include custommq($min: 1200px, $max: 1350px) {
         width: 14.375rem;
     }
+
     .brand-logo {
         display: flex;
         height: 100%;
@@ -58,6 +63,7 @@
         text-decoration: none;
         padding-left: 1.25rem;
         font-weight: 700;
+
         // &:hover {
         //     color: $primary;
         // }
@@ -67,15 +73,18 @@
             padding-right: 0;
             justify-content: center;
         }
+
         @include respond('phone-land') {
             padding-left: 0;
             padding-right: 0;
             justify-content: center;
         }
     }
+
     .brand-title {
         margin-left: 15px;
         max-width: 75px;
+
         // &::first-letter{
         //     background: $white;
         //     color: $primary;
@@ -92,6 +101,7 @@
 @include respond('phone-land') {
     .nav-header {
         width: 3.75rem;
+
         .brand-title {
             display: none;
         }
@@ -112,12 +122,15 @@
     padding: 2px 0.5rem 0;
     // margin-top: 5px;
     border-radius: 2px;
+
     @include respond('phone-land') {
         right: -3rem;
     }
+
     @include respond('phone') {
         right: -2.5rem;
     }
+
     // @include respond('desktop') {
     //     right: -3.125rem;
     // }
@@ -208,6 +221,7 @@
         .nav-control {
             display: none;
         }
+
         .nav-header {
             width: 9.375rem;
         }
@@ -219,6 +233,7 @@
         .brand-title {
             display: none;
         }
+
         .nav-header {
             .logo-abbr {
                 display: block;
@@ -233,6 +248,7 @@
             display: none;
         }
     }
+
     .logo-compact {
         display: none;
     }
@@ -251,6 +267,7 @@
         .brand-title {
             display: none;
         }
+
         .logo-compact {
             max-width: 75px;
         }
@@ -260,9 +277,11 @@
 [data-sidebar-style="modern"][data-layout="vertical"] {
     .nav-header {
         width: 9.375rem;
+
         .brand-title {
             display: none;
         }
+
         .logo-compact {
             display: block;
         }

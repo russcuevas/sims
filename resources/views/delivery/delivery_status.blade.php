@@ -156,7 +156,7 @@
                                                                             </button>
                                                                         </div>
                                                                         <div class="modal-body text-center">
-                                                                            <img src="{{ asset('storage/upload_images/' . $first->upload_image) }}" alt="Image" class="img-fluid">
+                                                                            <img src="{{ asset('upload_images/' . $first->upload_image) }}" alt="Uploaded Image" class="img-fluid">
                                                                         </div>
                                                                     </div>
                                                                 </div>

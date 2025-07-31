@@ -27,6 +27,7 @@
     margin-left: 17.1875rem;
     z-index: 0;
     transition: all .2s ease;
+
     @include custommq($min: 1200px, $max: 1350px) {
         margin-left: 14.375rem;
     }
@@ -47,6 +48,7 @@
     background-color: #343957;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     transition: all .2s ease;
+
     // border-top-left-radius: 5px;
     // border-top-right-radius: 5px;
     // @include respond('phone-land') {
@@ -63,26 +65,32 @@
         // border-top-left-radius: 5px;
         // border-top-right-radius: 5px;
     }
+
     @include custommq($min: 1200px, $max: 1350px) {
         width: 14.375rem;
     }
+
     ul {
         padding: 0;
         margin: 0;
         list-style: none;
     }
+
     .metismenu {
         display: flex;
         flex-direction: column;
+
         &.fixed {
             position: fixed;
             top: 0;
             width: 100%;
             left: 0;
         }
+
         &>li {
             display: flex;
             flex-direction: column;
+
             a {
                 &>i {
                     //icon will get color from parent "a"
@@ -95,9 +103,11 @@
                     top: -2px;
                 }
             }
+
             &>a {
                 color: rgba($color: $body-color, $alpha: 1);
             }
+
             &:hover,
             &:focus,
             &.mm-active {
@@ -112,43 +122,52 @@
                     // }
                 }
             }
+
             &.mm-active {
                 ul {
                     background-color: $body-bg;
+
                     ul {
                         background-color: $body-bg;
                     }
                 }
             }
         }
+
         li {
             position: relative;
         }
+
         //one step dropdown
         ul {
             background-color: darken($color: $primary, $amount: 35%);
             transition: all .2s ease-in-out;
+
             // @include respond('desktop') {
             //     background-color: $body-bg;
             // }
             a {
                 padding-left: 54px;
                 font-weight: 300;
+
                 &:hover,
                 &:focus,
                 &.mm-active {
                     text-decoration: none;
                     color: $white;
                 }
+
                 @at-root [direction="rtl"] & {
                     padding-right: 54px;
                 }
             }
+
             //two step dropdown
             ul {
                 a {
                     padding-left: 74px;
                 }
+
                 //three step dropdown
                 ul {
                     a {
@@ -157,6 +176,7 @@
                 }
             }
         }
+
         a {
             position: relative;
             display: block;
@@ -165,6 +185,7 @@
             color: rgba($color: $body-color, $alpha: 1);
             text-decoration: none;
         }
+
         .has-arrow {
             &:after {
                 width: .35rem;
@@ -176,6 +197,7 @@
                 transform: rotate(-225deg) translateY(-50%);
             }
         }
+
         .has-arrow[aria-expanded=true]:after,
         .mm-active>.has-arrow:after {
             -webkit-transform: rotate(-135deg) translateY(-50%);
@@ -190,13 +212,16 @@
 @media (max-width:767px) {
     .nav-header {
         width: 3.75rem;
+
         .brand-title {
             display: none;
         }
     }
+
     .footer {
         padding-left: 0;
     }
+
     .quixnav {
         left: 0;
     }
