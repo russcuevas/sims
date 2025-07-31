@@ -79,10 +79,9 @@ class ProcessController extends Controller
 
         // changes
         $rawHistoryRecords = DB::table('history_finish_product_raws')
-
-
             ->get()
             ->groupBy('transact_id');
+
         // Get distinct processors for the filter dropdown
         $processors = DB::table('history_finish_products')
             ->where('is_archived', 0)

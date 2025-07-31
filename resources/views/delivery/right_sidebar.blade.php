@@ -76,14 +76,10 @@
                                 <i class="icon-user"></i>
                                 <span class="ml-2">Profile </span>
                             </a>
-                            <form method="POST" action="{{ route('logout.request') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item" style="border: none; background: none;">
-                                    <i class="icon-key"></i>
-                                    <span class="ml-2">Logout</span>
-                                </button>
-                            </form>
-                            
+                            <button id="manual-logout-btn" class="dropdown-item" style="border: none; background: none;">
+                                <i class="icon-key"></i>
+                                <span class="ml-2">Logout</span>
+                            </button>
                         </div>
                     </li>
                 </ul>
@@ -91,3 +87,50 @@
         </nav>
     </div>
 </div>
+
+<script>
+    const logoutUser = (isInactivity = false) => {
+        if (isInactivity) {
+            sessionStorage.setItem('logout_message', 'You have been automatically logged out due to inactivity.');
+            sessionStorage.setItem('logout_type', 'warning');
+        } else {
+            sessionStorage.setItem('logout_message', 'You have been logged out.');
+            sessionStorage.setItem('logout_type', 'success');
+        }
+
+        fetch("{{ route('logout.request') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: "same-origin"
+        }).then(() => {
+            window.location.href = "{{ route('login.page') }}";
+        });
+    };
+
+    let inactivityTime = function () {
+        let time;
+        const logoutAfter = 5 * 60 * 1000; 
+
+        function resetTimer() {
+            clearTimeout(time);
+            time = setTimeout(() => logoutUser(true), logoutAfter);
+        }
+
+        window.onload = resetTimer;
+        document.onmousemove = resetTimer;
+        document.onkeydown = resetTimer;
+        document.onclick = resetTimer;
+        document.onscroll = resetTimer;
+    };
+
+    inactivityTime();
+
+    document.getElementById('manual-logout-btn').addEventListener('click', function () {
+        logoutUser();
+    });
+</script>
+

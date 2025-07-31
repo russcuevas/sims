@@ -76,6 +76,11 @@ class ManagerProcessController extends Controller
 
         $historyRecords = $historyQuery->get()->groupBy('transact_id');
 
+        // changes
+        $rawHistoryRecords = DB::table('history_finish_product_raws')
+            ->get()
+            ->groupBy('transact_id');
+
         // Get distinct processors for the filter dropdown
         $processors = DB::table('history_finish_products')
             ->where('is_archived', 0)
@@ -100,7 +105,8 @@ class ManagerProcessController extends Controller
             'finishProducts',
             'historyRecords',
             'processors',
-            'lowFinishedProducts'   // <-- added here
+            'lowFinishedProducts',
+            'rawHistoryRecords'
         ));
     }
 

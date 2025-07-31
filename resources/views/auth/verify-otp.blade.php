@@ -21,7 +21,8 @@
                             <div class="col-xl-12">
                                 <div class="auth-form">
                                     <h4 class="text-center mb-4">
-                                        <img src="" alt=""
+                                        <img src="{{ asset('auth/images/') }}"
+                                         alt=""
                                             style="width: 150px;" />
                                         <br />
                                         Verify OTP

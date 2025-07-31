@@ -21,8 +21,17 @@
                         <div class="row no-gutters">
                             <div class="col-xl-12">
                                 <div class="auth-form">
+                                        @if (session()->has('success'))
+                                            <div class="alert alert-success">
+                                                {{ session('success') }}
+                                            </div>
+                                        @endif
+
+                                        <div id="inactivity-msg" class="alert alert-warning" style="display: none; color: red;">
+                                            You have been automatically logged out due to inactivity.
+                                        </div>
                                     <h4 class="text-center mb-4">
-                                        <img src=""
+                                        <img src="{{ asset('auth/images/') }}"
                                             alt="" style="width: 150px;">
                                         <br>
                                         Login
@@ -61,19 +70,35 @@
     <script src="{{ asset('partials/js/custom.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        @if(session('success'))
-            toastr.success("{{ session('success') }}");
-        @endif
+        document.addEventListener("DOMContentLoaded", function () {
+            @if(session('success'))
+                toastr.success("{{ session('success') }}");
+            @endif
 
-        @if(session('error'))
-            toastr.error("{{ session('error') }}");
-        @endif
-    
-        @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                toastr.error("{{ $error }}");
-            @endforeach
-        @endif
+            @if(session('error'))
+                toastr.error("{{ session('error') }}");
+            @endif
+
+            @if ($errors->any())
+                @foreach ($errors->all() as $error)
+                    toastr.error("{{ $error }}");
+                @endforeach
+            @endif
+
+            const logoutMessage = sessionStorage.getItem('logout_message');
+            const logoutType = sessionStorage.getItem('logout_type');
+
+            if (logoutMessage) {
+                if (logoutType === 'warning') {
+                    toastr.warning(logoutMessage);
+                } else {
+                    toastr.success(logoutMessage);
+                }
+
+                sessionStorage.removeItem('logout_message');
+                sessionStorage.removeItem('logout_type');
+            }
+        });
     </script>
     
    

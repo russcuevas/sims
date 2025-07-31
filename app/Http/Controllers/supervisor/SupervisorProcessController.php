@@ -78,6 +78,12 @@ class SupervisorProcessController extends Controller
 
         $historyRecords = $historyQuery->get()->groupBy('transact_id');
 
+        // changes
+        $rawHistoryRecords = DB::table('history_finish_product_raws')
+            ->get()
+            ->groupBy('transact_id');
+
+
         // Get distinct processors for the filter dropdown
         $processors = DB::table('history_finish_products')
             ->where('is_archived', 0)
@@ -102,7 +108,8 @@ class SupervisorProcessController extends Controller
             'finishProducts',
             'historyRecords',
             'processors',
-            'lowFinishedProducts'   // <-- added here
+            'lowFinishedProducts',
+            'rawHistoryRecords'
         ));
     }
 
@@ -271,6 +278,10 @@ class SupervisorProcessController extends Controller
             ];
         }
 
+        // changes
+
+        $rawHistoryData = [];
+
         // Handle raw material deduction
         foreach ($request->input('raw_quantities', []) as $batchId => $deductQty) {
             $rawProduct = DB::table('batch_fetch_raw_products')->where('id', $batchId)->first();
@@ -299,11 +310,25 @@ class SupervisorProcessController extends Controller
                         ]);
                     }
                 }
+
+                $currentQty = $request->input('raw_current_quantities.' . $batchId, $rawProduct->quantity);
+
+
+                $rawHistoryData[] = [
+                    'transact_id'   => $transactId,
+                    'product_name'  => $rawProduct->product_name,
+                    'quantity'         => $deductQty,
+                    'current_quantity' => $currentQty,
+                    'unit'          => $rawProduct->stock_unit_id,
+                    'created_at'    => $now,
+                    'updated_at'    => $now,
+                ];
             }
         }
 
         // Save to history
         DB::table('history_finish_products')->insert($historyData);
+        DB::table('history_finish_product_raws')->insert($rawHistoryData);
 
         // Insert or update into product_details (category = finish product)
         foreach ($productDetailsData as $data) {
