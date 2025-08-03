@@ -14,3 +14,14 @@ Process
 Align total amount to Amount - OKAY
 Add Raw Materials - in View Modal - OKAY
 Quantity minus to current quantity - OKAY
+
+
+
+
+
+
+
+
+
+ALL PRINT BACK BUTTON
+MANAGER - EMAIL

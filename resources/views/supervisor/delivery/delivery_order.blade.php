@@ -106,6 +106,7 @@
 
     <div id="deliveryOrderContent"> 
     <div style="text-align: right; margin:20px;">
+        <button id="backButton" onclick="window.location.href='/supervisor/delivery_management'" style="padding: 8px 20px; font-size: 14px;">Back</button>
         <button id="btn-validate-pin" style="padding: 8px 20px; font-size: 14px;">Print</button>
     </div>
 
@@ -271,9 +272,12 @@
             allowOutsideClick: () => !Swal.isLoading()
         }).then((result) => {
             if (result.isConfirmed && result.value?.message === 'PIN verified') {
-                const button = document.getElementById('btn-validate-pin');
+                const printButton = document.getElementById('btn-validate-pin');
+                const backButton = document.getElementById('backButton');
                 const element = document.getElementById('deliveryOrderContent') || document.body;
-                button.style.display = 'none';
+
+                printButton.style.display = 'none';
+                backButton.style.display = 'none';
 
                 const opt = {
                     margin: 0.5,
@@ -284,7 +288,8 @@
                 };
 
                 html2pdf().from(element).set(opt).save().then(() => {
-                    button.style.display = 'inline-block';
+                    printButton.style.display = 'inline-block';
+                    backButton.style.display = 'inline-block';
                 });
             }
         });

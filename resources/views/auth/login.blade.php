@@ -31,7 +31,7 @@
                                             You have been automatically logged out due to inactivity.
                                         </div>
                                     <h4 class="text-center mb-4">
-                                        <img src="{{ asset('auth/images/') }}"
+                                        <img src="{{ asset('auth/images/logo.jpg') }}"
                                             alt="" style="width: 150px;">
                                         <br>
                                         Login

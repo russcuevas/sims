@@ -105,6 +105,7 @@
     </table>
 
     <div class="float-right">
+        <button id="backButton" onclick="window.location.href='/admin/sales/report'" class="btn btn-info">Back</button>
         <button id="exportButton" class="btn" onclick="confirmPinBeforePrint()">Print / Download</button>
     </div>
 </div>
@@ -151,10 +152,13 @@
             allowOutsideClick: () => !Swal.isLoading()
         }).then((result) => {
             if (result.isConfirmed) {
-                const button = document.getElementById('exportButton');
+                const exportButton = document.getElementById('exportButton');
+                const backButton = document.getElementById('backButton');
                 const element = document.getElementById('salesReportContent');
 
-                button.style.display = 'none';
+                // Hide both buttons before export
+                exportButton.style.display = 'none';
+                backButton.style.display = 'none';
 
                 const opt = {
                     margin: 0.5,
@@ -165,7 +169,9 @@
                 };
 
                 html2pdf().from(element).set(opt).save().then(() => {
-                    button.style.display = 'inline-block';
+                    // Show buttons after export
+                    exportButton.style.display = 'inline-block';
+                    backButton.style.display = 'inline-block';
                 });
             }
         });

@@ -64,14 +64,15 @@
     <p><strong>Processed by:</strong> {{ $purchaseOrderItems->first()->process_by }}</p>
 
     <div class="float-right mt-4">
-<button id="exportButton" onclick="confirmPinBeforePrint();" class="btn btn-primary">Print / Download</button>
+        <button id="backButton" onclick="window.location.href='/manager/stock_management'" class="btn btn-info">Back</button>
+        <button id="exportButton" onclick="confirmPinBeforePrint();" class="btn btn-primary">Print / Download</button>
     </div>
 
 </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script>
+        <script>
             function confirmPinBeforePrint() {
                 Swal.fire({
                     title: 'Enter Your PIN',
@@ -110,26 +111,27 @@
                     },
                     allowOutsideClick: () => !Swal.isLoading()
                 }).then((result) => {
-                    if (result.isConfirmed) {
-            const button = document.getElementById('exportButton');
-            const element = document.getElementById('purchaseOrderContent');
+                if (result.isConfirmed) {
+                    const exportButton = document.getElementById('exportButton');
+                    const backButton = document.getElementById('backButton');
+                    const element = document.getElementById('purchaseOrderContent');
 
-            // Hide the button
-            button.style.display = 'none';
+                    exportButton.style.display = 'none';
+                    backButton.style.display = 'none';
 
-            const opt = {
-                margin:       0.5,
-                filename:     '{{ $po_number }}.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
+                    const opt = {
+                        margin: 0.5,
+                        filename: '{{ $po_number }}.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    };
 
-            html2pdf().from(element).set(opt).save().then(() => {
-                button.style.display = 'inline-block';
-            });
-        }
-
+                    html2pdf().from(element).set(opt).save().then(() => {
+                        exportButton.style.display = 'inline-block';
+                        backButton.style.display = 'inline-block';
+                    });
+                }
         });
     }
 </script>
