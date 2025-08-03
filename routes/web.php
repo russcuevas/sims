@@ -33,7 +33,7 @@ use App\Http\Controllers\manager\ManagerSalesReportController;
 use App\Http\Controllers\manager\ManagerStockController;
 use App\Http\Controllers\manager\ManagerStockInController;
 use App\Http\Controllers\manager\ManagerArchiveController;
-
+use App\Http\Controllers\manager\ManagerEmailController;
 // SUPERVISOR CONTROLLER
 use App\Http\Controllers\supervisor\SupervisorArchiveController;
 use App\Http\Controllers\supervisor\SupervisorDashboardController;
@@ -413,10 +413,19 @@ Route::post('/delivery/validate-pin-delivery', [DeliveryDashboardController::cla
 
 
 
-// CHANGES NEW
+// CHANGES ADMIN NEW
 Route::get('/admin/email', [EmailController::class, 'AdminEmailPage'])->name('admin.email.management.page');
 Route::post('/admin/email/send', [EmailController::class, 'SendEmail'])->name('admin.email.send');
 Route::post('/admin/email/bulk-delete', [EmailController::class, 'EmailBulkDelete'])->name('admin.email.bulkDelete');
 Route::get('/admin/email/trash', [EmailController::class, 'AdminEmailTrash'])->name('admin.email.trash');
 Route::post('/admin/email/bulk-restore', [EmailController::class, 'EmailBulkRestore'])->name('admin.email.bulkRestore');
 Route::post('/admin/email/bulk-delete-permanent', [EmailController::class, 'EmailBulkDeletePermanent'])->name('admin.email.bulkDeletePermanent');
+
+
+// CHANGES MANAGER NEW
+Route::get('/manager/email', [ManagerEmailController::class, 'ManagerEmailPage'])->name('manager.email.management.page');
+Route::post('/manager/email/send', [ManagerEmailController::class, 'ManagerSendEmail'])->name('manager.email.send');
+Route::post('/manager/email/bulk-delete', [ManagerEmailController::class, 'ManagerEmailBulkDelete'])->name('manager.email.bulkDelete');
+Route::get('/manager/email/trash', [ManagerEmailController::class, 'ManagerEmailTrash'])->name('manager.email.trash');
+Route::post('/manager/email/bulk-restore', [ManagerEmailController::class, 'ManagerEmailBulkRestore'])->name('manager.email.bulkRestore');
+Route::post('/manager/email/bulk-delete-permanent', [ManagerEmailController::class, 'ManagerEmailBulkDeletePermanent'])->name('manager.email.bulkDeletePermanent');

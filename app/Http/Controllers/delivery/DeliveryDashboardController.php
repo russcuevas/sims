@@ -70,6 +70,51 @@ class DeliveryDashboardController extends Controller
         ));
     }
 
+    // LAST UPDATE WITHOUT UPDATING QUANTITY
+    // public function DeliveryMarkStatusDelivery(Request $request, $transact_id)
+    // {
+    //     $request->validate([
+    //         'upload_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    //         'upload_notes' => 'nullable|string',
+    //     ]);
+
+    //     $imagePath = null;
+    //     if ($request->hasFile('upload_image')) {
+    //         $image = $request->file('upload_image');
+    //         $imageName = $image->hashName();
+    //         $image->move(public_path('upload_images'), $imageName);
+    //         $imagePath = $imageName;
+    //     }
+
+
+    //     if ($request->has('completed')) {
+    //         $status = 'completed';
+    //     } elseif ($request->has('returned')) {
+    //         $status = 'returned';
+    //     } else {
+    //         return redirect()->back()->with('error', 'Invalid action.');
+    //     }
+
+    //     DB::table('delivery_orders')
+    //         ->where('transact_id', $transact_id)
+    //         ->update([
+    //             'status' => $status,
+    //             'upload_image' => $imagePath,
+    //             'upload_notes' => $request->upload_notes,
+    //             'updated_at' => now(),
+    //         ]);
+
+    //     $user = Auth::guard('employees')->user();
+    //     ActivityLogger::log(
+    //         $user->id,
+    //         'updated',
+    //         'delivery_orders',
+    //         "Marked delivery {$transact_id} as {$status}"
+    //     );
+
+    //     return redirect()->back()->with('success', "Delivery marked as {$status}.");
+    // }
+
 
     public function DeliveryMarkStatusDelivery(Request $request, $transact_id)
     {
@@ -86,7 +131,6 @@ class DeliveryDashboardController extends Controller
             $imagePath = $imageName;
         }
 
-
         if ($request->has('completed')) {
             $status = 'completed';
         } elseif ($request->has('returned')) {
@@ -95,6 +139,7 @@ class DeliveryDashboardController extends Controller
             return redirect()->back()->with('error', 'Invalid action.');
         }
 
+        // Update delivery order status
         DB::table('delivery_orders')
             ->where('transact_id', $transact_id)
             ->update([
@@ -104,6 +149,25 @@ class DeliveryDashboardController extends Controller
                 'updated_at' => now(),
             ]);
 
+        // ✅ Add returned quantity back to finish product category
+        if ($status === 'returned') {
+            $returnedItems = DB::table('delivery_orders')
+                ->where('transact_id', $transact_id)
+                ->select('product_name', 'unit', 'quantity_ordered')
+                ->get();
+
+            foreach ($returnedItems as $item) {
+                DB::table('product_details')
+                    ->where('product_name', $item->product_name)
+                    ->where('stock_unit_id', $item->unit)
+                    ->where('category', 'finish product')
+                    ->increment('quantity', $item->quantity_ordered);
+            }
+        }
+
+
+
+        // Log activity
         $user = Auth::guard('employees')->user();
         ActivityLogger::log(
             $user->id,
@@ -114,6 +178,7 @@ class DeliveryDashboardController extends Controller
 
         return redirect()->back()->with('success', "Delivery marked as {$status}.");
     }
+
 
     public function DeliveryViewDeliveryOrder($transact_id)
     {
