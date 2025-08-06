@@ -9,6 +9,7 @@ use App\Models\BatchProductMultipleUnits;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ManagerProcessController extends Controller
 {
@@ -157,10 +158,17 @@ class ManagerProcessController extends Controller
     public function ManagerAddBatchMultipleProduct(Request $request)
     {
         $request->validate([
-            'product_name' => 'required|string|max:255',
+            'product_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('batch_product_multiple_units', 'product_name'),
+            ],
             'price_80g'    => 'nullable|numeric|min:0',
             'price_130g'   => 'nullable|numeric|min:0',
             'price_230g'   => 'nullable|numeric|min:0',
+        ], [
+            'product_name.unique' => 'Product name already added.',
         ]);
 
         $productName = $request->input('product_name');

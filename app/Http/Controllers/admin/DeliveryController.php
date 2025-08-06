@@ -202,6 +202,17 @@ class DeliveryController extends Controller
         ]);
 
         $user = Auth::guard('employees')->user();
+
+        $existingCarAssignment = DB::table('delivery_orders')
+            ->where('car', $request->car)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($existingCarAssignment && $existingCarAssignment->delivered_by != $request->delivered_by) {
+            return back()->with('error', 'This car is already assigned please check the available cars.');
+        }
+
+
         $storeCode = $request->store
             ? DB::table('stores')->where('id', $request->store)->value('store_code')
             : 'UNKNOWN';
@@ -230,7 +241,10 @@ class DeliveryController extends Controller
                     $newQuantity = $currentQuantity - $request->quantity_ordered[$key];
                     DB::table('product_details')
                         ->where('id', $product->product_id_details)
-                        ->update(['quantity' => $newQuantity]);
+                        ->update([
+                            'quantity' => $newQuantity,
+                            'updated_at' => now(),
+                        ]);
                     $deliveryOrders[] = [
                         'transact_id' => $transactId,
                         'memo' => $request->memo,

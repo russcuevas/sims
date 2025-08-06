@@ -161,7 +161,10 @@ class DeliveryDashboardController extends Controller
                     ->where('product_name', $item->product_name)
                     ->where('stock_unit_id', $item->unit)
                     ->where('category', 'finish product')
-                    ->increment('quantity', $item->quantity_ordered);
+                    ->update([
+                        'quantity' => DB::raw("quantity + {$item->quantity_ordered}"),
+                        'updated_at' => now(),
+                    ]);
             }
         }
 
