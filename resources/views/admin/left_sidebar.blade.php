@@ -51,9 +51,11 @@
             <li class="nav-label first" style="font-weight: 900">Main Menu</li>
             <li><a href="{{ route('admin.dashboard.page') }}" aria-expanded="false"><i class="icon icon-home"></i><span
                         class="nav-text">Dashboard</span></a></li>
-            <li><a href="{{ route('admin.email.management.page') }}" aria-expanded="false"><i class="fa-solid fa-envelope"></i><span
+            
+            {{-- last revisions --}}
+            {{-- <li><a href="{{ route('admin.email.management.page') }}" aria-expanded="false"><i class="fa-solid fa-envelope"></i><span
                         class="nav-text">Email
-                        </span></a>
+                        </span></a> --}}
             </li>
             <li><a href="{{ route('admin.user.management.page') }}" aria-expanded="false"><i class="icon icon-single-04"></i><span
                         class="nav-text">User Management</span></a>

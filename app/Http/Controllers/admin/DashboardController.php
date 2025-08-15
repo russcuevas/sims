@@ -44,10 +44,12 @@ class DashboardController extends Controller
             ->distinct('transact_id')
             ->count('transact_id');
 
-        $returnItems = DB::table('history_return_items')
-            ->where('is_archived', 0)
-            ->distinct('transact_id')
-            ->count('transact_id');
+        // last revisions
+
+        // $returnItems = DB::table('history_return_items')
+        //     ->where('is_archived', 0)
+        //     ->distinct('transact_id')
+        //     ->count('transact_id');
 
 
         return view('admin.dashboard', compact(
@@ -56,8 +58,10 @@ class DashboardController extends Controller
             'lowFinishedProducts',
             'pendingOrders',
             'completedOrders',
-            'returnOrders',
-            'returnItems'
+            'returnOrders'
+
+            // last revisions
+            // 'returnItems'
         ));
     }
 
