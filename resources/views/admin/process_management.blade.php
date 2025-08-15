@@ -246,57 +246,58 @@
                                                 <button type="button" class="close"
                                                     data-dismiss="modal"><span>&times;</span></button>
                                             </div>
-                                            <form class="add_product_validation" action="{{ route('admin.add.batch.multiple.product') }}" method="POST">
-                                                @csrf
-                                                <div class="modal-body">
+<form class="add_product_validation" action="{{ route('admin.add.batch.multiple.product') }}" method="POST">
+    @csrf
+    <div class="modal-body">
 
-                                                    <!-- Product Name -->
-                                                    <div class="form-group row mb-3">
-                                                        <label for="product_name"
-                                                            class="col-sm-4 col-form-label text-end">
-                                                            Product Name <span class="text-danger">*</span>
-                                                        </label>
-                                                        <div class="col-sm-8">
-                                                            <input type="text" class="form-control" id="product_name"
-                                                                name="product_name" placeholder="Enter product name"
-                                                                required>
-                                                        </div>
-                                                    </div>
+        <!-- Product Name -->
+        <div class="form-group row mb-3">
+            <label for="product_name" class="col-sm-4 col-form-label text-end">
+                Product Name <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name" required>
+            </div>
+        </div>
 
-                                                    <!-- Product Units + Prices -->
-                                                    <div class="form-group row mb-3">
-                                                        <label class="col-sm-4 col-form-label text-end">
-                                                            Product Units & Prices <span class="text-danger">*</span>
-                                                        </label>
-                                                        <div class="col-sm-8">
-                                                            <div class="input-group mb-2">
-                                                                <span class="input-group-text">80g</span>
-                                                                <input type="text" class="form-control" name="price_80g"
-                                                                    placeholder="Enter price for 80g" required>
-                                                            </div>
-                                                            <div class="input-group mb-2">
-                                                                <span class="input-group-text">130g</span>
-                                                                <input type="text" class="form-control"
-                                                                    name="price_130g" placeholder="Enter price for 130g"
-                                                                    required>
-                                                            </div>
-                                                            <div class="input-group">
-                                                                <span class="input-group-text">230g</span>
-                                                                <input type="text" class="form-control"
-                                                                    name="price_230g" placeholder="Enter price for 230g"
-                                                                    required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+        <!-- Product Units & Prices -->
+<div class="form-group row mb-3">
+    <label class="col-sm-4 col-form-label text-end">
+        Product Units, Quantities & Prices <span class="text-danger">*</span>
+    </label>
+    <div class="col-sm-8">
 
-                                                </div>
+        <div class="d-flex mb-2">
+            <input type="number" class="form-control me-2" name="quantity_1" placeholder="Quantity" min="1" required style="max-width: 100px;">
+            <input type="text" class="form-control me-2" name="unit_1" placeholder="Unit" required style="max-width: 120px;">
+            <input type="number" class="form-control" name="price_1" placeholder="Price" min="0" step="0.01" required style="max-width: 120px;">
+        </div>
 
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-danger"
-                                                        data-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                                </div>
-                                            </form>
+        <div class="d-flex mb-2">
+            <input type="number" class="form-control me-2" name="quantity_2" placeholder="Quantity" min="1" required style="max-width: 100px;">
+            <input type="text" class="form-control me-2" name="unit_2" placeholder="Unit" required style="max-width: 120px;">
+            <input type="number" class="form-control" name="price_2" placeholder="Price" min="0" step="0.01" required style="max-width: 120px;">
+        </div>
+
+        <div class="d-flex">
+            <input type="number" class="form-control me-2" name="quantity_3" placeholder="Quantity" min="1" required style="max-width: 100px;">
+            <input type="text" class="form-control me-2" name="unit_3" placeholder="Unit" required style="max-width: 120px;">
+            <input type="number" class="form-control" name="price_3" placeholder="Price" min="0" step="0.01" required style="max-width: 120px;">
+        </div>
+
+    </div>
+</div>
+
+
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
+</form>
+
                                         </div>
                                     </div>
                                 </div>

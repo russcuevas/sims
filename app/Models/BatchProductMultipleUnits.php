@@ -11,6 +11,7 @@ class BatchProductMultipleUnits extends Model
 
     protected $fillable = [
         'product_name',
+        'quantity',
         'stock_unit_id',
         'product_price',
     ];

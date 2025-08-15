@@ -111,7 +111,7 @@
                                     @foreach ($lowFinishedProducts as $product)
                                         <div class="notification-item">
                                             <div>
-                                                <span class="mr-2">{{ $product->product_name }}:</span>
+                                                <span class="mr-2">{{ $product->product_name }} ({{ $product->stock_unit_id }}): </span>
                                                 <span class="text-danger">Low stock: {{ $product->quantity }}</span>
                                             </div>
                                         </div>
