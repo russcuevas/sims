@@ -77,7 +77,6 @@ class UserController extends Controller
             'role' => 'required|exists:positions,id',
             'contract' => 'required|exists:contracts,id',
             'email' => 'required|email|unique:employees,email',
-            'pin' => ['required', 'digits:4'],
         ]);
 
         $firstName = strtolower(explode(' ', trim($request->first_name))[0]);
@@ -105,19 +104,22 @@ class UserController extends Controller
             'email' => $request->email,
             'username' => $username,
             'password' => Hash::make($rawPassword),
-            'pin' => $request->pin,
+            'pin' => $birthYear,
             'login_attempts' => 0,
         ]);
 
-        // Send simple email
-        Mail::raw("Welcome to the system!\n\nYour default login credentials are:\nUsername: {$username}\nPassword: {$rawPassword}\n\nPlease change your password after logging in.", function ($message) use ($request) {
-            $message->to($request->email)
-                ->subject('Your Default Login Credentials');
-        });
+        Mail::raw(
+            "Welcome to the system!\n\nYour default login credentials are:\nUsername: {$username}\nPassword: {$rawPassword}\nThis is your pin: {$birthYear}\n\nPlease change your password after logging in.",
+            function ($message) use ($request) {
+                $message->to($request->email)
+                    ->subject('Your Default Login Credentials');
+            }
+        );
 
         return redirect()->route('admin.user.management.page')
             ->with('success', "User added successfully please check the email to logged in your account!");
     }
+
 
 
     public function AdminUpdateUser(Request $request, $id)

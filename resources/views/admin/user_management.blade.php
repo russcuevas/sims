@@ -179,7 +179,7 @@
 
                                                                 
                                                                     <!-- Pin -->
-                                                                    <div class="form-group row mb-3">
+                                                                    {{-- <div class="form-group row mb-3">
                                                                         <label class="col-sm-4 col-form-label text-end"
                                                                             for="pin">Pin <span
                                                                                 class="text-danger">*</span></label>
@@ -198,7 +198,7 @@
                                                                         >
                                                                         
                                                                         </div>
-                                                                    </div>
+                                                                    </div> --}}
 
                                                                 </div>
                                                             </div>
