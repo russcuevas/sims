@@ -107,7 +107,7 @@
                                 <div class="container my-4">
                                     <!-- Add Store Buttons aligned to the right -->
                                     <div class="row mb-3 justify-content-end">
-                                        <div class="col-md-2 text-end">
+                                        {{-- <div class="col-md-2 text-end">
                                         <a href="{{ route('admin.view.available.cars') }}" class="btn btn-outline-primary w-100">
                                             View available cars
                                         </a>
@@ -118,7 +118,7 @@
                                                 data-toggle="modal" data-target="#add_car">
                                                 Add car details
                                             </button>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-md-2 text-end">
                                             <button type="button" id="add_store_button_2"
                                                 class="btn btn-outline-primary w-100"
@@ -336,7 +336,7 @@
                                                 class="form-control">
                                         </div>
 
-                                        <div class="col-md-3 text-left">
+                                        <div class="col-md-3 text-left" style="display: none;">
                                             <label style="color: #D96F32;" for="process_by" class="form-label">Process
                                                 by</label>
                                             <input type="text" id="process_by" name="process_by" class="form-control"
@@ -370,7 +370,7 @@
                                         </div>
 
 
-                                        <div class="col-md-3 text-left">
+                                        {{-- <div class="col-md-3 text-left">
                                             <label style="color: #D96F32;" for="car" class="form-label">Select Car</label>
                                             <select id="car" name="car" class="form-control">
                                                 @foreach ($cars as $car)
@@ -379,7 +379,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="col-md-3 text-left">
                                             <label style="color: #D96F32;" for="store" class="form-label">Select Store</label>

@@ -11,6 +11,7 @@ class PurchaseOrder extends Model
 
     protected $fillable = [
         'po_number',
+        'product_id',
         'process_by',
         'approved_by',
         'product_name',
@@ -19,5 +20,6 @@ class PurchaseOrder extends Model
         'unit',
         'amount',
         'total_amount',
+        'status'
     ];
 }

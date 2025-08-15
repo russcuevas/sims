@@ -241,6 +241,10 @@
                                                 <li><a class="dropdown-item" href="{{ route('admin.user.management.page', ['sort' => 'desc']) }}">Z-A</a></li>
                                             </ul>
                                         </div>
+
+                                    <a href="{{ route('admin.archive.page') }}"  class="btn btn-outline-primary me-2 ml-2">
+                                        Archive
+                                    </a>
                                     </form>
                                     
                                 </div>

@@ -81,10 +81,10 @@
                         class="nav-text">Logs
                     </span></a>
             </li>
-            <li><a href="{{ route('admin.archive.page') }}" aria-expanded="false"><i class="icon icon-card-update"></i><span
+            {{-- <li><a href="{{ route('admin.archive.page') }}" aria-expanded="false"><i class="icon icon-card-update"></i><span
                         class="nav-text">Archive
                     </span></a>
-            </li>
+            </li> --}}
 
         </ul>
     </div>

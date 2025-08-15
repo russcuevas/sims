@@ -84,6 +84,16 @@ class StockInController extends Controller
             ->where('is_archived', 0)
             ->get();
 
+        // UPDATED
+        $rawMaterialPOs = DB::table('purchase_orders')
+            ->join('product_details', 'purchase_orders.product_id', '=', 'product_details.id')
+            ->select('purchase_orders.po_number')
+            ->where('product_details.category', 'raw materials')
+            ->where('purchase_orders.status', 'pending') // ✅ Only pending
+            ->distinct()
+            ->orderBy('purchase_orders.po_number', 'desc')
+            ->get();
+
         return view('admin.stock_in', compact(
             'role',
             'user',
@@ -92,7 +102,8 @@ class StockInController extends Controller
             'batchProductDetails',
             'totalAmount',
             'historyGroups',
-            'lowFinishedProducts'
+            'lowFinishedProducts',
+            'rawMaterialPOs'
         ));
     }
 
@@ -110,10 +121,22 @@ class StockInController extends Controller
             'product_price' => 'required|numeric|min:0.01',
         ]);
 
-        DB::table('products')->insert([
+        $productId = DB::table('products')->insertGetId([
             'product_name' => $validated['product_name'],
             'stock_unit_id' => $validated['product_unit'],
             'product_price' => $validated['product_price'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('product_details')->insert([
+            'product_id' => $productId,
+            'product_name' => $validated['product_name'],
+            'price' => $validated['product_price'],
+            'quantity' => 0,
+            'stock_unit_id' => $validated['product_unit'],
+            'category' => 'raw materials',
+            'is_archived' => 0,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -153,39 +176,71 @@ class StockInController extends Controller
         }
 
         $request->validate([
-            'product_ids' => 'required|array|min:1',
-            'product_ids.*' => 'exists:products,id',
+            'po_number' => 'required|exists:purchase_orders,po_number',
         ], [
-            'product_ids.required' => 'Product is required.',
+            'po_number.required' => 'Purchase Order number is required.',
         ]);
 
-
-        $now = now();
         $employee_id = Auth::guard('employees')->user()->id;
+        $now = now();
 
-        $products = DB::table('products')
-            ->whereIn('id', $request->product_ids)
+        $poProducts = DB::table('purchase_orders')
+            ->join('product_details', 'purchase_orders.product_id', '=', 'product_details.id')
+            ->where('purchase_orders.po_number', $request->po_number)
+            ->select(
+                'purchase_orders.product_id',
+                'purchase_orders.product_name',
+                'purchase_orders.price',
+                'purchase_orders.quantity',
+                'purchase_orders.unit',
+                'product_details.category'
+            )
             ->get();
+
+        if ($poProducts->isEmpty()) {
+            return redirect()->route('admin.stock.in.page')->with('error', 'No products found for this PO number.');
+        }
+
+        $productIds = $poProducts->pluck('product_id')->toArray();
+
+        $alreadySubmitted = DB::table('batch_product_details')
+            ->where('employee_id', $employee_id)
+            ->whereIn('product_id', $productIds)
+            ->exists();
+
+        if ($alreadySubmitted) {
+            return redirect()->route('admin.stock.in.page')
+                ->with('error', 'You have already submitted batch details for this PO.');
+        }
 
         $insert_data = [];
 
-        foreach ($products as $product) {
+        foreach ($poProducts as $product) {
             $insert_data[] = [
-                'product_id'    => $product->id,
-                'product_name'  => $product->product_name,
-                'price'         => $product->product_price,
-                'quantity'      => 0,
-                'stock_unit_id' => $product->stock_unit_id,
-                'category'      => null,
                 'employee_id'   => $employee_id,
+                'product_id'    => $product->product_id,
+                'product_name'  => $product->product_name,
+                'price'         => $product->price,
+                'quantity'      => $product->quantity ?? 0,
+                'stock_unit_id' => $product->unit,
+                'category'      => $product->category,
                 'created_at'    => $now,
                 'updated_at'    => $now,
             ];
         }
 
         DB::table('batch_product_details')->insert($insert_data);
-        return redirect()->route('admin.stock.in.page')->with('success', 'Product details added successfully.');
+
+        DB::table('purchase_orders')
+            ->where('po_number', $request->po_number)
+            ->update([
+                'status' => 'completed',
+                'updated_at' => $now,
+            ]);
+
+        return redirect()->route('admin.stock.in.page')->with('success', 'Products from PO number added successfully.');
     }
+
 
     public function updateQuantity(Request $request, $id)
     {
@@ -220,6 +275,7 @@ class StockInController extends Controller
 
         $now = now();
 
+        // Update 'products' table
         $updatedProduct = DB::table('products')
             ->where('id', $productId)
             ->update([
@@ -227,8 +283,15 @@ class StockInController extends Controller
                 'updated_at' => $now
             ]);
 
-        $updatedBatch = DB::table('batch_product_details')
+        DB::table('batch_product_details')
             ->where('product_id', $productId)
+            ->update([
+                'price' => $request->price,
+                'updated_at' => $now
+            ]);
+
+        DB::table('product_details')
+            ->where('id', $productId)
             ->update([
                 'price' => $request->price,
                 'updated_at' => $now
@@ -243,6 +306,7 @@ class StockInController extends Controller
 
 
 
+    // BEFORE UPDATED
     public function AdminRemoveBatchProduct($id)
     {
         if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
@@ -262,6 +326,52 @@ class StockInController extends Controller
             return redirect()->route('admin.stock.in.page')->with('error', 'Failed to remove batch product.');
         }
     }
+
+    // UPDATED
+    // public function AdminRemoveBatchProduct($id)
+    // {
+    //     if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+    //         return redirect()->route('login.page')->with('error', 'You must be logged in as an admin.');
+    //     }
+
+    //     $employeeId = Auth::guard('employees')->user()->id;
+
+    //     $batchProduct = DB::table('batch_product_details')
+    //         ->where('id', $id)
+    //         ->where('employee_id', $employeeId)
+    //         ->first();
+
+    //     if (!$batchProduct) {
+    //         return redirect()->route('admin.stock.in.page')->with('error', 'Batch product not found or not authorized.');
+    //     }
+    //     $deleted = DB::table('batch_product_details')
+    //         ->where('id', $id)
+    //         ->delete();
+
+    //     if ($deleted) {
+    //         $matchingOrders = DB::table('purchase_orders')
+    //             ->where('product_id', $batchProduct->product_id)
+    //             ->where('product_name', $batchProduct->product_name)
+    //             ->where('quantity', $batchProduct->quantity)
+    //             ->where('price', $batchProduct->price)
+    //             ->where('unit', $batchProduct->stock_unit_id)
+    //             ->where('status', 'completed')
+    //             ->get();
+
+    //         foreach ($matchingOrders as $order) {
+    //             DB::table('purchase_orders')
+    //                 ->where('id', $order->id)
+    //                 ->update([
+    //                     'status' => 'pending',
+    //                     'updated_at' => now(),
+    //                 ]);
+    //         }
+
+    //         return redirect()->route('admin.stock.in.page')->with('success', 'Batch product removed and related PO status updated to pending.');
+    //     } else {
+    //         return redirect()->route('admin.stock.in.page')->with('error', 'Failed to remove batch product.');
+    //     }
+    // }
 
 
     public function AdminRawStocksRequest(Request $request)

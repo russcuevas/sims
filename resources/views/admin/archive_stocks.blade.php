@@ -68,7 +68,7 @@
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Archive Management</li>
+                            <li class="breadcrumb-item active">Stocks Archive Management</li>
                         </ol>
                     </div>
                 </div>
@@ -80,33 +80,10 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title" style="font-size: 20px; color: #A16D28;">
-                                    Archive Management
+                                    Stocks Archive Management
                                 </h4>
                             </div>
 
-                            <div class="container my-4">
-                                <!-- Status Buttons aligned to the right -->
-                                <div class="row mb-3 justify-content-center">
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.page') }}" class="btn btn-outline-primary">Users</a>
-                                    </div>
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.stocks.page') }}" class="btn btn-primary">Stocks</a>
-                                    </div>
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.stock.in.page') }}" class="btn btn-outline-primary">Stock In History</a>
-                                    </div>
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.process.page') }}" class="btn btn-outline-primary">Process History</a>
-                                    </div>
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.delivery.page') }}" class="btn btn-outline-primary">Delivery History</a>
-                                    </div>
-                                    <div class="col-auto px-1">
-                                        <a href="{{ route('admin.archive.sales.page') }}" class="btn btn-outline-primary">Sales Reports</a>
-                                    </div>
-                                </div>
-                            </div>
                         
 
                             <div class="card-body">

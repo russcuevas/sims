@@ -42,6 +42,15 @@ class AuthController extends Controller
                     return back()->withErrors(['username' => 'Username or password is incorrect.']);
                 }
 
+                DB::table('activity_logs')->insert([
+                    'employee_id' => $employee->id,
+                    'action' => 'login',
+                    'module' => 'authentication',
+                    'description' => 'Logged in to the system.',
+                    'created_at' => now(),
+                ]);
+
+
                 $employee->update(['login_attempts' => 0]);
                 $request->session()->regenerate();
 

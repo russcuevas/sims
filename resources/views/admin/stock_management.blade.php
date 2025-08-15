@@ -104,6 +104,7 @@
                                                                 <th style="color: black">P.O Number</th>
                                                                 <th style="color: black">Process By</th>
                                                                 <th style="color: black">Total Amount</th>
+                                                                <th style="color: black">Status</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -117,6 +118,8 @@
                                                                     <td style="color: black">{{ $order->po_number }}</td>
                                                                     <td style="color: black">{{ $order->process_by }}</td>
                                                                     <td style="color: black">₱{{ number_format($order->total_amount, 2) }}</td>
+                                                                    <td style="color: black">{{ $order->status }}</td>
+
                                                                 </tr>
                                                             @empty
                                                                 <tr>
@@ -133,13 +136,17 @@
                                         </div>
                                     </div>
                                     <a href="{{ route('admin.purchase.order.page') }}"  class="btn btn-primary position-relative">
-                                        View P.O
+                                        Add P.O
                                         @if($lowRawMaterialsCount > 0)
                                             <span class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                                 {{ $lowRawMaterialsCount }}
                                                 <span class="visually-hidden">low stock alerts</span>
                                             </span>
                                         @endif
+                                    </a>
+
+                                    <a href="{{ route('admin.archive.stocks.page') }}"  class="btn btn-primary position-relative ml-2">
+                                        Archive
                                     </a>
                                 </div>
                             </div>
