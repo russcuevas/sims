@@ -194,15 +194,15 @@
         <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px;">
             <div>Delivered by: {{ $first->delivered_by_name ?? '(blank)' }}</div>
             <div>Prepared by: {{ $first->process_by }}</div>
-            <div>Approved by: {{ $first->approved_by_name  ?? '(blank)' }}</div>
+            <div>Approved by: {{ $first->approved_by_name  ?? '(blank)' }}
+            @if ($first->approved_by_assigned === 3)
+                [SIGNED]
+            @elseif($first->approved_by_assigned === 2)
+                
+            @else
+
+            @endif</div>
             <div>Received by: {!! $first->received_by ?? "<span style='margin-left: 100px'></span>" !!}</div>
-        </div>
-        <div style="font-weight: bold;">
-            Car details: 
-            {{ $first->car_name ?? '(blank)' }} 
-            @if($first->plate_number)
-                ({{ $first->plate_number }})
-            @endif
         </div>
     </div>
 

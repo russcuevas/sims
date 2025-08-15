@@ -322,18 +322,16 @@
                                             <input type="text" id="memo" name="memo"
                                                 class="form-control">
                                         </div>
+                                        {{-- UPDATED --}}
                                         <div class="col-md-3">
-                                            <label for="process_date" class="form-label"
-                                                style="color: #D96F32;">Transaction Date</label>
-                                            <input type="date" id="transaction_date" name="transaction_date"
-                                                class="form-control">
+                                            <label for="transaction_date" class="form-label" style="color: #D96F32;">Transaction Date</label>
+                                            <input type="date" id="transaction_date" name="transaction_date" class="form-control">
                                         </div>
 
+                                        {{-- UPDATED --}}
                                         <div class="col-md-3">
-                                            <label for="process_date" class="form-label"
-                                                style="color: #D96F32;">Expected Delivery</label>
-                                            <input type="date" id="expected_date" name="expected_date"
-                                                class="form-control">
+                                            <label for="expected_date" class="form-label" style="color: #D96F32;">Expected Delivery</label>
+                                            <input type="date" id="expected_date" name="expected_date" class="form-control">
                                         </div>
 
                                         <div class="col-md-3 text-left" style="display: none;">
@@ -756,6 +754,30 @@
         });
     });
 </script>
+
+{{-- UPDATED --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get date in Asia/Manila timezone
+        function getManilaDate(offsetDays = 0) {
+            const options = { timeZone: 'Asia/Manila', year: 'numeric', month: '2-digit', day: '2-digit' };
+            const date = new Date();
+            date.setDate(date.getDate() + offsetDays);
+
+            const manilaDateParts = new Intl.DateTimeFormat('en-CA', options).formatToParts(date);
+
+            const year = manilaDateParts.find(p => p.type === 'year').value;
+            const month = manilaDateParts.find(p => p.type === 'month').value;
+            const day = manilaDateParts.find(p => p.type === 'day').value;
+
+            return `${year}-${month}-${day}`;
+        }
+
+        document.getElementById('transaction_date').value = getManilaDate();
+        document.getElementById('expected_date').value = getManilaDate(7);
+    });
+</script>
+
 
 </body>
 

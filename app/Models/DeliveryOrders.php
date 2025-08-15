@@ -27,6 +27,8 @@ class DeliveryOrders extends Model
         'amount',
         'total_ordered',
         'total_amount',
+        'type_sign',
+        'approved_by_assigned',
         'status',
         'is_archived',
     ];

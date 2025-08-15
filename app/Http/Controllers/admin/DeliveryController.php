@@ -188,7 +188,6 @@ class DeliveryController extends Controller
             'expected_date' => 'required|date',
             'approved_by' => 'required',
             'delivered_by' => 'required',
-            'car' => 'required|exists:cars,id',
             'store' => 'required|exists:stores,id',
             'product_id' => 'required|array',
             'product_id.*' => 'required|exists:batch_fetch_finish_products,id',
@@ -202,16 +201,6 @@ class DeliveryController extends Controller
         ]);
 
         $user = Auth::guard('employees')->user();
-
-        $existingCarAssignment = DB::table('delivery_orders')
-            ->where('car', $request->car)
-            ->where('status', 'pending')
-            ->first();
-
-        if ($existingCarAssignment && $existingCarAssignment->delivered_by != $request->delivered_by) {
-            return back()->with('error', 'This car is already assigned please check the available cars.');
-        }
-
 
         $storeCode = $request->store
             ? DB::table('stores')->where('id', $request->store)->value('store_code')
@@ -253,7 +242,6 @@ class DeliveryController extends Controller
                         'process_by' => "{$user->employee_firstname} {$user->employee_lastname}",
                         'approved_by' => $request->approved_by,
                         'delivered_by' => $request->delivered_by,
-                        'car' => $request->car,
                         'store' => $request->store,
                         'product_name' => $product->product_name,
                         'pack' => 1,
@@ -263,6 +251,8 @@ class DeliveryController extends Controller
                         'price' => $request->price[$key],
                         'amount' => $request->amount[$key],
                         'total_amount' => $request->total_amount,
+                        'type_sign' => 'automated',
+                        'approved_by_assigned' => 3,
                         'status' => 'pending',
                         'is_archived' => 0,
                         'created_at' => now(),

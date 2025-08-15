@@ -33,9 +33,10 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->integer('total_ordered')->nullable();
             $table->decimal('total_amount', 10, 2);
+            $table->string('type_sign')->default('manual');
+            $table->integer('approved_by_assigned')->default(0);
             $table->string('status', 255)->nullable();
             $table->integer('is_archived')->default(0);
-
             $table->timestamps();
             $table->foreign('approved_by')->references('id')->on('employees')->onDelete('set null');
             $table->foreign('delivered_by')->references('id')->on('employees')->onDelete('set null');
