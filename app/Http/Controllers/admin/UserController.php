@@ -166,9 +166,24 @@ class UserController extends Controller
             return redirect()->route('login.page')->with('error', 'Unauthorized access.');
         }
 
-        // Update the is_archived flag for the employee
         DB::table('employees')->where('id', $id)->update(['is_archived' => 1]);
 
         return redirect()->route('admin.user.management.page')->with('success', 'User archived successfully');
+    }
+
+    public function ValidateArchiveUserAdminPin(Request $request)
+    {
+        $request->validate([
+            'pin' => 'required|digits:4',
+        ]);
+
+        $admin = Auth::guard('employees')->user();
+
+        if ((string) $request->pin != (string) $admin->pin) {
+            return response()->json(['error' => 'Incorrect PIN'], 401);
+        }
+
+
+        return response()->json(['status' => 'PIN verified']);
     }
 }

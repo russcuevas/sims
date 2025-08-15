@@ -109,10 +109,12 @@
                                                 <td style="color: black;">{{ $stock->stock_unit_id }}</td>
                                                 <td style="color: black; text-transform: capitalize"> {{ $stock->category }}</td>
                                                 <td>
-                                                    <form action="{{ route('admin.stocks.restore', $stock->id) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-outline-success btn-sm">Restore</button>
-                                                    </form>
+    <button 
+        type="button" 
+        class="btn btn-outline-success btn-sm" 
+        onclick="confirmRestoreStockWithPin({{ $stock->id }})">
+        Restore
+    </button>
                                                 </td>
                                             </tr>
                                         @empty
@@ -155,6 +157,70 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function confirmRestoreStockWithPin(stockId) {
+            Swal.fire({
+                title: 'Enter your PIN to restore',
+                input: 'password',
+                inputLabel: 'Admin PIN',
+                inputPlaceholder: 'Enter your 4-digit PIN',
+                inputAttributes: {
+                    maxlength: 4,
+                    autocapitalize: 'off',
+                    autocorrect: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Verify & Restore',
+                showLoaderOnConfirm: true,  // This triggers a loading spinner on the confirm button automatically
+                allowOutsideClick: () => !Swal.isLoading(),
+                preConfirm: (pin) => {
+                    if (!pin || pin.length !== 4) {
+                        Swal.showValidationMessage('Please enter a valid 4-digit PIN');
+                        return false;
+                    }
+                    return fetch('{{ route("admin.restore.validate.pin") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ pin: pin })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err.error || 'Incorrect PIN');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(`PIN validation failed: ${error.message}`);
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/admin/stocks/restore/${stockId}`;
+
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfInput);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+        </script>
+
+
+
     <script>
         $(document).ready(function () {
             $('#example').DataTable({

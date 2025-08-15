@@ -130,6 +130,25 @@ class StockController extends Controller
         return redirect()->route('admin.stock.management.page')->with('success', 'Product archived successfully.');
     }
 
+    public function ValidateStockArchivePin(Request $request)
+    {
+        $request->validate([
+            'pin' => 'required|digits:4',
+        ]);
+
+        $admin = Auth::guard('employees')->user();
+
+        if (!$admin || $admin->position_id != 1) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ((string) $request->pin !== (string) $admin->pin) {
+            return response()->json(['error' => 'Incorrect PIN'], 401);
+        }
+
+        return response()->json(['status' => 'PIN verified']);
+    }
+
     // CHANGES REVISIONS
     public function StockPurchaseOrderPage()
     {

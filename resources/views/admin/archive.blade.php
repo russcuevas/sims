@@ -123,12 +123,12 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <form action="{{ route('admin.employees.restore', $employee->id) }}" method="POST">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-outline-success btn-sm">
-                                                                Restore
-                                                            </button>
-                                                        </form>
+<button type="button"
+    class="btn btn-outline-success btn-sm"
+    onclick="confirmRestoreEmployeeWithPin({{ $employee->id }})">
+    Restore
+</button>
+
                                                     </td>
                                                 </tr>
                                             @empty
@@ -170,6 +170,60 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    function confirmRestoreEmployeeWithPin(employeeId) {
+        Swal.fire({
+            title: 'Enter your PIN to restore',
+            input: 'password',
+            inputLabel: 'Admin PIN',
+            inputPlaceholder: 'Enter your 4-digit PIN',
+            inputAttributes: {
+                maxlength: 4,
+                autocapitalize: 'off',
+                autocorrect: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Verify & Restore',
+            showLoaderOnConfirm: true,
+            preConfirm: (pin) => {
+                return fetch('{{ route("admin.restore.validate.pin") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ pin: pin })
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Incorrect PIN');
+                    }
+                    return response.json();
+                }).catch(error => {
+                    Swal.showValidationMessage(`PIN validation failed`);
+                });
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Submit the restore form programmatically
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/employees/restore/${employeeId}`;
+
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = '{{ csrf_token() }}';
+
+                form.appendChild(csrfInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+    </script>
+
     <script>
         $(document).ready(function () {
             $('#example').DataTable({

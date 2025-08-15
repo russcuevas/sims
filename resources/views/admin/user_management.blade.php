@@ -286,10 +286,10 @@
                                                             Update
                                                         </button>
                                             
-                                                        <form action="{{ route('admin.user.archive', $employee->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to archive this user?');">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-outline-danger">Archive</button>
-                                                        </form>
+<button type="button" class="btn btn-outline-danger" onclick="confirmArchiveWithPin({{ $employee->id }})">
+    Archive
+</button>
+
                                                     </div>
                                                 </td>
                                             </tr>
@@ -453,6 +453,61 @@
 
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmArchiveWithPin(employeeId) {
+    Swal.fire({
+        title: 'Enter your PIN to archive',
+        input: 'password',
+        inputLabel: 'Admin PIN',
+        inputPlaceholder: 'Enter your 4-digit PIN',
+        inputAttributes: {
+            maxlength: 4,
+            autocapitalize: 'off',
+            autocorrect: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Verify & Archive',
+        showLoaderOnConfirm: true,
+        preConfirm: (pin) => {
+            return fetch('{{ route("admin.user.archive.validate.pin") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ pin: pin })
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Incorrect PIN');
+                }
+                return response.json();
+            }).catch(error => {
+                Swal.showValidationMessage(`PIN validation failed`);
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Submit the form via POST using a dynamic form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/user_management/archive/${employeeId}`;
+
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = '_token';
+            tokenInput.value = '{{ csrf_token() }}';
+
+            form.appendChild(tokenInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+</script>
+
     <!-- ADD USERS VALIDATION -->
     <script>
         jQuery(".add_users_validation").validate({

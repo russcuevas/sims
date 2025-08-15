@@ -244,10 +244,12 @@
                                                             <i class="fa fa-pencil"></i> Update
                                                         </button>
 
-                                                        <form action="{{ route('admin.stock.archive.product', ['id' => $product->id]) }}" method="POST" style="display: inline;">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
-                                                        </form>
+<button type="button"
+    class="btn btn-outline-danger btn-sm"
+    onclick="confirmProductArchiveWithPin({{ $product->id }})">
+    Archive
+</button>
+
                                                     </td>
                                                 </tr>
 
@@ -337,6 +339,60 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmProductArchiveWithPin(productId) {
+    Swal.fire({
+        title: 'Enter your PIN to archive',
+        input: 'password',
+        inputLabel: 'Admin PIN',
+        inputPlaceholder: 'Enter your 4-digit PIN',
+        inputAttributes: {
+            maxlength: 4,
+            autocapitalize: 'off',
+            autocorrect: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Verify & Archive',
+        showLoaderOnConfirm: true,
+        preConfirm: (pin) => {
+            return fetch('{{ route("admin.stock.archive.validate.pin") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ pin: pin })
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Incorrect PIN');
+                }
+                return response.json();
+            }).catch(error => {
+                Swal.showValidationMessage(`PIN validation failed`);
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Submit archive form via JS
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/stock/archive-product/${productId}`;
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = '{{ csrf_token() }}';
+
+            form.appendChild(csrfInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+</script>
+
     <script>
         $(document).ready(function () {
             $('#poTable').DataTable({

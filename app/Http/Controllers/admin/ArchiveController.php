@@ -55,6 +55,25 @@ class ArchiveController extends Controller
         return redirect()->back()->with('success', 'Employee restored successfully.');
     }
 
+    public function ValidateRestorePin(Request $request)
+    {
+        $request->validate([
+            'pin' => 'required|digits:4',
+        ]);
+
+        $admin = Auth::guard('employees')->user();
+
+        if (!$admin || $admin->position_id != 1) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ((string) $request->pin !== (string) $admin->pin) {
+            return response()->json(['error' => 'Incorrect PIN'], 401);
+        }
+
+        return response()->json(['status' => 'PIN verified']);
+    }
+
 
 
     public function AdminArchiveStocksPage()

@@ -98,6 +98,7 @@ Route::get('/admin/available-products', [DashboardController::class, 'AdminGetAv
 Route::get('/admin/user_management', [UserController::class, 'AdminUserManagementPage'])->name('admin.user.management.page');
 Route::post('/admin/user_management/add', [UserController::class, 'AdminAddUser'])->name('admin.user.add');
 Route::post('/admin/user_management/archive/{id}', [UserController::class, 'AdminArchiveUser'])->name('admin.user.archive');
+Route::post('/admin/user/validate-pin/archive', [UserController::class, 'ValidateArchiveUserAdminPin'])->name('admin.user.archive.validate.pin');
 Route::put('/admin/user_management/update/{id}', [UserController::class, 'AdminUpdateUser'])->name('admin.user.update');
 
 // ADMIN STOCK IN MANAGEMENT
@@ -120,6 +121,7 @@ Route::get('/admin/purchase-order', [StockController::class, 'StockPurchaseOrder
 Route::post('/admin/submit/purchase-order', [StockController::class, 'StockSubmitPO'])->name('admin.stock.submit.po');
 Route::get('/admin/purchase-order/view/{po_number}', [StockController::class, 'AdminViewPO'])
     ->name('admin.view.po');
+Route::post('/admin/stock/archive/validate-pin', [StockController::class, 'ValidateStockArchivePin'])->name('admin.stock.archive.validate.pin');
 
 
 
@@ -177,10 +179,16 @@ Route::post('/admin/sales/report/archive/{id}', [SalesReportController::class, '
 Route::get('/admin/logs', [LogsController::class, 'AdminLogsPage'])->name('admin.logs.page');
 
 // ADMIN ARCHIVE MANAGEMENT
+// UPDATED AUG 15 2025
 Route::get('/admin/archive', [ArchiveController::class, 'AdminArchivePage'])->name('admin.archive.page');
 Route::post('/admin/employees/restore/{id}', [ArchiveController::class, 'AdminRestoreEmployee'])->name('admin.employees.restore');
 Route::get('/admin/archive/stocks', [ArchiveController::class, 'AdminArchiveStocksPage'])->name('admin.archive.stocks.page');
 Route::post('/admin/stocks/restore/{id}', [ArchiveController::class, 'AdminRestoreStocks'])->name('admin.stocks.restore');
+Route::post('/admin/restore/validate-pin', [ArchiveController::class, 'ValidateRestorePin'])->name('admin.restore.validate.pin');
+
+// UPDATED AUG 15 2025
+
+
 Route::get('/admin/archive/stock_in', [ArchiveController::class, 'AdminArchiveStockInPage'])->name('admin.archive.stock.in.page');
 Route::post('/admin/stockin/restore/{transact_id}', [ArchiveController::class, 'AdminRestoreStockIn'])->name('admin.stockin.restore');
 Route::get('/admin/archive/process', [ArchiveController::class, 'AdminArchiveProcessPage'])->name('admin.archive.process.page');
