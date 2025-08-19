@@ -59,6 +59,7 @@
             <table class="table table-bordered mt-3 text-center" style="color: black !important;">
                 <thead>
                     <tr>
+                        {{-- <th>Product ID</th> --}}
                         <th>Product Name</th>
                         <th>Quantity</th>
                         <th>Unit</th>
@@ -69,6 +70,9 @@
                 <tbody id="products-table-body">
                     @foreach($lowStockProducts as $index => $product)
                         <tr>
+                            {{-- CHANGES REVISION --}}
+                            <input type="hidden" name="products[{{ $index }}][product_id]" value="{{ $product->id }}">
+                            {{-- CHANGES REVISION --}}
                             <td>
                                 {{ $product->product_name }}
                                 <input type="hidden" name="products[{{ $index }}][product_name]" value="{{ $product->product_name }}">
@@ -95,6 +99,11 @@
                             <input type="hidden" name="total_amount" id="total_amount" value="0">
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="1" class="text-right">
+                            <button type="button" class="btn btn-success" onclick="addProductRow()">+ Add Product</button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -114,6 +123,27 @@
                 <button type="submit" class="btn btn-primary">Download</button>
             </div>
         </div>
+
+        {{-- CHANGES REVISION --}}
+        @php
+            $lowStockIds = $lowStockProducts->pluck('id')->toArray();
+        @endphp
+
+        <select id="product_template" class="d-none">
+            @foreach($allRawMaterials as $product)
+                @if (!in_array($product->id, $lowStockIds))
+                    <option value="{{ $product->id }}"
+                        data-name="{{ $product->product_name }}"
+                        data-unit="{{ $product->stock_unit_id }}"
+                        data-price="{{ $product->price }}">
+                        {{ $product->product_name }}
+                    </option>
+                @endif
+            @endforeach
+        </select>
+        {{-- CHANGES REVISION --}}
+
+
     </form>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -173,5 +203,100 @@
             });
         });
     </script>
+
+    {{-- CHANGES REVISION --}}
+    <script>
+        let productIndex = {{ count($lowStockProducts) }};
+
+        function getAlreadySelectedProductIds() {
+            const selectedIds = [];
+
+            document.querySelectorAll('.product-select').forEach(select => {
+                if (select.value) {
+                    selectedIds.push(select.value);
+                }
+            });
+
+            return selectedIds;
+        }
+
+        function addProductRow() {
+            const selectedProductIds = getAlreadySelectedProductIds();
+
+            // Clone the hidden select and filter out selected options
+            const selectTemplate = document.getElementById('product_template');
+            const selectClone = document.createElement('select');
+            selectClone.classList.add('form-control', 'product-select');
+            selectClone.name = `products[${productIndex}][product_id]`;
+            selectClone.setAttribute('onchange', `fillProductDetails(this, ${productIndex})`);
+
+            // Copy options except already selected
+            const defaultOption = document.createElement('option');
+            defaultOption.text = 'Please select product';
+            defaultOption.value = '';
+            selectClone.appendChild(defaultOption);
+
+            // Copy options except already selected
+            Array.from(selectTemplate.options).forEach(option => {
+                if (!selectedProductIds.includes(option.value)) {
+                    selectClone.appendChild(option.cloneNode(true));
+                }
+            });
+
+            // If no available products left to select
+            if (selectClone.options.length === 0) {
+                alert('All raw materials are already selected.');
+                return;
+            }
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <div class="product-name" id="product_name_${productIndex}">--</div>
+                    <input type="hidden" name="products[${productIndex}][product_name]" id="input_name_${productIndex}">
+                </td>
+                <td><input type="number" name="products[${productIndex}][quantity]" class="form-control quantity" min="1" value="1" required></td>
+                <td>
+                    <div id="unit_${productIndex}">--</div>
+                    <input type="hidden" name="products[${productIndex}][unit]" id="input_unit_${productIndex}" required>
+                </td>
+                <td><input type="number" name="products[${productIndex}][price]" class="form-control price" step="0.01" min="0" value="0" required></td>
+                <td><input type="text" class="form-control amount" name="products[${productIndex}][amount]" value="0.00" readonly></td>
+            `;
+
+            row.children[0].prepend(selectClone);
+
+            document.querySelector('#products-table-body').insertBefore(
+                row,
+                document.querySelector('#products-table-body').lastElementChild.previousElementSibling
+            );
+
+            row.querySelectorAll('.quantity, .price').forEach(input => {
+                input.addEventListener('input', calculateAmounts);
+            });
+
+            productIndex++;
+        }
+
+        function fillProductDetails(select, index) {
+            const selected = select.options[select.selectedIndex];
+            if (!selected.value) return;
+            const name = selected.dataset.name;
+            const unit = selected.dataset.unit;
+            const price = selected.dataset.price;
+
+            document.getElementById(`product_name_${index}`).innerText = name;
+            document.getElementById(`input_name_${index}`).value = name;
+
+            document.getElementById(`unit_${index}`).innerText = unit;
+            document.getElementById(`input_unit_${index}`).value = unit;
+
+            const priceInput = select.closest('tr').querySelector(`input[name="products[${index}][price]"]`);
+            priceInput.value = price;
+
+            calculateAmounts();
+        }
+        </script>
+
 </body>
 </html>

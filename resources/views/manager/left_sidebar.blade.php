@@ -51,10 +51,10 @@
             <li class="nav-label first" style="font-weight: 900">Main Menu</li>
             <li><a href="{{ route('manager.dashboard.page') }}" aria-expanded="false"><i class="icon icon-home"></i><span
                         class="nav-text">Dashboard</span></a></li>
-            <li><a href="{{ route('manager.email.management.page') }}" aria-expanded="false"><i class="fa-solid fa-envelope"></i><span
+            {{-- <li><a href="{{ route('manager.email.management.page') }}" aria-expanded="false"><i class="fa-solid fa-envelope"></i><span
                         class="nav-text">Email
                         </span></a>
-            </li>
+            </li> --}}
             <li><a href="{{ route('manager.stock.in.page') }}" aria-expanded="false"><i class="icon icon-form"></i><span
                         class="nav-text">Stock In</span></a>
             </li>
@@ -72,10 +72,10 @@
                         class="nav-text">Sales
                         Report</span></a>
             </li>
-            <li><a href="{{ route('manager.archive.page') }}" aria-expanded="false"><i class="icon icon-card-update"></i><span
+            {{-- <li><a href="{{ route('manager.archive.page') }}" aria-expanded="false"><i class="icon icon-card-update"></i><span
                         class="nav-text">Archive
                     </span></a>
-            </li>
+            </li> --}}
 
         </ul>
     </div>

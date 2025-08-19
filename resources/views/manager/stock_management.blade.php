@@ -104,6 +104,7 @@
                                                                 <th style="color: black">P.O Number</th>
                                                                 <th style="color: black">Process By</th>
                                                                 <th style="color: black">Total Amount</th>
+                                                                <th style="color: black">Status</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -117,10 +118,12 @@
                                                                     <td style="color: black">{{ $order->po_number }}</td>
                                                                     <td style="color: black">{{ $order->process_by }}</td>
                                                                     <td style="color: black">₱{{ number_format($order->total_amount, 2) }}</td>
+                                                                    <td style="color: black">{{ $order->status }}</td>
+
                                                                 </tr>
                                                             @empty
                                                                 <tr>
-                                                                    <td colspan="4" class="text-muted" style="text-align: center;">
+                                                                    <td colspan="5" class="text-muted" style="text-align: center;">
                                                                         No purchase orders found.
                                                                     </td>
                                                                 </tr>
@@ -133,7 +136,7 @@
                                         </div>
                                     </div>
                                     <a href="{{ route('manager.purchase.order.page') }}"  class="btn btn-primary position-relative">
-                                        View P.O
+                                        Add P.O
                                         @if($lowRawMaterialsCount > 0)
                                             <span class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                                 {{ $lowRawMaterialsCount }}

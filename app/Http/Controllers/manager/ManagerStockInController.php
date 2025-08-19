@@ -84,6 +84,19 @@ class ManagerStockInController extends Controller
             ->where('is_archived', 0)
             ->get();
 
+        $rawMaterialPOs = DB::table('purchase_orders')
+            ->leftJoin('product_details', 'purchase_orders.product_id', '=', 'product_details.id')
+            ->select('purchase_orders.po_number')
+            ->where('purchase_orders.status', 'pending')
+            ->where(function ($query) {
+                $query->where('product_details.category', 'raw materials')
+                    ->orWhereNull('product_details.category');
+            })
+            ->distinct()
+            ->orderBy('purchase_orders.po_number', 'desc')
+            ->get();
+
+
         return view('manager.stock_in', compact(
             'role',
             'user',
@@ -92,7 +105,8 @@ class ManagerStockInController extends Controller
             'batchProductDetails',
             'totalAmount',
             'historyGroups',
-            'lowFinishedProducts'
+            'lowFinishedProducts',
+            'rawMaterialPOs'
         ));
     }
 
@@ -110,10 +124,22 @@ class ManagerStockInController extends Controller
             'product_price' => 'required|numeric|min:0.01',
         ]);
 
-        DB::table('products')->insert([
+        $productId = DB::table('products')->insertGetId([
             'product_name' => $validated['product_name'],
             'stock_unit_id' => $validated['product_unit'],
             'product_price' => $validated['product_price'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('product_details')->insert([
+            'product_id' => $productId,
+            'product_name' => $validated['product_name'],
+            'price' => $validated['product_price'],
+            'quantity' => 0,
+            'stock_unit_id' => $validated['product_unit'],
+            'category' => 'raw materials',
+            'is_archived' => 0,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -153,37 +179,68 @@ class ManagerStockInController extends Controller
         }
 
         $request->validate([
-            'product_ids' => 'required|array|min:1',
-            'product_ids.*' => 'exists:products,id',
+            'po_number' => 'required|exists:purchase_orders,po_number',
         ], [
-            'product_ids.required' => 'Product is required.',
+            'po_number.required' => 'Purchase Order number is required.',
         ]);
 
-
-        $now = now();
         $employee_id = Auth::guard('employees')->user()->id;
+        $now = now();
 
-        $products = DB::table('products')
-            ->whereIn('id', $request->product_ids)
+        $poProducts = DB::table('purchase_orders')
+            ->join('product_details', 'purchase_orders.product_id', '=', 'product_details.id')
+            ->where('purchase_orders.po_number', $request->po_number)
+            ->select(
+                'purchase_orders.product_id',
+                'purchase_orders.product_name',
+                'purchase_orders.price',
+                'purchase_orders.quantity',
+                'purchase_orders.unit',
+                'product_details.category'
+            )
             ->get();
+
+        if ($poProducts->isEmpty()) {
+            return redirect()->route('manager.stock.in.page')->with('error', 'No products found for this PO number.');
+        }
+
+        $productIds = $poProducts->pluck('product_id')->toArray();
+
+        $alreadySubmitted = DB::table('batch_product_details')
+            ->where('employee_id', $employee_id)
+            ->whereIn('product_id', $productIds)
+            ->exists();
+
+        if ($alreadySubmitted) {
+            return redirect()->route('manager.stock.in.page')
+                ->with('error', 'You have already submitted batch details for this PO.');
+        }
 
         $insert_data = [];
 
-        foreach ($products as $product) {
+        foreach ($poProducts as $product) {
             $insert_data[] = [
-                'product_id'    => $product->id,
-                'product_name'  => $product->product_name,
-                'price'         => $product->product_price,
-                'quantity'      => 0,
-                'stock_unit_id' => $product->stock_unit_id,
-                'category'      => null,
                 'employee_id'   => $employee_id,
+                'product_id'    => $product->product_id,
+                'product_name'  => $product->product_name,
+                'price'         => $product->price,
+                'quantity'      => $product->quantity ?? 0,
+                'stock_unit_id' => $product->unit,
+                'category'      => $product->category,
                 'created_at'    => $now,
                 'updated_at'    => $now,
             ];
         }
 
         DB::table('batch_product_details')->insert($insert_data);
+
+        DB::table('purchase_orders')
+            ->where('po_number', $request->po_number)
+            ->update([
+                'status' => 'completed',
+                'updated_at' => $now,
+            ]);
+
         return redirect()->route('manager.stock.in.page')->with('success', 'Product details added successfully.');
     }
 
@@ -220,6 +277,7 @@ class ManagerStockInController extends Controller
 
         $now = now();
 
+        // Update 'products' table
         $updatedProduct = DB::table('products')
             ->where('id', $productId)
             ->update([
@@ -227,8 +285,15 @@ class ManagerStockInController extends Controller
                 'updated_at' => $now
             ]);
 
-        $updatedBatch = DB::table('batch_product_details')
+        DB::table('batch_product_details')
             ->where('product_id', $productId)
+            ->update([
+                'price' => $request->price,
+                'updated_at' => $now
+            ]);
+
+        DB::table('product_details')
+            ->where('id', $productId)
             ->update([
                 'price' => $request->price,
                 'updated_at' => $now

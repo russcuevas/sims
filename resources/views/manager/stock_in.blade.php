@@ -231,13 +231,13 @@
                                     <form action="{{ route('manager.stock.in.add.batch.product.details') }}" method="POST">
                                         @csrf
                                         <div class="d-flex gap-2 align-items-center">
-                                            <select id="product_select" name="product_ids[]" class="form-control mr-2" multiple="multiple" style="flex: 1; color: black !important">
-                                                @foreach ($products as $product)
-                                                    <option value="{{ $product->id }}">
-                                                        {{ $product->product_name }} ({{ $product->stock_unit_id }}) - ₱{{ $product->product_price }}
-                                                    </option>
+
+                                            <select id="po_select" name="po_number" class="form-control">
+                                                @foreach ($rawMaterialPOs as $po)
+                                                    <option value="{{ $po->po_number }}">{{ $po->po_number }}</option>
                                                 @endforeach
                                             </select>
+
                                             <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
                                     </form>
@@ -248,12 +248,10 @@
                                 <form action="{{ route('manager.raw.stocks.request') }}" method="POST">
                                     @csrf
                                     <div class="row mb-3">
+                                        {{-- CHANGES REVISIONS --}}
                                         <div class="col-md-3 text-left">
-                                            <label style="color: #A16D28;" for="received_date"
-                                                class="form-label">Received
-                                                date</label>
-                                            <input type="date" id="received_date" name="received_date"
-                                                class="form-control">
+                                            <label style="color: #A16D28;" for="received_date" class="form-label">Received date</label>
+                                            <input type="date" id="received_date" name="received_date" class="form-control" value="{{ date('Y-m-d') }}">
                                         </div>
                                         <div class="col-md-3 text-left">
                                             <label style="color: #A16D28;" for="process_date" class="form-label">Process
@@ -755,11 +753,23 @@
         @endif
     </script>
 
+    {{-- CHANGES REVISIONS --}}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    {{-- <script>
+        $(document).ready(function() {
+            $('#po_select').select2({
+                placeholder: "Search and select purchase order",
+                allowClear: true,
+                width: 'resolve'
+            });
+        });
+    </script> --}}
+        
+
     <script>
-        $(function() {
-            $('#product_select').select2({
-                placeholder: "Search and select products",
+        $(document).ready(function(){
+            $('#po_select').select2({
+                placeholder: "Search purchase orders",
                 allowClear: true,
                 width: 'resolve'
             });

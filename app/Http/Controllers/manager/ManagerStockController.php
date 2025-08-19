@@ -66,8 +66,8 @@ class ManagerStockController extends Controller
             ->get();
 
         $purchaseOrders = DB::table('purchase_orders')
-            ->select('po_number', 'process_by', 'total_amount')
-            ->groupBy('po_number', 'process_by', 'total_amount')  // Avoid showing same PO multiple times
+            ->select('po_number', 'process_by', 'total_amount', 'status') // ✅ Add 'status'
+            ->groupBy('po_number', 'process_by', 'total_amount', 'status') // ✅ Also group by 'status'
             ->orderBy('id', 'desc')
             ->get();
 
@@ -146,9 +146,10 @@ class ManagerStockController extends Controller
             ->where('is_archived', 0)
             ->get();
 
-        if ($lowStockProducts->isEmpty()) {
-            return redirect()->back()->with('error', 'No product to request.');
-        }
+        // CHANGES REVISION CAN ADD PO EVEN WITHOUT NO PRODUCTS
+        // if ($lowStockProducts->isEmpty()) {
+        //     return redirect()->back()->with('error', 'No product to request.');
+        // }
 
         $date = now()->format('ymd');
         $currentMonth = now()->format('ym');
@@ -174,7 +175,13 @@ class ManagerStockController extends Controller
 
         $suppliers = DB::table('suppliers')->get();
 
-        return view('manager.purchase_order', compact('lowStockProducts', 'poNumber', 'user', 'admins', 'suppliers'));
+        $allRawMaterials = DB::table('product_details')
+            ->where('category', 'raw materials')
+            ->where('is_archived', 0)
+            ->get();
+
+
+        return view('manager.purchase_order', compact('lowStockProducts', 'poNumber', 'user', 'admins', 'suppliers', 'allRawMaterials'));
     }
 
 
@@ -185,6 +192,7 @@ class ManagerStockController extends Controller
             'approved_by' => 'required|exists:employees,id',
             'total_amount' => 'required|numeric|min:0',
             'products' => 'required|array|min:1',
+            'products.*.product_id' => 'required|integer|exists:product_details,id', // ✅ Add this
             'products.*.product_name' => 'required|string',
             'products.*.quantity' => 'required|numeric|min:1',
             'products.*.unit' => 'required|string',
@@ -220,16 +228,19 @@ class ManagerStockController extends Controller
                 'supplier_id' => $request->supplier_id,
                 'process_by' => $user->employee_firstname . ' ' . $user->employee_lastname,
                 'approved_by' => $request->approved_by,
+                'product_id' => $product['product_id'],
                 'product_name' => $product['product_name'],
                 'quantity' => $product['quantity'],
                 'unit' => $product['unit'],
                 'price' => $product['price'],
                 'amount' => $product['amount'],
                 'total_amount' => $request->total_amount,
+                'status' => 'pending', // <-- ADD THIS LINE
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
         }
+
 
         return redirect()->route('manager.stock.management.page')->with('success', 'Downloaded successfully!');
     }

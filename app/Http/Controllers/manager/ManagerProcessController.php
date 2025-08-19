@@ -164,29 +164,49 @@ class ManagerProcessController extends Controller
                 'max:255',
                 Rule::unique('batch_product_multiple_units', 'product_name'),
             ],
-            'price_80g'    => 'nullable|numeric|min:0',
-            'price_130g'   => 'nullable|numeric|min:0',
-            'price_230g'   => 'nullable|numeric|min:0',
+            'quantity_1' => 'required|integer|min:1',
+            'unit_1' => 'required|string|max:50',
+            'price_1' => 'required|numeric|min:0',
+
+            'quantity_2' => 'required|integer|min:1',
+            'unit_2' => 'required|string|max:50',
+            'price_2' => 'required|numeric|min:0',
+
+            'quantity_3' => 'required|integer|min:1',
+            'unit_3' => 'required|string|max:50',
+            'price_3' => 'required|numeric|min:0',
         ], [
             'product_name.unique' => 'Product name already added.',
         ]);
 
         $productName = $request->input('product_name');
 
-        $units = [
-            '80g' => $request->input('price_80g'),
-            '130g' => $request->input('price_130g'),
-            '230g' => $request->input('price_230g'),
+        // Prepare an array of units with their quantity and price
+        $unitsData = [
+            [
+                'unit' => $request->input('unit_1'),
+                'quantity' => $request->input('quantity_1'),
+                'price' => $request->input('price_1'),
+            ],
+            [
+                'unit' => $request->input('unit_2'),
+                'quantity' => $request->input('quantity_2'),
+                'price' => $request->input('price_2'),
+            ],
+            [
+                'unit' => $request->input('unit_3'),
+                'quantity' => $request->input('quantity_3'),
+                'price' => $request->input('price_3'),
+            ],
         ];
 
-        foreach ($units as $unit => $price) {
-            if ($price !== null) {
-                BatchProductMultipleUnits::create([
-                    'product_name'  => $productName,
-                    'stock_unit_id' => $unit,
-                    'product_price' => $price,
-                ]);
-            }
+        foreach ($unitsData as $data) {
+            BatchProductMultipleUnits::create([
+                'product_name'  => $productName,
+                'stock_unit_id' => $data['unit'],
+                'quantity'      => $data['quantity'], // Add this column in DB if not exists
+                'product_price' => $data['price'],
+            ]);
         }
 
         return redirect()->back()->with('success', 'Product added successfully.');
@@ -208,7 +228,7 @@ class ManagerProcessController extends Controller
         foreach ($products as $product) {
             DB::table('batch_finish_products')->insert([
                 'employee_id'    => $employeeId,
-                'quantity'       => 100,
+                'quantity'       => $product->quantity,   // Use quantity from stored product
                 'product_name'   => $product->product_name,
                 'stock_unit_id'  => $product->stock_unit_id,
                 'product_price'  => $product->product_price,

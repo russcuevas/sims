@@ -86,10 +86,13 @@ class StockInController extends Controller
 
         // UPDATED
         $rawMaterialPOs = DB::table('purchase_orders')
-            ->join('product_details', 'purchase_orders.product_id', '=', 'product_details.id')
+            ->leftJoin('product_details', 'purchase_orders.product_id', '=', 'product_details.id')
             ->select('purchase_orders.po_number')
-            ->where('product_details.category', 'raw materials')
-            ->where('purchase_orders.status', 'pending') // ✅ Only pending
+            ->where('purchase_orders.status', 'pending')
+            ->where(function ($query) {
+                $query->where('product_details.category', 'raw materials')
+                    ->orWhereNull('product_details.category');
+            })
             ->distinct()
             ->orderBy('purchase_orders.po_number', 'desc')
             ->get();
