@@ -65,10 +65,6 @@
                         class="nav-text">Sales
                         Report</span></a>
             </li>
-            <li><a href="{{ route('supervisor.archive.page') }}" aria-expanded="false"><i class="icon icon-card-update"></i><span
-                        class="nav-text">Archive
-                    </span></a>
-            </li>
 
         </ul>
     </div>

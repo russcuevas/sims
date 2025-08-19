@@ -532,7 +532,7 @@
                                 </div>
 
                                 <div class="table-responsive">
-                                    <table class="table table-bordered text-center align-middle">
+                                    <table id="historyTable" class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
                                                 <th style="width: 10%; color: #D96F32;">Details</th>
@@ -603,6 +603,14 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+            <script>
+        $(document).ready(function () {
+            $('#historyTable').DataTable({
+                pageLength: 10,
+                responsive: true,
+            });
+        });
+    </script>
     <script>
         function updateAmount(input) {
             const quantity = parseFloat(input.value);

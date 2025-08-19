@@ -209,7 +209,7 @@
                                         </form>
                                         
                                     </div>
-                                    <table class="table table-bordered table-responsive-sm">
+                                    <table id="stockTable" class="table table-responsive-sm">
                                         <thead>
                                             <tr>
                                                 <th style="color: #A16D28;">Date</th>
@@ -333,6 +333,15 @@
     <script>
         $(document).ready(function () {
             $('#poTable').DataTable({
+                pageLength: 10,
+                responsive: true,
+            });
+        });
+    </script>
+
+        <script>
+        $(document).ready(function () {
+            $('#stockTable').DataTable({
                 pageLength: 10,
                 responsive: true,
             });
