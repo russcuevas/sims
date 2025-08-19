@@ -530,7 +530,7 @@
                                 </div>
 
                                 <div class="table-responsive">
-                                <table class="table table-bordered text-center align-middle">
+                                <table id="delivery-table" class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
                                                 <th style="width: 10%; color: #D96F32;">Details</th>

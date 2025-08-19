@@ -216,7 +216,7 @@
                                         </form>
                                         
                                     </div>
-                                    <table  class="table table-bordered table-responsive-sm">
+                                    <table id="productDataTable" class="table table-responsive-sm">
                                         <thead>
                                             <tr>
                                                 <th style="color: #A16D28;">Date</th>
@@ -400,6 +400,21 @@ function confirmProductArchiveWithPin(productId) {
                 responsive: true,
             });
         });
+    </script>
+
+    <script>
+    $(document).ready(function () {
+        $('#productDataTable').DataTable({
+            responsive: true,
+            searching: false,
+            ordering: true,
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50, 100],
+            columnDefs: [
+                { orderable: false, targets: [0, 4] } // disable sorting on Details & Actions
+            ]
+        });
+    });
     </script>
     
     <!-- ADD USERS VALIDATION -->

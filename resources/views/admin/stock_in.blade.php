@@ -11,6 +11,7 @@
     <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <style>
     .col-form-label {
         color: black;
@@ -388,7 +389,7 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered text-center align-middle">
+<table id="historyTable" class="table table-bordered text-center align-middle">
                                     <thead class="table-light fw-bold">
                                         <tr>
                                             <th style="width: 10%; color: #A16D28;">Details</th>
@@ -526,6 +527,21 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+    $(document).ready(function () {
+        $('#historyTable').DataTable({
+            responsive: true,
+            searching: false,
+            ordering: true,
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50, 100],
+            columnDefs: [
+                { orderable: false, targets: [0, 4] } // disable sorting on Details & Actions
+            ]
+        });
+    });
+</script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
