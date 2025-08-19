@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('transaction_date')->nullable();
             $table->date('expected_delivery')->nullable();
             $table->string('process_by', 255)->nullable();
+            $table->string('process_by_role', 255)->nullable();
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->unsignedBigInteger('delivered_by')->nullable();
             $table->unsignedBigInteger('car')->nullable();

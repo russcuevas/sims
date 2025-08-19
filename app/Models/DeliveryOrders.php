@@ -14,6 +14,7 @@ class DeliveryOrders extends Model
         'transaction_date',
         'expected_delivery',
         'process_by',
+        'process_by_role',
         'approved_by',
         'delivered_by',
         'car',

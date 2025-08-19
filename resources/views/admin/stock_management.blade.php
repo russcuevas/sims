@@ -123,7 +123,7 @@
                                                                 </tr>
                                                             @empty
                                                                 <tr>
-                                                                    <td colspan="4" class="text-muted" style="text-align: center;">
+                                                                    <td colspan="5" class="text-muted" style="text-align: center;">
                                                                         No purchase orders found.
                                                                     </td>
                                                                 </tr>
