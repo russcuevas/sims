@@ -233,58 +233,65 @@
                                                 <th style="color: #A16D28;">Debit</th>
                                                 <th style="color: #A16D28;">Credit</th>
                                                 <th style="color: #A16D28;">Balances</th>
-                                                <th style="color: #A16D28;">Action</th>
                                             </tr>
                                         </thead>
 
                                         <tbody>
-                                            @forelse($transactions as $transaction)
-                                                <tr>
-                                                    <td style="color: black">{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('Y-m-d') }}</td>
-                                                    <td style="color: black">{{ $transaction->process_by }}</td>
-                                                    <td style="color: black">{{ $transaction->transaction_type }}</td>
-                                                    <td style="color: black">{{ $transaction->transaction_id }}</td>
-                                                    <td style="color: black">₱{{ number_format($transaction->debit, 2) }}</td>
-                                                    <td style="color: black">₱{{ number_format($transaction->credit, 2) }}</td>
-                                                    <td style="color: black">₱{{ number_format($transaction->balances, 2) }}</td>
-                                                    <td>
-                                                        <form action="{{ route('admin.transaction.archive', $transaction->id) }}" method="POST" style="display:inline;">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to archive this transaction?')">Archive</button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="8" class="text-center">No transactions found.</td>
-                                                </tr>
-                                            @endforelse
+
                                         </tbody>
 
                                         <tfoot>
                                             <tr>
-                                                <th colspan="4" class="text-end" style="color: #A16D28;">Total:</th>
-                                                <th style="color: #A16D28;">₱{{ number_format($transactions->sum('debit'), 2) }}</th>
-                                                <th style="color: #A16D28;">₱{{ number_format($transactions->sum('credit'), 2) }}</th>
-                                                <td style="color: 
-                                                    @if(isset($transaction) && $transaction->balances < 0) 
-                                                        #A16D28
-                                                    @elseif(isset($transaction)) 
-                                                        #A16D28
-                                                    @else 
-                                                        inherit
-                                                    @endif
-                                                ">
-                                                    @if(isset($transaction) && $transaction->balances !== null)
-                                                        @if($transaction->balances < 0)
-                                                            ₱-{{ number_format(abs($transaction->balances), 2) }}
-                                                        @else
-                                                            ₱{{ number_format($transaction->balances, 2) }}
-                                                        @endif
-                                                    @else
-                                                            <span style="color: #A16D28; font-weight: 900">₱0.00</span>
-                                                    @endif
-                                                </td>
+
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+
+                                    <table class="table table-bordered table-responsive-sm">
+                                        <thead>
+                                            <tr>
+                                                <th style="color: #A16D28;">Transaction date</th>
+                                                <th style="color: #A16D28;">Process by</th>
+                                                <th style="color: #A16D28;">Transaction type</th>
+                                                <th style="color: #A16D28;">Transaction ID</th>
+                                                <th style="color: #A16D28;">Debit</th>
+                                                <th style="color: #A16D28;">Credit</th>
+                                                <th style="color: #A16D28;">Balances</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                        </tbody>
+
+                                        <tfoot>
+                                            <tr>
+
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+
+                                    <table class="table table-bordered table-responsive-sm">
+                                        <thead>
+                                            <tr>
+                                                <th style="color: #A16D28;">Transaction date</th>
+                                                <th style="color: #A16D28;">Process by</th>
+                                                <th style="color: #A16D28;">Transaction type</th>
+                                                <th style="color: #A16D28;">Transaction ID</th>
+                                                <th style="color: #A16D28;">Loss</th>
+                                                <th style="color: #A16D28;">Debit</th>
+                                                <th style="color: #A16D28;">Credit</th>
+                                                <th style="color: #A16D28;">Balances</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                        </tbody>
+
+                                        <tfoot>
+                                            <tr>
+
                                             </tr>
                                         </tfoot>
                                     </table>

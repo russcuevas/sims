@@ -92,14 +92,14 @@
                                         <!-- ADD PRODUCT -->
                                         <button id="add_product_button" class="btn btn-outline-primary me-2 mr-2"
                                             data-toggle="modal" data-target="#add_product_modal">+ Add
-                                            Products</button>
+                                            Ingredients</button>
 
                                         <!-- ADD PRODUCT MODAL -->
                                         <div class="modal fade" id="add_product_modal">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Add Product</h5>
+                                                        <h5 class="modal-title">Add Ingredients</h5>
                                                         <button type="button" class="close"
                                                             data-dismiss="modal"><span>&times;</span>
                                                         </button>

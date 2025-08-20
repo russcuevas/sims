@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('status')->default('pending');
             $table->timestamps();
             $table->foreign('approved_by')->references('id')->on('employees')->onDelete('set null');
-            $table->foreign('product_id')->references('id')->on('product_details')->onDelete('set null');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('set null');
             $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('set null');
         });
     }

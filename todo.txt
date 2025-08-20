@@ -60,3 +60,50 @@ REMOVE ARCHIVE
 UPDATE DELIVERY
 DATATABLES
 DELIVERY MANAGEMENT - CAN SEE ALL APPROVED ASSIGNED WHERE = 0 AND 3
+
+
+
+
+TODO
+RETURN TABLE
+create table return orders
+transact_id
+memo
+upload_image
+upload_notes
+transaction_date
+expected_delivery
+process_by
+process_by_role
+approved_by
+delivered_by
+store
+product_name
+pack
+unit
+quantity_ordered
+quantity_returned
+price
+amount
+total_ordered
+total_amount
+type_sign
+approved_assigned_by
+status
+is_archived
+created_at
+updated_at
+
+
+SALES TABLE
+sales_transaction
+transaction_date
+process_by
+transaction_type = stock in / delivery
+transaction_id
+payment
+return
+debit
+credit
+loss
+balances

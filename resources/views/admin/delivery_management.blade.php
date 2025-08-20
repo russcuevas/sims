@@ -368,16 +368,13 @@
                                         </div>
 
 
-                                        {{-- <div class="col-md-3 text-left">
-                                            <label style="color: #D96F32;" for="car" class="form-label">Select Car</label>
-                                            <select id="car" name="car" class="form-control">
-                                                @foreach ($cars as $car)
-                                                    <option value="{{ $car->id }}">
-                                                        {{ $car->car }} ({{ $car->plate_number }})
-                                                    </option>
-                                                @endforeach
+                                        <div class="col-md-3 text-left">
+                                            <label style="color: #D96F32;" for="type_sign" class="form-label">Select Type Sign</label>
+                                            <select id="type_sign" name="type_sign" class="form-control">
+                                                <option value="manual">Manual</option>
+                                                <option value="automated">Automated</option>
                                             </select>
-                                        </div> --}}
+                                        </div>
 
                                         <div class="col-md-3 text-left">
                                             <label style="color: #D96F32;" for="store" class="form-label">Select Store</label>

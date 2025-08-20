@@ -71,7 +71,7 @@
                     @foreach($lowStockProducts as $index => $product)
                         <tr>
                             {{-- CHANGES REVISION --}}
-                            <input type="hidden" name="products[{{ $index }}][product_id]" value="{{ $product->id }}">
+                            <input type="hidden" name="products[{{ $index }}][product_id]" value="{{ $product->product_id }}">
                             {{-- CHANGES REVISION --}}
                             <td>
                                 {{ $product->product_name }}

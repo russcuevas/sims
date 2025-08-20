@@ -84,18 +84,21 @@ class StockInController extends Controller
             ->where('is_archived', 0)
             ->get();
 
-        // UPDATED
         $rawMaterialPOs = DB::table('purchase_orders')
-            ->leftJoin('product_details', 'purchase_orders.product_id', '=', 'product_details.id')
+            ->leftJoin('product_details', function ($join) {
+                $join->on('purchase_orders.product_id', '=', 'product_details.id')
+                    ->where(function ($q) {
+                        $q->where('product_details.category', 'raw materials')
+                            ->orWhereNull('product_details.category');
+                    });
+            })
             ->select('purchase_orders.po_number')
             ->where('purchase_orders.status', 'pending')
-            ->where(function ($query) {
-                $query->where('product_details.category', 'raw materials')
-                    ->orWhereNull('product_details.category');
-            })
             ->distinct()
             ->orderBy('purchase_orders.po_number', 'desc')
             ->get();
+
+
 
         return view('admin.stock_in', compact(
             'role',

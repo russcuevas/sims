@@ -210,7 +210,7 @@ class StockController extends Controller
             'approved_by' => 'required|exists:employees,id',
             'total_amount' => 'required|numeric|min:0',
             'products' => 'required|array|min:1',
-            'products.*.product_id' => 'required|integer|exists:product_details,id', // ✅ Add this
+            'products.*.product_id' => 'required|integer|exists:products,id', // ✅ Add this
             'products.*.product_name' => 'required|string',
             'products.*.quantity' => 'required|numeric|min:1',
             'products.*.unit' => 'required|string',

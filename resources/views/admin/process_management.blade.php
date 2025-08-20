@@ -180,7 +180,7 @@
                                             <button type="button" id="add_product_button"
                                                 class="btn btn-outline-primary w-100" data-toggle="modal"
                                                 data-target="#add_product_modal">
-                                                + Add Products
+                                                + Create Products
                                             </button>
                                         </div>
                                     </form>
