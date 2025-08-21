@@ -10,7 +10,21 @@ ADD PRODUCT DERCHO ADD PRODUCT_DETAILS RAW MATERIALS 0 QUANTITY - OKAY
 PO - ADD status column pending kapag hindi pa naasusubmit sa stock in kapag na submit completed na - OKAY
 PAG KA SUBMIT KAPAG BINAGO SA STOCK IN UPDATE PRICE - OKAY
 RECEIVED DATE - KUNG ANO DATE NGAYON - OKAY
-USER AND STOCK PRODUCTS - ARCHIVE LANG MAKAKAARCHIVE - OKAY
+USER AND STOCK PRODUCTS - ADMIN LANG MAKAKAARCHIVE - OKAY
+
+- STOCK IN OKAY -
+SALES TABLE
+sales_transaction
+transaction_date
+process_by
+transaction_type = stock in / delivery
+transaction_id
+payment
+return
+debit
+credit
+loss
+balances
 
 USER MANAGEMENT - PIN AUTOMATIC YEAR OF BIRTHDAY - OKAY
 
@@ -32,11 +46,12 @@ EXPECTED DATE - 7 DAYS FROM DATE NOW - OKAY
 ADMIN - OKAY
 AUTOMATIC AUTOMATED 3 = approved_assigned_by - OKAY
 
+DATATABLES - SALES & RETURN WORKING
+
 
 TODO:
 
 TOMORROW
-DATATABLES - SOME OKAY - SALES - RETURN - NOT OKAY
 USER MANAGEMENT - UPDATE CONTRACT TERMINATED WILL AUTOMATICALLY LOCKED
 
 MONDAY
@@ -95,15 +110,3 @@ created_at
 updated_at
 
 
-SALES TABLE
-sales_transaction
-transaction_date
-process_by
-transaction_type = stock in / delivery
-transaction_id
-payment
-return
-debit
-credit
-loss
-balances

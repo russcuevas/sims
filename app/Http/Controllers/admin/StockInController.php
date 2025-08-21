@@ -464,6 +464,26 @@ class StockInController extends Controller
         // Clear the batch items
         DB::table('batch_product_details')->where('employee_id', $employee->id)->delete();
 
+        // Calculate total amount from the batch items
+        $totalAmount = collect($historyData)->sum('amount');
+
+        // Insert into sales_transactions
+        DB::table('sales_transactions')->insert([
+            'transaction_date'  => now()->toDateTimeString(),
+            'process_by'        => $employee->employee_firstname . ' ' . $employee->employee_lastname,
+            'transaction_type'  => 'stock in',
+            'transaction_id'    => $transactId,
+            'payment'           => 0,
+            'return'            => 0,
+            'debit'             => $totalAmount,
+            'credit'            => 0,
+            'loss'              => 0,
+            'balances'          => $totalAmount,
+            'created_at'        => now(),
+            'updated_at'        => now(),
+        ]);
+
+
         // Log the action
         ActivityLogger::log(
             $employee->id,

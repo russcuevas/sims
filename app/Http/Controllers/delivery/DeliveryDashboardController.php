@@ -123,6 +123,9 @@ class DeliveryDashboardController extends Controller
             'upload_notes' => 'nullable|string',
         ]);
 
+        $employee = Auth::guard('employees')->user();
+
+        // Handle image upload
         $imagePath = null;
         if ($request->hasFile('upload_image')) {
             $image = $request->file('upload_image');
@@ -131,6 +134,7 @@ class DeliveryDashboardController extends Controller
             $imagePath = $imageName;
         }
 
+        // Determine status based on the request
         if ($request->has('completed')) {
             $status = 'completed';
         } elseif ($request->has('returned')) {
@@ -149,7 +153,7 @@ class DeliveryDashboardController extends Controller
                 'updated_at' => now(),
             ]);
 
-        // ✅ Add returned quantity back to finish product category
+        // If returned, add quantity back to stock
         if ($status === 'returned') {
             $returnedItems = DB::table('delivery_orders')
                 ->where('transact_id', $transact_id)
@@ -168,12 +172,37 @@ class DeliveryDashboardController extends Controller
             }
         }
 
+        // Log the delivery in sales_transactions
+        $deliveryItems = DB::table('delivery_orders')
+            ->where('transact_id', $transact_id)
+            ->get();
+
+        $totalAmount = $deliveryItems->sum('amount');
+
+        // Get process_by from delivery_orders
+        $processBy = DB::table('delivery_orders')
+            ->where('transact_id', $transact_id)
+            ->value('process_by');
+
+        DB::table('sales_transactions')->insert([
+            'transaction_date'  => now()->toDateTimeString(),
+            'process_by'        => $processBy ?? ($employee->employee_firstname . ' ' . $employee->employee_lastname),
+            'transaction_type'  => 'delivery',
+            'transaction_id'    => $transact_id,
+            'payment'           => 0,
+            'return'            => 0,
+            'debit'             => $totalAmount,
+            'credit'            => 0,
+            'loss'              => 0,
+            'balances'          => $totalAmount,
+            'created_at'        => now(),
+            'updated_at'        => now(),
+        ]);
 
 
         // Log activity
-        $user = Auth::guard('employees')->user();
         ActivityLogger::log(
-            $user->id,
+            $employee->id,
             'updated',
             'delivery_orders',
             "Marked delivery {$transact_id} as {$status}"
@@ -181,6 +210,10 @@ class DeliveryDashboardController extends Controller
 
         return redirect()->back()->with('success', "Delivery marked as {$status}.");
     }
+
+
+
+
 
 
     public function DeliveryViewDeliveryOrder($transact_id)

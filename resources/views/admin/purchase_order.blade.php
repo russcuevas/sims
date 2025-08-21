@@ -132,7 +132,7 @@
         <select id="product_template" class="d-none">
             @foreach($allRawMaterials as $product)
                 @if (!in_array($product->id, $lowStockIds))
-                    <option value="{{ $product->id }}"
+                    <option value="{{ $product->product_id }}"
                         data-name="{{ $product->product_name }}"
                         data-unit="{{ $product->stock_unit_id }}"
                         data-price="{{ $product->price }}">

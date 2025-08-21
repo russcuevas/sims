@@ -12,11 +12,37 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="{{ asset('partials/vendor/datatables/css/jquery.dataTables.min.css') }}" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<style>
+  /* Ensure all text in the table body is black */
+  table tbody {
+    color: black;
+  }
+
+  /* You can also target table cells directly if you prefer */
+  table tbody td {
+    color: black;
+  }
+</style>
+
+<style>
+  /* Ensure all text in the table body is black */
+  table tbody {
+    color: black;
+  }
+
+  /* You can also target table cells directly if you prefer */
+  table tbody td {
+    color: black;
+  }
+</style>
 
     <style>
         .col-form-label {
             color: black;
         }
+        
     
         .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
             cursor: default;
@@ -141,17 +167,17 @@
                                                         <div class="modal-body">
                                                             <form class="add_transaction_validation" action="{{ route('admin.sales.request.transaction') }}" method="POST">
                                                                 @csrf
-                                                                <div class="form-group row mb-3">
-                                                                    <label for="transaction_date"
-                                                                        class="col-sm-4 col-form-label text-end">
-                                                                        Transaction Date <span class="text-danger">*</span>
-                                                                    </label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="date" class="form-control"
-                                                                            id="transaction_date" name="transaction_date"
-                                                                            required>
-                                                                    </div>
-                                                                </div>
+<div class="form-group row mb-3">
+    <label for="transaction_date"
+        class="col-sm-4 col-form-label text-end">
+        Transaction Date <span class="text-danger">*</span>
+    </label>
+    <div class="col-sm-8">
+        <input type="date" class="form-control"
+            id="transaction_date" name="transaction_date"
+            required>
+    </div>
+</div>
                                                                 <div class="form-group row mb-3">
                                                                     <label for="process_by"
                                                                         class="col-sm-4 col-form-label text-end">
@@ -163,44 +189,30 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row mb-3">
-                                                                    <label for="transaction_type"
-                                                                        class="col-sm-4 col-form-label text-end">
+                                                                    <label for="type" class="col-sm-4 col-form-label text-end">
                                                                         Transaction Type <span class="text-danger">*</span>
                                                                     </label>
                                                                     <div class="col-sm-8">
-                                                                        <input type="text" class="form-control"
-                                                                            id="transaction_type"
-                                                                            name="transaction_type"
-                                                                            placeholder="Enter transaction type" required>
+                                                                    <select class="form-control" id="transaction_type" name="transaction_type" required>
+                                                                        <option value="">-- Select Transaction Type --</option>
+                                                                        <option value="return-item" selected>Return</option>
+                                                                    </select>
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row mb-3">
-                                                                    <label for="transaction_id"
-                                                                        class="col-sm-4 col-form-label text-end">
+                                                                    <label for="transaction_id" class="col-sm-4 col-form-label text-end">
                                                                         Transaction ID <span class="text-danger">*</span>
                                                                     </label>
                                                                     <div class="col-sm-8">
-                                                                        <input type="text" class="form-control"
-                                                                            id="transaction_id"
-                                                                            name="transaction_id"
-                                                                            placeholder="Enter transaction type" required>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="form-group row mb-3">
-                                                                    <label for="type" class="col-sm-4 col-form-label text-end">
-                                                                        Debit/Credit <span class="text-danger">*</span>
-                                                                    </label>
-                                                                    <div class="col-sm-8">
-                                                                        <select class="form-control" id="type" name="type" required>
-                                                                            <option value="">-- Select Type --</option>
-                                                                            <option value="credit">Credit</option>
-                                                                            <option value="debit">Debit</option>
+                                                                        <select class="form-control" id="transaction_id" name="transaction_id" required>
+                                                                            <option value="">Select Transaction ID</option>
+                                                                            @foreach ($transactionIds as $transactionId)
+                                                                                <option value="{{ $transactionId }}">{{ $transactionId }}</option>
+                                                                            @endforeach
                                                                         </select>
                                                                     </div>
                                                                 </div>
-
-                                                                <!-- Input Amount (initially hidden) -->
-                                                                <div class="form-group row mb-3" id="amount_field" style="display: none;">
+                                                                <div class="form-group row mb-3" id="amount_field">
                                                                     <label for="amount" class="col-sm-4 col-form-label text-end">
                                                                         Input Amount: <span class="text-danger">*</span>
                                                                     </label>
@@ -223,29 +235,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <table class="table table-bordered table-responsive-sm">
-                                        <thead>
-                                            <tr>
-                                                <th style="color: #A16D28;">Transaction date</th>
-                                                <th style="color: #A16D28;">Process by</th>
-                                                <th style="color: #A16D28;">Transaction type</th>
-                                                <th style="color: #A16D28;">Transaction ID</th>
-                                                <th style="color: #A16D28;">Debit</th>
-                                                <th style="color: #A16D28;">Credit</th>
-                                                <th style="color: #A16D28;">Balances</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-
-                                        </tbody>
-
-                                        <tfoot>
-                                            <tr>
-
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                                    @php
+                                        $totalDebit = 0;
+                                        $totalCredit = 0;
+                                        $totalStockInBalance = DB::table('sales_transactions')
+                                            ->where('transaction_type', 'stock in')
+                                            ->sum('balances');
+                                    @endphp
 
                                     <table class="table table-bordered table-responsive-sm">
                                         <thead>
@@ -261,40 +257,158 @@
                                         </thead>
 
                                         <tbody>
-
+                                            @foreach ($stockInSalesTransaction as $transaction)
+                                                @php
+                                                    $totalDebit += $transaction->debit;
+                                                    $totalCredit += $transaction->credit;
+                                                @endphp
+                                                <tr>
+                                                    <td>{{ $transaction->transaction_date }}</td>
+                                                    <td>{{ $transaction->process_by }}</td>
+                                                    <td><span style="text-transform: capitalize">{{ $transaction->transaction_type }}</span></td>
+                                                    <td>{{ $transaction->transaction_id }}</td>
+                                                    <td>{{ number_format($transaction->debit, 2) }}</td>
+                                                    <td>{{ number_format($transaction->credit, 2) }}</td>
+                                                    <td>{{ number_format($transaction->balances, 2) }}</td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
 
                                         <tfoot>
-                                            <tr>
-
+                                            <tr style="color: black">
+                                                <td colspan="4" style="text-align: right; font-weight: bold;">Sub-total</td>
+                                                <td style="font-weight: bold;">{{ number_format($totalDebit, 2) }}</td>
+                                                <td style="font-weight: bold;">{{ number_format($totalCredit, 2) }}</td>
+                                                <td style="font-weight: bold;">{{ number_format($totalStockInBalance, 2) }}</td>
                                             </tr>
                                         </tfoot>
                                     </table>
 
-                                    <table class="table table-bordered table-responsive-sm">
+
+                                    @php
+                                        $runningDebit = 0;
+                                        $runningCredit = 0;
+                                        $runningBalance = 0;
+
+                                        $sortedTransactions = $allSalesTransactions->sortBy(function ($transaction) {
+                                            return match ($transaction->transaction_type) {
+                                                'return-item' => 2, // show last
+                                                'payment' => 1,     // show second last
+                                                default => 0,       // show first
+                                            };
+                                        });
+                                    @endphp
+
+                                    <table class="table table-bordered table-responsive-sm mt-2">
                                         <thead>
                                             <tr>
                                                 <th style="color: #A16D28;">Transaction date</th>
                                                 <th style="color: #A16D28;">Process by</th>
                                                 <th style="color: #A16D28;">Transaction type</th>
                                                 <th style="color: #A16D28;">Transaction ID</th>
-                                                <th style="color: #A16D28;">Loss</th>
                                                 <th style="color: #A16D28;">Debit</th>
                                                 <th style="color: #A16D28;">Credit</th>
-                                                <th style="color: #A16D28;">Balances</th>
+                                                <th style="color: #A16D28;">Balance</th>
                                             </tr>
                                         </thead>
-
                                         <tbody>
+                                            @foreach ($sortedTransactions as $transaction)
+                                                @php
+                                                    // accumulate totals
+                                                    $runningDebit += $transaction->debit;
+                                                    $runningCredit += $transaction->credit;
 
+                                                    // formula: previous balance + debit - credit
+                                                    $runningBalance += $transaction->debit - $transaction->credit;
+                                                @endphp
+                                                <tr>
+                                                    <td>{{ $transaction->transaction_date }}</td>
+                                                    <td>{{ $transaction->process_by }}</td>
+                                                    <td>{{ ucfirst($transaction->transaction_type) }}</td>
+                                                    <td>{{ $transaction->transaction_id }}</td>
+                                                    <td>{{ number_format($transaction->debit, 2) }}</td>
+                                                    <td>{{ number_format($transaction->credit, 2) }}</td>
+                                                    <td>{{ number_format($runningBalance, 2) }}</td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
-
                                         <tfoot>
-                                            <tr>
-
+                                            <tr style="color: black">
+                                                <td colspan="4" class="text-right font-weight-bold">Sub-total</td>
+                                                <td class="font-weight-bold">{{ number_format($runningDebit, 2) }}</td>
+                                                <td class="font-weight-bold">{{ number_format($runningCredit, 2) }}</td>
+                                                <td class="font-weight-bold">{{ number_format($runningBalance, 2) }}</td>
                                             </tr>
                                         </tfoot>
                                     </table>
+
+
+
+                                        @php
+                                            $totalLoss = 0;
+                                        @endphp
+
+                                        <table class="table table-bordered table-responsive-sm mt-2">
+                                            <thead>
+                                                <tr>
+                                                    <th style="color: #A16D28;">Transaction date</th>
+                                                    <th style="color: #A16D28;">Process by</th>
+                                                    <th style="color: #A16D28;">Transaction type</th>
+                                                    <th style="color: #A16D28;">Transaction ID</th>
+                                                    <th style="color: #A16D28;">Loss</th>
+                                                    <th style="color: #A16D28;">Debit</th>
+                                                    <th style="color: #A16D28;">Credit</th>
+                                                    <th style="color: #A16D28;">Balance</th>
+                                                </tr>
+                                            </thead>
+                                        <tbody>
+                                            @foreach ($allSalesTransactions as $transaction)
+                                                @if ($transaction->loss > 0)
+                                                    @php $totalLoss += $transaction->loss; @endphp
+                                                    <tr>
+                                                        <td>{{ $transaction->transaction_date }}</td>
+                                                        <td>{{ $transaction->process_by }}</td>
+                                                        <td>{{ ucfirst($transaction->transaction_type) }}</td>
+                                                        <td>{{ $transaction->transaction_id }}</td>
+                                                        <td style="color: red; font-weight: bold;">
+                                                            {{ number_format($transaction->loss, 2) }}
+                                                        </td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>{{ number_format($transaction->loss, 2) }}</td>
+                                                    </tr>
+                                                @endif
+                                            @endforeach
+                                        </tbody>
+
+                                        <tfoot>
+                                            <tr style="color: black">
+                                                <td colspan="4" class="text-right font-weight-bold">Total Loss</td>
+                                                <td class="font-weight-bold text-danger">{{ number_format($totalLoss, 2) }}</td>
+                                                <td>{{ number_format(0, 2) }}</td>
+                                                <td>{{ number_format(0, 2) }}</td>
+                                                <td class="font-weight-bold text-danger">{{ number_format($totalLoss, 2) }}</td>
+                                            </tr>
+                                        </tfoot>
+                                        </table>
+
+                                        @php
+                                            $totalProfit = $runningCredit - $totalDebit - $totalLoss;
+                                        @endphp
+
+                                        <table class="table table-bordered table-responsive-sm mt-2">
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="7" class="text-right font-weight-bold" style="color: green; font-size: 16px;">
+                                                        Total Profit
+                                                    </td>
+                                                    <td class="font-weight-bold" style="color: green; font-size: 16px;">
+                                                        {{ number_format($totalProfit, 2) }}
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+
                                 </div>
                             </div>
                         </div>
@@ -334,7 +448,16 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#transaction_id').select2({
+                placeholder: "Search purchase orders",
+                allowClear: true,
+                width: 'resolve'
+            });
+        });
+    </script>
     {{-- CREDIT OR DEBIT --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -381,6 +504,11 @@
                 }
             });
         });
+    </script>
+
+    <script>
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('transaction_date').value = today;
     </script>
 
     <script>
