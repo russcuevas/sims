@@ -91,6 +91,9 @@
                                         <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-outline-primary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
+                                        <a href="{{ route('admin.payment.item.page') }}" class="btn btn-outline-primary" id="status_payment">Payment</a>
+                                    </div>
+                                    <div class="col-auto px-1">
                                         <a href="{{ route('admin.return.item.page') }}" class="btn btn-primary" id="status_to_ship">Return item</a>
                                     </div>
                                     <div class="col-auto px-1">
@@ -105,122 +108,36 @@
 
                             <div class="card-body">
                                 <div class="container my-4">
-
-
-                                    
-                                <form action="{{ route('admin.return.submit.item') }}" method="POST">
-                                        @csrf
-                                        <div class="d-flex gap-2" style="width: 100%;">
-                                            <select id="product_select" name="products[]" class="form-control" multiple>
-                                                @foreach ($products as $product)
-                                                    <option value="{{ $product->id }}">
-                                                        {{ $product->product_name }} | {{ $product->stock_unit_id }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <button class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </form>
-                                </div>
-
-
-                                <form action="{{ route('admin.return.submit') }}" method="POST">
-                                    @csrf                                    
-                                    <div class="row mb-3 align-items-end">
-                                        <div class="col-md-3">
-                                            <label for="transaction_date" class="form-label"
-                                                style="color: #A16D28;">Transaction Date</label>
-                                            <input type="date" id="transaction_date" name="transaction_date"
-                                                class="form-control">
-                                        </div>
-
-                                        <div class="col-md-3 text-left">
-                                            <label style="color: #A16D28;" for="process_by" class="form-label">Process
-                                                by</label>
-                                            <input type="text" id="process_by" name="process_by" class="form-control"
-                                            value="{{ $user->employee_firstname }} {{ $user->employee_lastname }}" readonly>
-                                        </div>
-
-
-                                        <div class="col-md-3 text-left" style="margin-top: 20px">
-                                            <label style="color: #A16D28;" for="picked_up_by" class="form-label">Picked up by</label>
-                                            <select id="picked_up_by" name="picked_up_by" class="form-control">
-                                                @foreach ($allEmployees as $employee)
-                                                    @if ($employee->position_id == 3) 
-                                                        <option value="{{ $employee->id }}">
-                                                            {{ $employee->employee_firstname }} {{ $employee->employee_lastname }}
-                                                        </option>
-                                                    @endif
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-3 text-left">
-                                            <label style="color: #A16D28;" for="store" class="form-label">Select Store</label>
-                                            <select id="store" name="store" class="form-control">
-                                                @foreach ($stores as $store)
-                                                    <option value="{{ $store->id }}">
-                                                        {{ $store->store_name }} - {{ $store->store_code }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                    </div>
-                                
-
-
-
-                                <div class="table-responsive">
-                                        <table class="table table-bordered table-responsive-sm">
+                                    <table id="completedOrders" class="table">
                                         <thead>
-                                            <tr>
-                                                <th style="color: #A16D28;">Product</th>
-                                                <th style="color: #A16D28;">Quantity</th>
-                                                <th style="color: #A16D28;">Unit</th>
-                                                <th style="color: #A16D28;">Price</th>
-                                                <th style="color: #A16D28;">Amount</th>
-                                                <th style="color: #A16D28;">Action</th>
+                                            <tr style="color: #A16D28;">
+                                                <th style="color: #A16D28;">Transaction ID</th>
+                                                <th style="color: #A16D28;">Transaction Date</th>
+                                                <th style="color: #A16D28;">Process By</th>
+                                                <th style="color: #A16D28;">Status</th>
+                                                <th style="color: #A16D28;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse ($batchProducts as $item)
-                                            <tr>
-                                                <td style="color: black;">{{ $item->product_name }}</td>
-                                                <td>
-                                                    <input style="border-color: #A16D28; width: 100px;" type="number" class="form-control input-rounded" name="quantity[]" min="1" value="1">
-                                                </td>
-                                                <td style="color: black;">{{ $item->stock_unit_id }}</td>
-                                                <td style="color: black;">₱ {{ number_format($item->price, 2) }}</td>
-                                                <td style="color: black;">
-                                                    <span class="amount-display">₱ 0.00</span>
-                                                    <input type="hidden" name="amount[]" value="">
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('admin.batch-return-item.delete', $item->id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">
-                                                                <i class="fa fa-close"></i> Remove
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="6" class="text-center text-muted">No returned products yet.</td>
-                                            </tr>
-                                        @endforelse
+                                            @foreach($groupedDeliveryOrders as $transactId => $orders)
+                                                @php
+                                                    $first = $orders->first();
+                                                @endphp
+                                                <tr style="color: black;">
+                                                    <td>{{ $transactId }}</td>
+                                                    <td>{{ $first->transaction_date }}</td>
+                                                    <td>{{ $first->process_by }}</td>
+                                                    <td>{{ ucfirst($first->status) }}</td>
+                                                    <td>
+                                                        <a href="{{ route('admin.delivery.return.view', ['transact_id' => $transactId]) }}" class="btn btn-primary btn-sm">
+                                                            Update Return
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td colspan="3" class="text-end fw-bold" style="color: #A16D28;"></td>
-                                                <td colspan="3" class="fw-bold" style="color: black;">
-                                                    <span style="color: red;">Total Amount:</span>
-                                                    <span style="color: red" id="total_amount_display">0.00</span>
-                                                </td>
-                                            </tr>
-                                        </tfoot>
                                     </table>
-                                        <button type="submit" class="btn btn-primary float-right">Submit</button>
-                                    </form>
-                                    
+
 
                                 </div>
                                 <hr class="my-4">
@@ -254,7 +171,10 @@
 
                                 </div>
 
-                                <div class="table-responsive">
+                                @if($returnedDeliveryOrders->isEmpty())
+                                    <p>No returned deliveries available.</p>
+                                @else
+                                    <div class="table-responsive">
                                     <table class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
@@ -264,99 +184,28 @@
                                                 <th style="width: 20%; color: #A16D28;">Status</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            @forelse($historyReturns as $transactId => $group)
-                                                @php
-                                                    $first = $group->first();
-                                                    $totalAmount = $group->sum('amount');
-                                                @endphp
-                                                <tr>
-                                                    <td>
-                                                        <button type="button" data-toggle="modal" data-target="#viewReturnHistory{{ $transactId }}" class="btn btn-outline-primary btn-sm">View</button>
-                                                    </td>
-                                                    <td style="color: black;">
-                                                        {{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') }}
-                                                    </td>
-                                                    <td style="color: black;">{{ $first->process_by }}</td>
-                                                    <td><span class="badge bg-success text-white">Returned</span></td>
-                                                </tr>
+                                            <tbody>
+                                                @foreach($returnedDeliveryOrders as $transact_id => $items)
+                                                    @php
+                                                        $first = $items->first();
+                                                        $totalReturned = $items->sum('quantity_returned');
+                                                    @endphp
+                                                    <tr style="color: black">
+                                                        <td>
+                                                            <a href="{{ route('admin.delivery.return.print', ['transact_id' => $transact_id]) }}" class="btn btn-outline-primary btn-sm">
+                                                                View
+                                                            </a>
+                                                        </td>
+                                                        <td>{{ \Carbon\Carbon::parse($first->transaction_date)->format('Y-m-d') }}</td>
+                                                        <td>{{ $first->process_by }}</td>
+                                                        <td><span style="text-transform: capitalize">{{ $first->status }}</span></td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
 
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="viewReturnHistory{{ $transactId }}" tabindex="-1" role="dialog" aria-hidden="true">
-                                                    <div class="modal-dialog modal-xl">
-                                                        <div class="modal-content">
-
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">Transaction Details - {{ $transactId }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                                                            </div>
-
-                                                            <div class="modal-body">
-                                                                <div class="p-4 position-relative">
-
-                                                                    <h5>Details</h5>
-
-                                                                    <div class="row mt-4">
-                                                                        <div class="col-md-6">
-                                                                            <p style="color: black;" class="mb-1"><strong>Processed by:</strong> {{ $first->process_by }}</p>
-                                                                            <p style="color: black;" class="mb-1">
-                                                                                <strong>Pick-up by:</strong> 
-                                                                                {{ $first->employee_firstname ?? 'N/A' }} {{ $first->employee_lastname ?? '' }}
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="col-md-6 text-md-end">
-                                                                            <p style="color: black;" class="mb-1"><strong>Process Date:</strong> {{ \Carbon\Carbon::parse($first->transaction_date)->format('F d, Y') }}</p>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <!-- Products Section -->
-                                                                    <div class="mt-4">
-                                                                        <div class="row fw-bold border-bottom pb-2">
-                                                                            <div class="col-2" style="color: #A16D28;">Qty</div>
-                                                                            <div class="col-4" style="color: #A16D28;">Product</div>
-                                                                            <div class="col-2" style="color: #A16D28;">Unit</div>
-                                                                            <div class="col-2 text-end" style="color: #A16D28;">Price</div>
-                                                                            <div class="col-2 text-end" style="color: #A16D28;">Amount</div>
-                                                                        </div>
-
-                                                                        @foreach($group as $item)
-                                                                            <div class="row py-2 border-bottom">
-                                                                                <div class="col-2" style="color: black;">{{ $item->quantity }}</div>
-                                                                                <div class="col-4" style="color: black;">{{ $item->product }}</div>
-                                                                                <div class="col-2" style="color: black;">{{ $item->unit }}</div>
-                                                                                <div class="col-2 text-end" style="color: black;">₱{{ number_format($item->price, 2) }}</div>
-                                                                                <div class="col-2 text-end" style="color: black;">₱{{ number_format($item->amount, 2) }}</div>
-                                                                            </div>
-                                                                        @endforeach
-                                                                    </div>
-
-                                                                    <!-- Total and Footer -->
-                                                                    <div class="row mt-4">
-                                                                        <div class="col-md-6"></div>
-                                                                        <div class="col-md-6 text-end">
-                                                                            <p style="color: black;" class="mb-2"><strong>Total amount:</strong> ₱{{ number_format($totalAmount, 2) }}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            @empty
-                                                <tr>
-                                                    <td colspan="4">No return history found.</td>
-                                                </tr>
-                                            @endforelse
-
-                                        </tbody>
-                                    </table>
-                                </div>
 
 
 
@@ -394,6 +243,14 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#completedOrders').DataTable({
+                pageLength: 10,
+                order: [], // disable initial ordering
+            });
+        });
+    </script>
     <script>
        function calculateTotals() {
     let totalAmount = 0;

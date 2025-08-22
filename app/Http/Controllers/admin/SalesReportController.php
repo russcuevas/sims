@@ -37,22 +37,41 @@ class SalesReportController extends Controller
         $stockInSalesTransaction = DB::table('sales_transactions')
             ->where('transaction_type', 'stock in')
             ->orderByDesc('transaction_date')
-            ->get();
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
 
         $deliveryTransactions = DB::table('sales_transactions')
             ->where('transaction_type', 'delivery')
             ->orderByDesc('transaction_date')
-            ->get();
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
+
 
         $allSalesTransactions = DB::table('sales_transactions')
             ->whereIn('transaction_type', ['delivery', 'payment', 'return-item'])
             ->orderByDesc('transaction_date')
-            ->get();
+            ->get()
+            ->map(function ($transaction) {
+                // Format the transaction_date here to only show the date
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
+
 
         // Collect unique transaction IDs from stock-in and delivery
         $transactionIds = $stockInSalesTransaction->pluck('transaction_id')
             ->merge($deliveryTransactions->pluck('transaction_id'))
-            ->unique();
+            ->filter(function ($id) {
+                return str_starts_with($id, 'DO-');
+            })
+            ->unique()
+            ->values(); // Optional: reset keys
 
         return view('admin.sales_report', compact(
             'role',
@@ -131,32 +150,57 @@ class SalesReportController extends Controller
 
     public function AdminViewPrintSalesHistoryPage()
     {
-        // Check if the logged-in user is an admin
-        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
-            return redirect()->route('login.page')->with('error', 'Unauthorized access.');
+        // Check if logged-in user is Admin
+        $user = Auth::guard('employees')->user();
+        if (!$user || $user->position_id != 1) {
+            return redirect()->route('login.page')
+                ->with('error', 'Unauthorized access.');
         }
 
-        $user = Auth::guard('employees')->user();
+        // Stock in transactions
+        $stockInSalesTransaction = DB::table('sales_transactions')
+            ->where('transaction_type', 'stock in')
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
 
-        // Get all non-archived transactions
-        $transactions = DB::table('transactions')
-            ->where('is_archived', 0)
-            ->orderBy('transaction_date', 'desc')
-            ->get();
+        // Delivery transactions
+        $deliveryTransactions = DB::table('sales_transactions')
+            ->where('transaction_type', 'delivery')
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
 
-        // Calculate total debit and credit for the report
-        $totals = DB::table('transactions')
-            ->where('is_archived', 0)
-            ->selectRaw('SUM(debit) as total_debit, SUM(credit) as total_credit')
-            ->first();
+        // All sales (delivery, payment, return-item)
+        $allSalesTransactions = DB::table('sales_transactions')
+            ->whereIn('transaction_type', ['delivery', 'payment', 'return-item'])
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
+
+        // Collect unique transaction IDs
+        $transactionIds = $stockInSalesTransaction->pluck('transaction_id')
+            ->merge($deliveryTransactions->pluck('transaction_id'))
+            ->unique();
 
         return view('admin.sales.print_sales', [
-            'transactions' => $transactions,
-            'total_debit' => $totals->total_debit ?? 0,
-            'total_credit' => $totals->total_credit ?? 0,
-            'user' => $user
+            'user' => $user,
+            'stockInSalesTransaction' => $stockInSalesTransaction,
+            'deliveryTransactions' => $deliveryTransactions,
+            'allSalesTransactions' => $allSalesTransactions,
+            'transactionIds' => $transactionIds,
         ]);
     }
+
 
     public function AdminValidatePinSales(Request $request)
     {

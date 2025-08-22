@@ -7,6 +7,7 @@ use App\Http\Controllers\admin\DeliveryController;
 use App\Http\Controllers\admin\DeliveryStatusController;
 use App\Http\Controllers\admin\EmailController;
 use App\Http\Controllers\admin\LogsController;
+use App\Http\Controllers\admin\PaymentItemController;
 use App\Http\Controllers\admin\PendingDeliveryController;
 use App\Http\Controllers\admin\ProcessController;
 use App\Http\Controllers\admin\ProfileManagement;
@@ -160,8 +161,22 @@ Route::post('/admin/pending/marked-status/{transact_id}', [PendingDeliveryContro
 Route::get('/admin/delivery_status', [DeliveryStatusController::class, 'AdminDeliveryStatusPage'])->name('admin.delivery.status.page');
 
 
+// ADMIN PAYMENT ITEM MANAGEMENT
+// UPDATED
+Route::get('/admin/payment', [PaymentItemController::class, 'AdminPaymentItemPage'])->name('admin.payment.item.page');
+Route::get('/admin/payment/fetch', [PaymentItemController::class, 'fetchDeliveryOrderDetails'])->name('admin.payment.fetch');
+Route::put('/admin/payment/update-transact', [PaymentItemController::class, 'updateTransactPayment'])->name('admin.payment.updateTransact');
+Route::get('/admin/payment/print_payment/{transact_id}', [PaymentItemController::class, 'AdminPrintPaymentOrder'])->name('admin.delivery.payment.print');
+// END UPDATED
+
 // ADMIN RETURN ITEM MANAGEMENT
+// UPDATED
 Route::get('/admin/return_item', [ReturnItemController::class, 'AdminReturnItemPage'])->name('admin.return.item.page');
+Route::get('/admin/return/view_returning/{transact_id}', [ReturnItemController::class, 'AdminViewReturnedOrder'])->name('admin.delivery.return.view');
+Route::post('/admin/return/update/{transact_id}', [ReturnItemController::class, 'AdminUpdateReturn'])->name('admin.return.update');
+Route::get('/admin/return/print_returning/{transact_id}', [ReturnItemController::class, 'AdminPrintReturnedOrder'])->name('admin.delivery.return.print');
+// END UPDATED
+
 Route::post('/admin//return/add-multiple-finish', [ReturnItemController::class, 'AdminBatchReturnProductSubmit'])->name('admin.return.submit.item');
 Route::post('/admin/return/submit-items', [ReturnItemController::class, 'AdminAddReturnItem'])->name('admin.return.submit');
 Route::get('/admin/return/delete/{id}', [ReturnItemController::class, 'AdminDeleteBatchReturnProduct'])->name('admin.batch-return-item.delete');

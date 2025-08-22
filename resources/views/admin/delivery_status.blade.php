@@ -116,6 +116,9 @@
                                         <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-outline-primary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
+                                        <a href="{{ route('admin.payment.item.page') }}" class="btn btn-outline-primary" id="status_payment">Payment</a>
+                                    </div>
+                                    <div class="col-auto px-1">
                                         <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-primary" id="status_to_ship">Return item</a>
                                     </div>
                                     <div class="col-auto px-1">

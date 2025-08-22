@@ -30,6 +30,8 @@ return new class extends Migration
             $table->string('unit', 255)->nullable();
             $table->integer('quantity_ordered')->nullable();
             $table->string('quantity_received', 255)->nullable();
+            $table->integer('quantity_returned')->nullable();
+            $table->decimal('payment_amount', 10, 2)->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('amount', 10, 2);
             $table->integer('total_ordered')->nullable();

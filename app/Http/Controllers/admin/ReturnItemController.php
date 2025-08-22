@@ -72,6 +72,23 @@ class ReturnItemController extends Controller
 
         $historyReturns = $query->get()->groupBy('transact_id');
 
+        $groupedDeliveryOrders = DB::table('delivery_orders')
+            ->where('is_archived', 0)
+            ->where('status', 'completed')
+            ->whereNull('quantity_returned')
+            ->orderBy('transaction_date', 'desc')
+            ->get()
+            ->groupBy('transact_id');
+
+        $returnedDeliveryOrders = DB::table('delivery_orders')
+            ->where('is_archived', 0)
+            ->where('status', 'completed')
+            ->whereNotNull('quantity_returned')
+            ->orderBy('transaction_date', 'desc')
+            ->get()
+            ->groupBy('transact_id');
+
+
         return view('admin.return_item', compact(
             'role',
             'user',
@@ -80,8 +97,108 @@ class ReturnItemController extends Controller
             'stores',
             'batchProducts',
             'lowFinishedProducts',
-            'historyReturns'
+            'historyReturns',
+            'groupedDeliveryOrders',
+            'returnedDeliveryOrders' // ← add this
         ));
+    }
+
+    // RETURN UPDATE
+
+    public function AdminViewReturnedOrder($transact_id)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
+        }
+
+        $delivery = DB::table('delivery_orders')
+            ->leftJoin('employees as approved', 'delivery_orders.approved_by', '=', 'approved.id')
+            ->leftJoin('employees as delivered', 'delivery_orders.delivered_by', '=', 'delivered.id')
+            ->leftJoin('stores', 'delivery_orders.store', '=', 'stores.id')
+            ->leftJoin('cars', 'delivery_orders.car', '=', 'cars.id')
+            ->select(
+                'delivery_orders.*',
+                DB::raw("CONCAT(approved.employee_firstname, ' ', approved.employee_lastname) as approved_by_name"),
+                DB::raw("CONCAT(delivered.employee_firstname, ' ', delivered.employee_lastname) as delivered_by_name"),
+                'stores.store_name',
+                'stores.store_code',
+                'stores.store_address',
+                'stores.store_tel_no',
+                'stores.store_cp_number',
+                'stores.store_fax',
+                'stores.store_tin',
+                'cars.car as car_name',
+                'cars.plate_number'
+            )
+            ->where('delivery_orders.transact_id', $transact_id)
+            ->get();
+
+        if ($delivery->isEmpty()) {
+            abort(404);
+        }
+
+        $first = $delivery->first();
+
+        return view('admin.return.delivery_order', compact('delivery', 'first'));
+    }
+
+    public function AdminUpdateReturn(Request $request, $transact_id)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'Unauthorized access.');
+        }
+
+        $returns = $request->input('returns', []);
+
+        foreach ($returns as $id => $qty) {
+            DB::table('delivery_orders')
+                ->where('id', $id)
+                ->update([
+                    'quantity_returned' => (int)$qty,
+                    'updated_at' => now()
+                ]);
+        }
+
+        return redirect()->route('admin.delivery.return.print', ['transact_id' => $transact_id])
+            ->with('success', 'Return quantities updated successfully.');
+    }
+
+
+    public function AdminPrintReturnedOrder($transact_id)
+    {
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
+        }
+
+        $delivery = DB::table('delivery_orders')
+            ->leftJoin('employees as approved', 'delivery_orders.approved_by', '=', 'approved.id')
+            ->leftJoin('employees as delivered', 'delivery_orders.delivered_by', '=', 'delivered.id')
+            ->leftJoin('stores', 'delivery_orders.store', '=', 'stores.id')
+            ->leftJoin('cars', 'delivery_orders.car', '=', 'cars.id')
+            ->select(
+                'delivery_orders.*',
+                DB::raw("CONCAT(approved.employee_firstname, ' ', approved.employee_lastname) as approved_by_name"),
+                DB::raw("CONCAT(delivered.employee_firstname, ' ', delivered.employee_lastname) as delivered_by_name"),
+                'stores.store_name',
+                'stores.store_code',
+                'stores.store_address',
+                'stores.store_tel_no',
+                'stores.store_cp_number',
+                'stores.store_fax',
+                'stores.store_tin',
+                'cars.car as car_name',
+                'cars.plate_number'
+            )
+            ->where('delivery_orders.transact_id', $transact_id)
+            ->get();
+
+        if ($delivery->isEmpty()) {
+            abort(404);
+        }
+
+        $first = $delivery->first();
+
+        return view('admin.return.print_delivery_order', compact('delivery', 'first'));
     }
 
 

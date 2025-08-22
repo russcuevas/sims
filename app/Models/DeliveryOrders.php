@@ -24,6 +24,8 @@ class DeliveryOrders extends Model
         'unit',
         'quantity_ordered',
         'quantity_received',
+        'quantity_returned',
+        'payment_amount',
         'price',
         'amount',
         'total_ordered',

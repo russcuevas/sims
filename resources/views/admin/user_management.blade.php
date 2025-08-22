@@ -282,13 +282,14 @@
                                                 <td style="color: black;">{{ $employee->status }}</td>
                                                 <td>
                                                     <div class="d-flex gap-2">
-                                                        <button class="btn btn-outline-warning mr-2" data-toggle="modal" data-target="#updateUserModal{{ $employee->id }}">
-                                                            Update
-                                                        </button>
-                                            
-<button type="button" class="btn btn-outline-danger" onclick="confirmArchiveWithPin({{ $employee->id }})">
-    Archive
+<button class="btn btn-outline-warning mr-2" onclick="verifyPinBeforeUserUpdate({{ $employee->id }})">
+    Update
 </button>
+
+                                            
+                                                        <button type="button" class="btn btn-outline-danger" onclick="confirmArchiveWithPin({{ $employee->id }})">
+                                                            Archive
+                                                        </button>
 
                                                     </div>
                                                 </td>
@@ -300,7 +301,7 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title">Update User - {{ $employee->employee_firstname }} {{ $employee->employee_lastname }}</h5>
-                                                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                            <button type="button" class="close"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <form action="{{ route('admin.user.update', $employee->id) }}" method="POST" class="update_users_validation">
@@ -416,7 +417,6 @@
                                             
                                                                 <!-- Modal Footer -->
                                                                 <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                                                                     <button type="submit" class="btn btn-primary">Save changes</button>
                                                                 </div>
                                             
@@ -455,6 +455,49 @@
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+function verifyPinBeforeUserUpdate(employeeId) {
+    Swal.fire({
+        title: 'Enter your PIN to update user info',
+        input: 'password',
+        inputLabel: 'Admin PIN',
+        inputPlaceholder: 'Enter your 4-digit PIN',
+        inputAttributes: {
+            maxlength: 4,
+            autocapitalize: 'off',
+            autocorrect: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Verify & Continue',
+        showLoaderOnConfirm: true,
+        preConfirm: (pin) => {
+            return fetch('{{ route("admin.user.archive.validate.pin") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ pin: pin })
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Incorrect PIN');
+                }
+                return response.json();
+            }).catch(error => {
+                Swal.showValidationMessage(`PIN validation failed`);
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Open modal manually if PIN is correct
+            const modalId = '#updateUserModal' + employeeId;
+            $(modalId).modal('show');
+        }
+    });
+}
+</script>
+
 <script>
 function confirmArchiveWithPin(employeeId) {
     Swal.fire({
