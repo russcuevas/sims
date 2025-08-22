@@ -380,6 +380,7 @@ class StockInController extends Controller
     // }
 
 
+    // UPDATED AUG 22
     public function AdminRawStocksRequest(Request $request)
     {
         if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
@@ -440,26 +441,59 @@ class StockInController extends Controller
         DB::table('history_raw_materials')->insert($historyData);
 
         // Merge with existing product_details if product_name + unit exists
+foreach ($productDetailsData as $data) {
+    $existing = DB::table('product_details')
+        ->where('product_name', $data['product_name'])
+        ->where('stock_unit_id', $data['stock_unit_id'])
+        ->where('category', 'raw materials')
+        ->first();
+
+    if ($existing) {
+        // Update quantity
+        DB::table('product_details')
+            ->where('id', $existing->id)
+            ->update([
+                'quantity'   => $existing->quantity + $data['quantity'],
+                'updated_at' => $now,
+            ]);
+    } else {
+        // Insert new product detail
+        DB::table('product_details')->insert($data);
+    }
+}
+
+// Sync batch_finish_raw_products quantity with product_details quantity
         foreach ($productDetailsData as $data) {
-            $existing = DB::table('product_details')
+            $productDetail = DB::table('product_details')
                 ->where('product_name', $data['product_name'])
                 ->where('stock_unit_id', $data['stock_unit_id'])
                 ->where('category', 'raw materials')
                 ->first();
 
-            if ($existing) {
-                // Update quantity
-                DB::table('product_details')
-                    ->where('id', $existing->id)
+            if ($productDetail) {
+                // Update batch_finish_raw_products if exists
+                $finishUpdated = DB::table('batch_finish_raw_products')
+                    ->where('product_name', $productDetail->product_name)
+                    ->where('stock_unit_id', $productDetail->stock_unit_id)
                     ->update([
-                        'quantity'   => $existing->quantity + $data['quantity'],
-                        'updated_at' => $now,
+                        'quantity'   => $productDetail->quantity,
+                        'updated_at' => now(),
                     ]);
-            } else {
-                // Insert new product detail
-                DB::table('product_details')->insert($data);
+
+                // Update batch_fetch_raw_products if exists
+                $fetchUpdated = DB::table('batch_fetch_raw_products')
+                    ->where('product_name', $productDetail->product_name)
+                    ->where('stock_unit_id', $productDetail->stock_unit_id)
+                    ->update([
+                        'quantity'   => $productDetail->quantity,
+                        'updated_at' => now(),
+                    ]);
+
+                // If no rows updated, just continue (no error thrown)
             }
         }
+
+
 
         // Clear the batch items
         DB::table('batch_product_details')->where('employee_id', $employee->id)->delete();

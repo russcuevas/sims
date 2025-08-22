@@ -10,20 +10,15 @@ class EmployeeSeeder extends Seeder
 {
     public function run(): void
     {
-        $lastName = 'Doe';
-        $birthday = '1990-01-01';
-        $formattedBirthday = str_replace('-', '', $birthday);
-        $passwordRaw = $lastName . $formattedBirthday;
-
         DB::table('employees')->insert([
-            'employee_firstname' => 'John',
-            'employee_lastname' => $lastName,
-            'birthday' => $birthday,
+            'employee_firstname' => 'Marie Teresita',
+            'employee_lastname' => 'Lumanda',
+            'birthday' => '1967-09-22',
             'position_id' => 1,
             'contract_id' => 1,
-            'username' => 'johndoe',
-            'email' => 'russelcuevas0@gmail.com',
-            'password' => bcrypt($passwordRaw),
+            'username' => 'marieteresital',
+            'email' => 'juandelacruz.sample100@gmail.com',
+            'password' => bcrypt('lumanda1967'),
             'pin' => 1234,
             'status' => 'Unlocked',
             'login_attempts' => 0,

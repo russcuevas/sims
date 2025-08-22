@@ -74,7 +74,7 @@ class StockController extends Controller
         return view('admin.stock_management', compact('productDetails', 'categories', 'sortBy', 'sortDir', 'role', 'user', 'lowRawMaterialsCount', 'lowFinishedProducts', 'purchaseOrders'));
     }
 
-
+    // UPDATED AUG 22
     public function StockUpdateProduct(Request $request, $id)
     {
         $request->validate([
@@ -90,6 +90,7 @@ class StockController extends Controller
             return redirect()->back()->with('error', 'Product not found.');
         }
 
+        // Update product_details
         DB::table('product_details')->where('id', $id)->update([
             'product_name'   => $request->product_name,
             'price'          => $request->price,
@@ -98,6 +99,7 @@ class StockController extends Controller
             'updated_at'     => now(),
         ]);
 
+        // Update products table
         DB::table('products')->where('id', $productDetail->product_id)->update([
             'product_name'   => $request->product_name,
             'product_price'  => $request->price,
@@ -105,8 +107,25 @@ class StockController extends Controller
             'updated_at'     => now(),
         ]);
 
+        // Update batch_fetch_raw_products where product_id_details matches
+        DB::table('batch_fetch_raw_products')
+            ->where('product_id_details', $id)
+            ->update([
+                'quantity'      => $request->quantity,
+                'updated_at'    => now(),
+            ]);
+
+        // Update batch_finish_raw_products where product_id_details matches
+        DB::table('batch_finish_raw_products')
+            ->where('product_id_details', $id)
+            ->update([
+                'quantity'      => $request->quantity,
+                'updated_at'    => now(),
+            ]);
+
         return redirect()->route('admin.stock.management.page')->with('success', 'Product updated successfully.');
     }
+
 
     public function StockArchiveProduct($id)
     {

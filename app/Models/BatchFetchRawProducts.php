@@ -11,12 +11,14 @@ class BatchFetchRawProducts extends Model
 
     protected $fillable = [
         'employee_id',
+        'identity_no',
         'product_id_details',
         'product_name',
         'price',
         'quantity',
         'stock_unit_id',
         'product_price',
+        'is_selected',
         'category',
     ];
 }

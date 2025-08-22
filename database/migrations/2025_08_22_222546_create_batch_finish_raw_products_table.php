@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('batch_fetch_raw_products', function (Blueprint $table) {
+        Schema::create('batch_finish_raw_products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('employee_id')->nullable();
             $table->unsignedBigInteger('product_id_details')->nullable();
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('batch_fetch_raw_products');
+        Schema::dropIfExists('batch_finish_raw_products');
     }
 };
