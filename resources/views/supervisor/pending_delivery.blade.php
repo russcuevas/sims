@@ -113,12 +113,12 @@
 
                                 <!-- Status Buttons aligned to the right -->
                                 <div class="row mb-3 justify-content-center">
-                                    <div class="col-auto px-1">
+                                    {{-- <div class="col-auto px-1">
                                         <a href="{{ route('supervisor.delivery.management.page') }}" class="btn btn-outline-primary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
                                         <a href="{{ route('supervisor.return.item.page') }}" class="btn btn-outline-primary" id="status_to_ship">Return item</a>
-                                    </div>
+                                    </div> --}}
                                     <div class="col-auto px-1">
                                         <a href="{{ route('supervisor.pending.management.page') }}" class="btn btn-primary" id="status_delivered">Pending delivery</a>
                                     </div>

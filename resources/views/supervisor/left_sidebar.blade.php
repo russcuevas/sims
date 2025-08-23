@@ -42,7 +42,7 @@
         style="display: flex; margin-top: 20px; flex-direction: column; align-items: center; text-decoration: none;">
         <img class="logo-abbr" src="{{ asset('partials/images/logo.png') }}" alt="Logo" style="width: 50px;">
         <h6 style="margin-top: 10px; text-align: center; color: aliceblue;">
-            Welcome {{ $role ?? 'User' }},<br>{{ $user->employee_firstname ?? '' }}
+            Welcome Supervisor,<br>{{ $user->employee_firstname ?? '' }}
         </h6>
      </a>
      
@@ -51,13 +51,16 @@
             <li class="nav-label first" style="font-weight: 900">Main Menu</li>
             <li><a href="{{ route('supervisor.dashboard.page') }}" aria-expanded="false"><i class="icon icon-home"></i><span
                         class="nav-text">Dashboard</span></a></li>
+            <li><a href="{{ route('supervisor.stock.in.page') }}" aria-expanded="false"><i class="icon icon-form"></i><span
+                        class="nav-text">Stock In</span></a>
+            </li>
             <li><a href="{{ route('supervisor.stock.management.page') }}" aria-expanded="false"><i class="icon icon-layout-25"></i><span
                         class="nav-text">Stock Management</span></a>
             </li>
             <li><a href="{{ route('supervisor.process.management.page') }}" aria-expanded="false"><i class="icon icon-app-store"></i><span
                         class="nav-text">Process Management</span></a>
             </li>
-            <li><a href="{{ route('supervisor.delivery.management.page') }}" aria-expanded="false"><i class="fa-solid fa-truck-fast"></i><span
+            <li><a href="{{ route('supervisor.pending.management.page') }}" aria-expanded="false"><i class="fa-solid fa-truck-fast"></i><span
                         class="nav-text">Delivery
                         Management</span></a>
             </li>
@@ -65,7 +68,10 @@
                         class="nav-text">Sales
                         Report</span></a>
             </li>
-
+            <li><a href="{{ route('supervisor.logs.page') }}" aria-expanded="false"><i class="fa-solid fa-receipt"></i><span
+                        class="nav-text">Logs
+                    </span></a>
+            </li>
         </ul>
     </div>
 </div>

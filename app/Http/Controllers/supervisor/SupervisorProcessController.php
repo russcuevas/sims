@@ -30,10 +30,18 @@ class SupervisorProcessController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $multipleUnitProducts = DB::table('batch_product_multiple_units')
-            ->select('product_name')
-            ->groupBy('product_name')
+        // UPDATED AUG 22
+        $multipleUnitProducts = DB::table('batch_product_multiple_units as bpmu')
+            ->select('bpmu.product_name')
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('batch_finish_raw_products as bfrp')
+                    ->whereColumn('bfrp.product_name', 'bpmu.product_name')
+                    ->whereColumn('bfrp.identity_no', 'bpmu.identity_no');
+            })
+            ->groupBy('bpmu.product_name')
             ->get();
+
 
         $hasFinishProducts = DB::table('batch_finish_products')
             ->where('employee_id', $user->id)
@@ -81,7 +89,6 @@ class SupervisorProcessController extends Controller
         $rawHistoryRecords = DB::table('history_finish_product_raws')
             ->get()
             ->groupBy('transact_id');
-
 
         // Get distinct processors for the filter dropdown
         $processors = DB::table('history_finish_products')
@@ -158,6 +165,7 @@ class SupervisorProcessController extends Controller
 
     public function SupervisorAddBatchMultipleProduct(Request $request)
     {
+// Validate inputs
         $request->validate([
             'product_name' => [
                 'required',
@@ -176,13 +184,21 @@ class SupervisorProcessController extends Controller
             'quantity_3' => 'required|integer|min:1',
             'unit_3' => 'required|string|max:50',
             'price_3' => 'required|numeric|min:0',
+
+            'ingredients' => 'nullable|array',
+            'ingredients.*.id' => 'required_with:ingredients.*.quantity|exists:product_details,id',
+            'ingredients.*.unit' => 'required_with:ingredients.*.id|string|max:50',
         ], [
             'product_name.unique' => 'Product name already added.',
         ]);
 
         $productName = $request->input('product_name');
+        $employeeId = Auth::guard('employees')->id();
 
-        // Prepare an array of units with their quantity and price
+        // ✅ Generate a shared identity number for this batch
+        $identityNo = 'BATCH-' . strtoupper(uniqid());
+
+        // Save product units
         $unitsData = [
             [
                 'unit' => $request->input('unit_1'),
@@ -203,11 +219,35 @@ class SupervisorProcessController extends Controller
 
         foreach ($unitsData as $data) {
             BatchProductMultipleUnits::create([
-                'product_name'  => $productName,
-                'stock_unit_id' => $data['unit'],
-                'quantity'      => $data['quantity'], // Add this column in DB if not exists
-                'product_price' => $data['price'],
+                'identity_no'    => $identityNo,
+                'product_name'   => $productName,
+                'stock_unit_id'  => $data['unit'],
+                'quantity'       => $data['quantity'],
+                'product_price'  => $data['price'],
             ]);
+        }
+
+        // Save ingredients if provided
+        $ingredients = $request->input('ingredients', []);
+
+        foreach ($ingredients as $ingredient) {
+            $product = DB::table('product_details')->where('id', $ingredient['id'])->first();
+
+            if ($product) {
+                DB::table('batch_finish_raw_products')->insert([
+                    'employee_id'         => $employeeId,
+                    'product_id_details'  => $product->id,
+                    'identity_no'         => $identityNo, // ✅ Same identity_no
+                    'product_name'        => $product->product_name,
+                    'price'               => $product->price,
+                    'quantity'            => $product->quantity, // from product_details
+                    'ingredient_quantity' => null, // from input
+                    'stock_unit_id'       => $product->stock_unit_id,
+                    'category'            => $product->category,
+                    'created_at'          => now(),
+                    'updated_at'          => now(),
+                ]);
+            }
         }
 
         return redirect()->back()->with('success', 'Product added successfully.');
@@ -219,22 +259,48 @@ class SupervisorProcessController extends Controller
             return redirect()->route('login.page')->with('error', 'You must be logged in as an supervisor.');
         }
 
-        $request->validate([
+         $request->validate([
             'batch_product_name' => 'required|string',
         ]);
 
         $employeeId = Auth::guard('employees')->id();
         $products = BatchProductMultipleUnits::where('product_name', $request->batch_product_name)->get();
 
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'No products found.'], 404);
+        }
+
         foreach ($products as $product) {
             DB::table('batch_finish_products')->insert([
                 'employee_id'    => $employeeId,
-                'quantity'       => $product->quantity,   // Use quantity from stored product
+                'quantity'       => $product->quantity,
                 'product_name'   => $product->product_name,
                 'stock_unit_id'  => $product->stock_unit_id,
                 'product_price'  => $product->product_price,
                 'created_at'     => now(),
                 'updated_at'     => now(),
+            ]);
+        }
+
+        $identityNo = $products->first()->identity_no;
+        $rawsToInsert = DB::table('batch_finish_raw_products')
+            ->where('identity_no', $identityNo)
+            ->get();
+
+        foreach ($rawsToInsert as $raw) {
+            DB::table('batch_fetch_raw_products')->insert([
+                'employee_id'         => $employeeId,
+                'product_id_details'  => $raw->product_id_details,
+                'identity_no'         => $raw->identity_no,
+                'product_name'        => $raw->product_name,
+                'price'               => $raw->price,
+                'ingredient_quantity' => $raw->ingredient_quantity,
+                'quantity'            => $raw->quantity,
+                'stock_unit_id'       => $raw->stock_unit_id,
+                'category'            => $raw->category,
+                'is_selected'         => 1,
+                'created_at'          => now(),
+                'updated_at'          => now(),
             ]);
         }
 
@@ -304,48 +370,75 @@ class SupervisorProcessController extends Controller
             ];
         }
 
+        // changes
+
         $rawHistoryData = [];
 
         // Handle raw material deduction
         foreach ($request->input('raw_quantities', []) as $batchId => $deductQty) {
-            $rawProduct = DB::table('batch_fetch_raw_products')->where('id', $batchId)->first();
+            $deductQty = (int) $deductQty;
+            if ($deductQty <= 0) continue;
 
-            if ($rawProduct) {
-                $newBatchQty = $rawProduct->quantity - $deductQty;
+            // Get batch_fetch_raw_products entry
+            $fetchRaw = DB::table('batch_fetch_raw_products')->where('id', $batchId)->first();
 
-                if ($newBatchQty <= 0) {
+            if ($fetchRaw) {
+                // Deduct from batch_fetch_raw_products
+                $newFetchQty = $fetchRaw->quantity - $deductQty;
+
+                if ($newFetchQty <= 0) {
                     DB::table('batch_fetch_raw_products')->where('id', $batchId)->delete();
                 } else {
                     DB::table('batch_fetch_raw_products')->where('id', $batchId)->update([
-                        'quantity'    => $newBatchQty,
-                        'updated_at'  => $now,
+                        'quantity'   => $newFetchQty,
+                        'updated_at' => $now,
                     ]);
                 }
 
-                if (!is_null($rawProduct->product_id_details)) {
-                    $product = DB::table('product_details')->where('id', $rawProduct->product_id_details)->first();
+                // Deduct from batch_finish_raw_products WHERE product_id_details = fetchRaw's product_id_details
+                if ($fetchRaw->product_id_details) {
+                    $finishRaw = DB::table('batch_finish_raw_products')
+                        ->where('product_id_details', $fetchRaw->product_id_details)
+                        ->first();
+
+                    if ($finishRaw) {
+                        $newFinishQty = $finishRaw->quantity - $deductQty;
+
+                        if ($newFinishQty <= 0) {
+                            DB::table('batch_finish_raw_products')->where('id', $finishRaw->id)->update([
+                                'quantity'   => 0,
+                                'updated_at' => $now,
+                            ]);
+                        } else {
+                            DB::table('batch_finish_raw_products')->where('id', $finishRaw->id)->update([
+                                'quantity'   => $newFinishQty,
+                                'updated_at' => $now,
+                            ]);
+                        }
+                    }
+
+                    // Deduct from product_details
+                    $product = DB::table('product_details')->where('id', $fetchRaw->product_id_details)->first();
 
                     if ($product) {
                         $newProductQty = $product->quantity - $deductQty;
-
-                        DB::table('product_details')->where('id', $rawProduct->product_id_details)->update([
+                        DB::table('product_details')->where('id', $product->id)->update([
                             'quantity'   => max(0, $newProductQty),
                             'updated_at' => $now,
                         ]);
                     }
                 }
 
-                $currentQty = $request->input('raw_current_quantities.' . $batchId, $rawProduct->quantity);
-
+                $currentQty = $request->input('raw_current_quantities.' . $batchId, $fetchRaw->quantity);
 
                 $rawHistoryData[] = [
-                    'transact_id'   => $transactId,
-                    'product_name'  => $rawProduct->product_name,
+                    'transact_id'      => $transactId,
+                    'product_name'     => $fetchRaw->product_name,
                     'quantity'         => $deductQty,
                     'current_quantity' => $currentQty,
-                    'unit'          => $rawProduct->stock_unit_id,
-                    'created_at'    => $now,
-                    'updated_at'    => $now,
+                    'unit'             => $fetchRaw->stock_unit_id,
+                    'created_at'       => $now,
+                    'updated_at'       => $now,
                 ];
             }
         }

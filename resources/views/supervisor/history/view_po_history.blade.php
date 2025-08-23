@@ -64,7 +64,8 @@
     <p><strong>Processed by:</strong> {{ $purchaseOrderItems->first()->process_by }}</p>
 
     <div class="float-right mt-4">
-        <button onclick="window.print();" class="btn btn-primary">Print / Download</button>
+        <a href="{{ route('supervisor.stock.management.page') }}" class="btn btn-primary">Go back</a>
+        {{-- <button onclick="window.print();" class="btn btn-primary">Print / Download</button> --}}
     </div>
 
 </div>

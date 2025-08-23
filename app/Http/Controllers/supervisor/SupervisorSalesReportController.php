@@ -16,20 +16,67 @@ class SupervisorSalesReportController extends Controller
         }
 
         $user = Auth::guard('employees')->user();
-        $role = DB::table('positions')->where('id', $user->position_id)->value('position_name');
+        // Get role name
+        $role = DB::table('positions')
+            ->where('id', $user->position_id)
+            ->value('position_name');
 
+        // Low stock finished products (< 1000)
         $lowFinishedProducts = DB::table('product_details')
             ->where('category', 'finish product')
             ->where('quantity', '<', 1000)
             ->where('is_archived', 0)
             ->get();
 
-        $transactions = DB::table('transactions')
-            ->where('is_archived', 0)
-            ->orderBy('transaction_date', 'desc')
-            ->get();
+        // Transactions by type
+        $stockInSalesTransaction = DB::table('sales_transactions')
+            ->where('transaction_type', 'stock in')
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
 
-        return view('supervisor.sales_report', compact('role', 'user', 'lowFinishedProducts', 'transactions'));
+        $deliveryTransactions = DB::table('sales_transactions')
+            ->where('transaction_type', 'delivery')
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
+
+
+        $allSalesTransactions = DB::table('sales_transactions')
+            ->whereIn('transaction_type', ['delivery', 'payment', 'return-item'])
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                // Format the transaction_date here to only show the date
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
+
+
+        // Collect unique transaction IDs from stock-in and delivery
+        $transactionIds = $stockInSalesTransaction->pluck('transaction_id')
+            ->merge($deliveryTransactions->pluck('transaction_id'))
+            ->filter(function ($id) {
+                return str_starts_with($id, 'DO-');
+            })
+            ->unique()
+            ->values(); // Optional: reset keys
+
+        return view('supervisor.sales_report', compact(
+            'role',
+            'user',
+            'lowFinishedProducts',
+            'stockInSalesTransaction',
+            'deliveryTransactions',
+            'allSalesTransactions',
+            'transactionIds'
+        ));
     }
 
 

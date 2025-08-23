@@ -180,7 +180,7 @@
                                             <button type="button" id="add_product_button"
                                                 class="btn btn-outline-primary w-100" data-toggle="modal"
                                                 data-target="#add_product_modal">
-                                                + Add Products
+                                                + Create Products
                                             </button>
                                         </div>
                                     </form>
@@ -246,8 +246,8 @@
                                                 <button type="button" class="close"
                                                     data-dismiss="modal"><span>&times;</span></button>
                                             </div>
-                                            <form class="add_product_validation" action="{{ route('supervisor.add.batch.multiple.product') }}" method="POST">
-                                                @csrf
+<form class="add_product_validation" action="{{ route('supervisor.add.batch.multiple.product') }}" method="POST">
+    @csrf
     <div class="modal-body">
 
         <!-- Product Name -->
@@ -261,34 +261,45 @@
         </div>
 
         <!-- Product Units & Prices -->
-<div class="form-group row mb-3">
-    <label class="col-sm-4 col-form-label text-end">
-        Product Units, Quantities & Prices <span class="text-danger">*</span>
-    </label>
-    <div class="col-sm-8">
+        <div class="form-group row mb-3">
+            <label class="col-sm-4 col-form-label text-end">
+                Product Units, Quantities & Prices <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
 
-        <div class="d-flex mb-2">
-            <input type="number" class="form-control me-2" name="quantity_1" placeholder="Quantity" min="1" required style="max-width: 100px;">
-            <input type="text" class="form-control me-2" name="unit_1" placeholder="Unit" required style="max-width: 120px;">
-            <input type="number" class="form-control" name="price_1" placeholder="Price" min="0" step="0.01" required style="max-width: 120px;">
+                <div class="d-flex mb-2">
+                    <input type="number" class="form-control me-2" name="quantity_1" placeholder="Quantity" min="1" required style="max-width: 100px;">
+                    <input type="text" class="form-control me-2" name="unit_1" placeholder="Unit" required style="max-width: 120px;">
+                    <input type="number" class="form-control" name="price_1" placeholder="Price" min="0" step="0.01" required style="max-width: 120px;">
+                </div>
+
+                <div class="d-flex mb-2">
+                    <input type="number" class="form-control me-2" name="quantity_2" placeholder="Quantity" min="1" required style="max-width: 100px;">
+                    <input type="text" class="form-control me-2" name="unit_2" placeholder="Unit" required style="max-width: 120px;">
+                    <input type="number" class="form-control" name="price_2" placeholder="Price" min="0" step="0.01" required style="max-width: 120px;">
+                </div>
+
+                <div class="d-flex">
+                    <input type="number" class="form-control me-2" name="quantity_3" placeholder="Quantity" min="1" required style="max-width: 100px;">
+                    <input type="text" class="form-control me-2" name="unit_3" placeholder="Unit" required style="max-width: 120px;">
+                    <input type="number" class="form-control" name="price_3" placeholder="Price" min="0" step="0.01" required style="max-width: 120px;">
+                </div>
+
+            </div>
         </div>
 
-        <div class="d-flex mb-2">
-            <input type="number" class="form-control me-2" name="quantity_2" placeholder="Quantity" min="1" required style="max-width: 100px;">
-            <input type="text" class="form-control me-2" name="unit_2" placeholder="Unit" required style="max-width: 120px;">
-            <input type="number" class="form-control" name="price_2" placeholder="Price" min="0" step="0.01" required style="max-width: 120px;">
+        <!-- Add Ingredients Section -->
+        <div class="form-group row mb-3">
+            <label class="col-sm-4 col-form-label text-end">
+                Ingredients
+            </label>
+            <div class="col-sm-8">
+                <div id="ingredients_container">
+                    <!-- Dynamic ingredient rows will appear here -->
+                </div>
+                <button type="button" class="btn btn-sm btn-secondary mt-2" id="add_ingredient_btn">+ Add Ingredient</button>
+            </div>
         </div>
-
-        <div class="d-flex">
-            <input type="number" class="form-control me-2" name="quantity_3" placeholder="Quantity" min="1" required style="max-width: 100px;">
-            <input type="text" class="form-control me-2" name="unit_3" placeholder="Unit" required style="max-width: 120px;">
-            <input type="number" class="form-control" name="price_3" placeholder="Price" min="0" step="0.01" required style="max-width: 120px;">
-        </div>
-
-    </div>
-</div>
-
-
 
     </div>
 
@@ -296,7 +307,9 @@
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary">Save changes</button>
     </div>
-                                            </form>
+</form>
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -327,7 +340,6 @@
                                                         $totalAmount += $amount;
                                                     @endphp
                                                     <tr>
-                                                        
                                                         <td>
                                                             <input type="number"
                                                                 name="quantities[{{ $product->id }}]"
@@ -429,7 +441,7 @@
                                 </div>
 
                                 <div class="table-responsive">
-                                    <table id="processTable" class="table table-bordered text-center align-middle">
+                                <table id="processTable" class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
                                                 <th style="width: 10%; color: #A16D28;">Details</th>
@@ -591,11 +603,85 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            let ingredientIndex = 0;
+
+            function updateSelectOptions() {
+                // Collect all selected values
+                let selectedValues = [];
+                $('.ingredient_select').each(function() {
+                    const val = $(this).val();
+                    if (val) selectedValues.push(val);
+                });
+
+                // For each select, disable options that are selected in other selects
+                $('.ingredient_select').each(function() {
+                    const currentVal = $(this).val();
+                    $(this).find('option').each(function() {
+                        const optionVal = $(this).attr('value');
+
+                        if (optionVal === "") {
+                            // Always enable the empty option
+                            $(this).prop('disabled', false);
+                            return;
+                        }
+
+                        // Disable if selected in another select
+                        if (selectedValues.includes(optionVal) && optionVal !== currentVal) {
+                            $(this).prop('disabled', true);
+                        } else {
+                            $(this).prop('disabled', false);
+                        }
+                    });
+                });
+            }
+
+            $('#add_ingredient_btn').click(function() {
+                ingredientIndex++;
+
+                let ingredientRow = `
+                <div class="ingredient-row d-flex mb-2 align-items-center">
+                    <select name="ingredients[${ingredientIndex}][id]" class="form-control me-2 ingredient_select" required style="max-width: 250px;">
+                        <option value="">-- Select Raw Material --</option>
+                        @foreach ($products->where('category', 'raw materials') as $product)
+                            <option value="{{ $product->id }}" data-stock_unit="{{ $product->stock_unit_id }}">
+                                {{ $product->product_name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <input type="text" name="ingredients[${ingredientIndex}][unit]" class="form-control me-2 stock_unit_display" placeholder="Unit" readonly style="max-width: 100px;">
+
+                    <button type="button" class="btn btn-danger btn-sm remove_ingredient_btn">X</button>
+                </div>
+                `;
+
+                $('#ingredients_container').append(ingredientRow);
+                updateSelectOptions();
+            });
+
+            $(document).on('change', '.ingredient_select', function() {
+                let selected = $(this).find('option:selected');
+                let stockUnit = selected.data('stock_unit');
+                $(this).closest('.ingredient-row').find('.stock_unit_display').val(stockUnit);
+
+                updateSelectOptions();
+            });
+
+            $(document).on('click', '.remove_ingredient_btn', function() {
+                $(this).closest('.ingredient-row').remove();
+                updateSelectOptions();
+            });
+        });
+    </script>
+
         <script>
         $(document).ready(function () {
             $('#processTable').DataTable({
                 pageLength: 10,
-                responsive: true,
+                searching: false, // remove search box
+                order: [], // disable initial ordering
             });
         });
     </script>

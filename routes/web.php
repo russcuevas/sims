@@ -35,6 +35,7 @@ use App\Http\Controllers\manager\ManagerStockController;
 use App\Http\Controllers\manager\ManagerStockInController;
 use App\Http\Controllers\manager\ManagerArchiveController;
 use App\Http\Controllers\manager\ManagerEmailController;
+use App\Http\Controllers\supervisor\LogsController as SupervisorLogsController;
 // SUPERVISOR CONTROLLER
 use App\Http\Controllers\supervisor\SupervisorArchiveController;
 use App\Http\Controllers\supervisor\SupervisorDashboardController;
@@ -46,6 +47,7 @@ use App\Http\Controllers\supervisor\SupervisorProfileManagement;
 use App\Http\Controllers\supervisor\SupervisorReturnItemController;
 use App\Http\Controllers\supervisor\SupervisorSalesReportController;
 use App\Http\Controllers\supervisor\SupervisorStockController;
+use App\Http\Controllers\supervisor\SupervisorStockInController;
 use App\Http\Controllers\supervisor\SupervisorViewAvailableCarsController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -411,6 +413,19 @@ Route::get('/supervisor/archive/delivery', [SupervisorArchiveController::class, 
 Route::post('/supervisor/delivery/restore/{transact_id}', [SupervisorArchiveController::class, 'SupervisorRestoreDelivery'])->name('supervisor.delivery.restore');
 Route::get('/supervisor/archive/sales', [SupervisorArchiveController::class, 'SupervisorArchiveSalesPage'])->name('supervisor.archive.sales.page');
 Route::post('/supervisor/archive/sales/restore/{id}', [SupervisorArchiveController::class, 'SupervisorRestoreSales'])->name('supervisor.sales.restore');
+
+Route::get('/supervisor/stock_in', [SupervisorStockInController::class, 'SupervisorStockInPage'])->name('supervisor.stock.in.page');
+Route::post('/supervisor/stock_in/add_product', [SupervisorStockInController::class, 'SupervisorAddProduct'])->name('supervisor.stock.in.add.product');
+Route::post('/supervisor/stock_in/add_supplier', [SupervisorStockInController::class, 'SupervisorAddSupplier'])->name('supervisor.stock.in.add.supplier');
+Route::post('/supervisor/stock_in/add_batch_product_details', [SupervisorStockInController::class, 'SupervisorAddBatchProductDetails'])->name('supervisor.stock.in.add.batch.product.details');
+Route::post('/supervisor/batch-product-details/{id}/quantity', [SupervisorStockInController::class, 'updateQuantity']);
+Route::post('/supervisor/products/{productId}/update-price', [SupervisorStockInController::class, 'UpdateProductPrice'])->name('supervisor.product.update.price');
+Route::get('/supervisor/batch-product-details/delete/{id}', [SupervisorStockInController::class, 'SupervisorRemoveBatchProduct'])->name('supervisor.batch.product.remove');
+Route::post('/supervisor/raw-stocks-request', [SupervisorStockInController::class, 'SupervisorRawStocksRequest'])->name('supervisor.raw.stocks.request');
+Route::post('/supervisor/archive-raw-stock/{transactId}', [SupervisorStockInController::class, 'ArchiveRawStock'])->name('supervisor.archive.raw.stock');
+
+// SUPERVISOR LOGS
+Route::get('/supervisor/logs', [SupervisorLogsController::class, 'SupervisorLogsPage'])->name('supervisor.logs.page');
 
 // DELIVERY PO
 Route::post('/supervisor/validate-pin-delivery', [SupervisorDeliveryController::class, 'SupervisorValidatePinDelivery'])

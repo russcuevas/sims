@@ -64,10 +64,11 @@ class SupervisorStockController extends Controller
             ->get();
 
         $purchaseOrders = DB::table('purchase_orders')
-            ->select('po_number', 'process_by', 'total_amount')
-            ->groupBy('po_number', 'process_by', 'total_amount')  // Avoid showing same PO multiple times
+            ->select('po_number', 'process_by', 'total_amount', 'status') // ✅ Add 'status'
+            ->groupBy('po_number', 'process_by', 'total_amount', 'status') // ✅ Also group by 'status'
             ->orderBy('id', 'desc')
             ->get();
+
 
         return view('supervisor.stock_management', compact('productDetails', 'categories', 'sortBy', 'sortDir', 'role', 'user', 'lowRawMaterialsCount', 'lowFinishedProducts', 'purchaseOrders'));
     }
