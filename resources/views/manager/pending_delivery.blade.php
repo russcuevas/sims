@@ -114,6 +114,15 @@
                                 <!-- Status Buttons aligned to the right -->
                                 <div class="row mb-3 justify-content-center">
                                     <div class="col-auto px-1">
+                                        <a href="" class="btn btn-outline-primary" id="status_preparing">Preparing</a>
+                                    </div>
+                                    <div class="col-auto px-1">
+                                        <a href="" class="btn btn-outline-primary" id="status_payment">Payment</a>
+                                    </div>
+                                    <div class="col-auto px-1">
+                                        <a href="" class="btn btn-outline-primary" id="status_return_item">Return item</a>
+                                    </div>
+                                    <div class="col-auto px-1">
                                         <a href="{{ route('manager.pending.management.page') }}" class="btn btn-primary" id="status_delivered">Pending delivery</a>
                                     </div>
                                     <div class="col-auto px-1">

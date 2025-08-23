@@ -42,7 +42,7 @@
         style="display: flex; margin-top: 20px; flex-direction: column; align-items: center; text-decoration: none;">
         <img class="logo-abbr" src="{{ asset('partials/images/logo.png') }}" alt="Logo" style="width: 50px;">
         <h6 style="margin-top: 10px; text-align: center; color: aliceblue;">
-            Welcome {{ $role ?? 'User' }},<br>{{ $user->employee_firstname ?? '' }}
+            Welcome Manager,<br>{{ $user->employee_firstname ?? '' }}
         </h6>
      </a>
      
