@@ -480,7 +480,6 @@ class StockInController extends Controller
                 ->first();
 
             if ($productDetail) {
-                // Update batch_finish_raw_products if exists
                 $finishUpdated = DB::table('batch_finish_raw_products')
                     ->where('product_name', $productDetail->product_name)
                     ->where('stock_unit_id', $productDetail->stock_unit_id)
@@ -489,7 +488,6 @@ class StockInController extends Controller
                         'updated_at' => now(),
                     ]);
 
-                // Update batch_fetch_raw_products if exists
                 $fetchUpdated = DB::table('batch_fetch_raw_products')
                     ->where('product_name', $productDetail->product_name)
                     ->where('stock_unit_id', $productDetail->stock_unit_id)
@@ -498,7 +496,6 @@ class StockInController extends Controller
                         'updated_at' => now(),
                     ]);
 
-                // If no rows updated, just continue (no error thrown)
             }
         }
 

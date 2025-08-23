@@ -178,7 +178,7 @@ class ManagerStockInController extends Controller
             return redirect()->route('login.page')->with('error', 'You must be logged in as an manager to access the dashboard.');
         }
 
-        $request->validate([
+$request->validate([
             'po_number' => 'required|exists:purchase_orders,po_number',
         ], [
             'po_number.required' => 'Purchase Order number is required.',
@@ -187,10 +187,13 @@ class ManagerStockInController extends Controller
         $employee_id = Auth::guard('employees')->user()->id;
         $now = now();
 
-        $poProducts = DB::table('purchase_orders')
+        // Fetch supplier_id + products
+        $poData = DB::table('purchase_orders')
             ->join('product_details', 'purchase_orders.product_id', '=', 'product_details.id')
+            ->join('suppliers', 'purchase_orders.supplier_id', '=', 'suppliers.id') // join suppliers
             ->where('purchase_orders.po_number', $request->po_number)
             ->select(
+                'purchase_orders.supplier_id',
                 'purchase_orders.product_id',
                 'purchase_orders.product_name',
                 'purchase_orders.price',
@@ -200,11 +203,13 @@ class ManagerStockInController extends Controller
             )
             ->get();
 
-        if ($poProducts->isEmpty()) {
-            return redirect()->route('manager.stock.in.page')->with('error', 'No products found for this PO number.');
+        if ($poData->isEmpty()) {
+            return redirect()->route('admin.stock.in.page')->with('error', 'No products found for this PO number.');
         }
 
-        $productIds = $poProducts->pluck('product_id')->toArray();
+        $supplierId = $poData->first()->supplier_id; // get supplier id
+
+        $productIds = $poData->pluck('product_id')->toArray();
 
         $alreadySubmitted = DB::table('batch_product_details')
             ->where('employee_id', $employee_id)
@@ -212,13 +217,12 @@ class ManagerStockInController extends Controller
             ->exists();
 
         if ($alreadySubmitted) {
-            return redirect()->route('manager.stock.in.page')
+            return redirect()->route('admin.stock.in.page')
                 ->with('error', 'You have already submitted batch details for this PO.');
         }
 
         $insert_data = [];
-
-        foreach ($poProducts as $product) {
+        foreach ($poData as $product) {
             $insert_data[] = [
                 'employee_id'   => $employee_id,
                 'product_id'    => $product->product_id,
@@ -241,6 +245,8 @@ class ManagerStockInController extends Controller
                 'updated_at' => $now,
             ]);
 
+        // Redirect and pass selected supplier ID back to view
+        session(['selected_supplier_id' => $supplierId]);
         return redirect()->route('manager.stock.in.page')->with('success', 'Product details added successfully.');
     }
 
@@ -410,8 +416,58 @@ class ManagerStockInController extends Controller
             }
         }
 
+        // Sync batch_finish_raw_products quantity with product_details quantity
+        foreach ($productDetailsData as $data) {
+            $productDetail = DB::table('product_details')
+                ->where('product_name', $data['product_name'])
+                ->where('stock_unit_id', $data['stock_unit_id'])
+                ->where('category', 'raw materials')
+                ->first();
+
+            if ($productDetail) {
+                $finishUpdated = DB::table('batch_finish_raw_products')
+                    ->where('product_name', $productDetail->product_name)
+                    ->where('stock_unit_id', $productDetail->stock_unit_id)
+                    ->update([
+                        'quantity'   => $productDetail->quantity,
+                        'updated_at' => now(),
+                    ]);
+
+                $fetchUpdated = DB::table('batch_fetch_raw_products')
+                    ->where('product_name', $productDetail->product_name)
+                    ->where('stock_unit_id', $productDetail->stock_unit_id)
+                    ->update([
+                        'quantity'   => $productDetail->quantity,
+                        'updated_at' => now(),
+                    ]);
+
+            }
+        }
+
+
+
         // Clear the batch items
         DB::table('batch_product_details')->where('employee_id', $employee->id)->delete();
+
+        // Calculate total amount from the batch items
+        $totalAmount = collect($historyData)->sum('amount');
+
+        // Insert into sales_transactions
+        DB::table('sales_transactions')->insert([
+            'transaction_date'  => now()->toDateTimeString(),
+            'process_by'        => $employee->employee_firstname . ' ' . $employee->employee_lastname,
+            'transaction_type'  => 'stock in',
+            'transaction_id'    => $transactId,
+            'payment'           => 0,
+            'return'            => 0,
+            'debit'             => $totalAmount,
+            'credit'            => 0,
+            'loss'              => 0,
+            'balances'          => $totalAmount,
+            'created_at'        => now(),
+            'updated_at'        => now(),
+        ]);
+
 
         // Log the action
         ActivityLogger::log(
@@ -420,6 +476,8 @@ class ManagerStockInController extends Controller
             'raw_materials',
             "Processed raw materials with transaction ID: {$transactId}"
         );
+
+        session()->forget('selected_supplier_id');
 
         return redirect()->route('manager.stock.in.page')->with('success', 'Raw stocks saved successfully!');
     }

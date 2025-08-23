@@ -167,17 +167,17 @@
                                                         <div class="modal-body">
                                                             <form class="add_transaction_validation" action="{{ route('admin.sales.request.transaction') }}" method="POST">
                                                                 @csrf
-<div class="form-group row mb-3">
-    <label for="transaction_date"
-        class="col-sm-4 col-form-label text-end">
-        Transaction Date <span class="text-danger">*</span>
-    </label>
-    <div class="col-sm-8">
-        <input type="date" class="form-control"
-            id="transaction_date" name="transaction_date"
-            required>
-    </div>
-</div>
+                                                                <div class="form-group row mb-3">
+                                                                    <label for="transaction_date"
+                                                                        class="col-sm-4 col-form-label text-end">
+                                                                        Transaction Date <span class="text-danger">*</span>
+                                                                    </label>
+                                                                    <div class="col-sm-8">
+                                                                        <input type="date" class="form-control"
+                                                                            id="transaction_date" name="transaction_date"
+                                                                            required>
+                                                                    </div>
+                                                                </div>
                                                                 <div class="form-group row mb-3">
                                                                     <label for="process_by"
                                                                         class="col-sm-4 col-form-label text-end">

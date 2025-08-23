@@ -90,6 +90,7 @@ class ManagerStockController extends Controller
             return redirect()->back()->with('error', 'Product not found.');
         }
 
+        // Update product_details
         DB::table('product_details')->where('id', $id)->update([
             'product_name'   => $request->product_name,
             'price'          => $request->price,
@@ -98,12 +99,29 @@ class ManagerStockController extends Controller
             'updated_at'     => now(),
         ]);
 
+        // Update products table
         DB::table('products')->where('id', $productDetail->product_id)->update([
             'product_name'   => $request->product_name,
             'product_price'  => $request->price,
             'stock_unit_id'  => $request->stock_unit_id,
             'updated_at'     => now(),
         ]);
+
+        // Update batch_fetch_raw_products where product_id_details matches
+        DB::table('batch_fetch_raw_products')
+            ->where('product_id_details', $id)
+            ->update([
+                'quantity'      => $request->quantity,
+                'updated_at'    => now(),
+            ]);
+
+        // Update batch_finish_raw_products where product_id_details matches
+        DB::table('batch_finish_raw_products')
+            ->where('product_id_details', $id)
+            ->update([
+                'quantity'      => $request->quantity,
+                'updated_at'    => now(),
+            ]);
 
         return redirect()->route('manager.stock.management.page')->with('success', 'Product updated successfully.');
     }
@@ -243,6 +261,25 @@ class ManagerStockController extends Controller
 
 
         return redirect()->route('manager.stock.management.page')->with('success', 'Downloaded successfully!');
+    }
+
+    public function ManagerValidateStockArchivePin(Request $request)
+    {
+        $request->validate([
+            'pin' => 'required|digits:4',
+        ]);
+
+        $manager = Auth::guard('employees')->user();
+
+        if (!$manager || $manager->position_id != 2) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ((string) $request->pin !== (string) $manager->pin) {
+            return response()->json(['error' => 'Incorrect PIN'], 401);
+        }
+
+        return response()->json(['status' => 'PIN verified']);
     }
 
     public function ManagerViewPO($po_number)

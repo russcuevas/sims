@@ -4,6 +4,7 @@ namespace App\Http\Controllers\manager;
 
 use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
+use App\Models\SalesTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,13 +26,62 @@ class ManagerSalesReportController extends Controller
             ->where('is_archived', 0)
             ->get();
 
-        $transactions = DB::table('transactions')
+ // Low stock finished products (< 1000)
+        $lowFinishedProducts = DB::table('product_details')
+            ->where('category', 'finish product')
+            ->where('quantity', '<', 1000)
             ->where('is_archived', 0)
-            ->orderBy('transaction_date', 'desc')
             ->get();
 
-        return view('manager.sales_report', compact('role', 'user', 'lowFinishedProducts', 'transactions'));
-    }
+        // Transactions by type
+        $stockInSalesTransaction = DB::table('sales_transactions')
+            ->where('transaction_type', 'stock in')
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
+
+        $deliveryTransactions = DB::table('sales_transactions')
+            ->where('transaction_type', 'delivery')
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
+
+
+        $allSalesTransactions = DB::table('sales_transactions')
+            ->whereIn('transaction_type', ['delivery', 'payment', 'return-item'])
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                // Format the transaction_date here to only show the date
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
+
+
+        // Collect unique transaction IDs from stock-in and delivery
+        $transactionIds = $stockInSalesTransaction->pluck('transaction_id')
+            ->merge($deliveryTransactions->pluck('transaction_id'))
+            ->filter(function ($id) {
+                return str_starts_with($id, 'DO-');
+            })
+            ->unique()
+            ->values(); // Optional: reset keys
+
+        return view('manager.sales_report', compact(
+            'role',
+            'user',
+            'lowFinishedProducts',
+            'stockInSalesTransaction',
+            'deliveryTransactions',
+            'allSalesTransactions',
+            'transactionIds'
+        ));    }
 
 
     public function ManagerTransactionAdd(Request $request)
@@ -40,39 +90,42 @@ class ManagerSalesReportController extends Controller
             return redirect()->route('login.page')->with('error', 'You must be logged in as an manager to access the dashboard.');
         }
 
+       // Validate the incoming request
         $request->validate([
             'transaction_date' => 'required|date',
-            'process_by' => 'required|string',
-            'transaction_type' => 'required|string',
+            'transaction_type' => 'required|in:payment,return-item',
             'transaction_id' => 'required|string',
-            'type' => 'required|in:debit,credit',
             'amount' => 'required|numeric|min:0',
         ]);
 
-        $existing = DB::table('transactions')
-            ->select(DB::raw('SUM(debit) as total_debit'), DB::raw('SUM(credit) as total_credit'))
-            ->first();
+        // Initialize fields
+        $credit = 0;
+        $debit = 0;
+        $loss = 0;
 
-        $existing_total_debit = $existing->total_debit ?? 0;
-        $existing_total_credit = $existing->total_credit ?? 0;
+        // Determine the credit, debit, and loss based on transaction type
+        if ($request->transaction_type === 'payment') {
+            $credit = $request->amount;
+        } elseif ($request->transaction_type === 'return-item') {
+            $credit = $request->amount;
+            $loss = $request->amount; // Assuming loss equals the return amount
+        }
 
-        $new_debit = $request->type === 'debit' ? $request->amount : 0;
-        $new_credit = $request->type === 'credit' ? $request->amount : 0;
-
-        $balance = ($existing_total_credit + $new_credit) - ($existing_total_debit + $new_debit);
-
-        DB::table('transactions')->insert([
+        // Create a new transaction record
+        SalesTransaction::create([
             'transaction_date' => $request->transaction_date,
-            'process_by' => $request->process_by,
+            'process_by' => Auth::guard('employees')->user()->employee_firstname . ' ' . Auth::guard('employees')->user()->employee_lastname,
             'transaction_type' => $request->transaction_type,
             'transaction_id' => $request->transaction_id,
-            'debit' => $new_debit,
-            'credit' => $new_credit,
-            'balances' => $balance,
-            'created_at' => now(),
-            'updated_at' => now()
+            'payment' => $request->transaction_type === 'payment' ? $request->amount : 0,
+            'return' => $request->transaction_type === 'return-item' ? $request->amount : 0,
+            'credit' => $credit,
+            'debit' => $debit,
+            'loss' => $loss,
+            'balances' => 0, // Set the initial balance as needed
         ]);
 
+        // Redirect back with a success message
         return redirect()->back()->with('success', 'Transaction added successfully.');
     }
 
@@ -101,23 +154,47 @@ class ManagerSalesReportController extends Controller
 
         $user = Auth::guard('employees')->user();
 
-        // Get all non-archived transactions
-        $transactions = DB::table('transactions')
-            ->where('is_archived', 0)
-            ->orderBy('transaction_date', 'desc')
-            ->get();
+         // Stock in transactions
+        $stockInSalesTransaction = DB::table('sales_transactions')
+            ->where('transaction_type', 'stock in')
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
 
-        // Calculate total debit and credit for the report
-        $totals = DB::table('transactions')
-            ->where('is_archived', 0)
-            ->selectRaw('SUM(debit) as total_debit, SUM(credit) as total_credit')
-            ->first();
+        // Delivery transactions
+        $deliveryTransactions = DB::table('sales_transactions')
+            ->where('transaction_type', 'delivery')
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
+
+        // All sales (delivery, payment, return-item)
+        $allSalesTransactions = DB::table('sales_transactions')
+            ->whereIn('transaction_type', ['delivery', 'payment', 'return-item'])
+            ->orderByDesc('transaction_date')
+            ->get()
+            ->map(function ($transaction) {
+                $transaction->transaction_date = \Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y');
+                return $transaction;
+            });
+
+        // Collect unique transaction IDs
+        $transactionIds = $stockInSalesTransaction->pluck('transaction_id')
+            ->merge($deliveryTransactions->pluck('transaction_id'))
+            ->unique();
 
         return view('manager.sales.print_sales', [
-            'transactions' => $transactions,
-            'total_debit' => $totals->total_debit ?? 0,
-            'total_credit' => $totals->total_credit ?? 0,
-            'user' => $user
+            'user' => $user,
+            'stockInSalesTransaction' => $stockInSalesTransaction,
+            'deliveryTransactions' => $deliveryTransactions,
+            'allSalesTransactions' => $allSalesTransactions,
+            'transactionIds' => $transactionIds,
         ]);
     }
 

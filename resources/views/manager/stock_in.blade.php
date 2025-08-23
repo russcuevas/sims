@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Sales & Inventory Management System </title>
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('partials/images/favicon.png') }}">
-    <link href="{{ asset('partials/vendor/datatables/css/jquery.dataTables.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('partials/vendor/datatables/css/jquery.dataTables.min.css') }}" rel="stylesheet">
+
     <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -272,7 +273,10 @@
                                             <select id="supplier" name="supplier" class="form-control">
                                                 <option value="">Select supplier</option>
                                                 @foreach ($suppliers as $supplier)
-                                                    <option value="{{ $supplier->id }}">{{ $supplier->supplier_name }}</option>
+                                                    <option value="{{ $supplier->id }}" 
+                                                        {{ session('selected_supplier_id') == $supplier->id ? 'selected' : '' }}>
+                                                        {{ $supplier->supplier_name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -386,14 +390,13 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered text-center align-middle">
+                                    <table id="historyTable" class="table table-bordered text-center align-middle">
                                     <thead class="table-light fw-bold">
                                         <tr>
                                             <th style="width: 10%; color: #A16D28;">Details</th>
                                             <th style="width: 15%; color: #A16D28;">Process Date</th>
                                             <th style="width: 15%; color: #A16D28;">Received Date</th>
                                             <th style="width: 30%; color: #A16D28;">Processed By</th>
-                                            <th style="width: 30%; color: #A16D28;">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -416,12 +419,6 @@
                                                 </td>
                                                 <td>
                                                     <input type="text" class="form-control form-control-sm" value="{{ $first->process_by }}" readonly>
-                                                </td>
-                                                <td>
-                                                    <form action="{{ route('manager.archive.raw.stock', ['transactId' => $transactId]) }}" method="POST" style="display:inline;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
-                                                    </form>
                                                 </td>
                                             </tr>
 
@@ -518,6 +515,17 @@
     <script src="{{ asset('partials/js/custom.min.js') }}"></script>
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#historyTable').DataTable({
+                responsive: true,
+                searching: false,
+                ordering: true,
+                pageLength: 10,
+            });
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 

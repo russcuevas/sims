@@ -212,7 +212,7 @@
                                         </form>
                                         
                                     </div>
-                                    <table class="table table-bordered table-responsive-sm">
+                                    <table id="productsTable" class="table table-bordered table-responsive-sm">
                                         <thead>
                                             <tr>
                                                 <th style="color: #A16D28;">Date</th>
@@ -236,14 +236,10 @@
                                                     <td><span class="badge badge-primary">{{ $product->stock_unit_id }}</span></td>
                                                     <td style="color: black; text-transform: capitalize">{{ $product->category }}</td>
                                                     <td>
-                                                        <button class="btn btn-outline-warning btn-sm" data-toggle="modal" data-target="#updateProductModal{{ $product->id }}">
-                                                            <i class="fa fa-pencil"></i> Update
-                                                        </button>
-
-                                                        <form action="{{ route('manager.stock.archive.product', ['id' => $product->id]) }}" method="POST" style="display: inline;">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
-                                                        </form>
+                                                    <button class="btn btn-outline-warning btn-sm"
+                                                            onclick="verifyPinBeforeModal({{ $product->id }})">
+                                                        <i class="fa fa-pencil"></i> Update
+                                                    </button>
                                                     </td>
                                                 </tr>
 
@@ -255,7 +251,7 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title">Update Product - {{ $product->product_name }}</h5>
-                                                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                                    <button type="button" class="close" data-dismiss="modal"></button>
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
@@ -277,7 +273,6 @@
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button class="btn btn-primary" type="submit">Save</button>
-                                                                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
                                                                 </div>
                                                             </div>
                                                         </form>
@@ -333,6 +328,62 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#productsTable').DataTable({
+                responsive: true,
+                searching: false,
+                ordering: true,
+                pageLength: 10,
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function verifyPinBeforeModal(productId) {
+            Swal.fire({
+                title: 'Enter your PIN to update',
+                input: 'password',
+                inputLabel: 'Manager PIN',
+                inputPlaceholder: 'Enter your 4-digit PIN',
+                inputAttributes: {
+                    maxlength: 4,
+                    autocapitalize: 'off',
+                    autocorrect: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Verify',
+                showLoaderOnConfirm: true,
+                preConfirm: (pin) => {
+                    return fetch('{{ route("manager.stock.archive.validate.pin") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ pin: pin })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Incorrect PIN');
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(`PIN validation failed`);
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If PIN is correct, show the modal manually
+                    const modalId = '#updateProductModal' + productId;
+                    $(modalId).modal('show');
+                }
+            });
+        }
+</script>
     <script>
         $(document).ready(function () {
             $('#poTable').DataTable({

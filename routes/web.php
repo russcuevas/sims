@@ -23,7 +23,7 @@ use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\delivery\DeliveryDashboardController;
 use App\Http\Controllers\delivery\DeliveryDeliveryStatusController;
 use App\Http\Controllers\delivery\DeliveryProfileManagement;
-
+use App\Http\Controllers\manager\LogsController as ManagerLogsController;
 // MANAGER CONTROLLER
 use App\Http\Controllers\manager\ManagerDashboardController;
 use App\Http\Controllers\manager\ManagerDeliveryStatusController;
@@ -263,6 +263,9 @@ Route::post('/manager/submit/purchase-order', [ManagerStockController::class, 'M
 Route::get('/manager/purchase-order/view/{po_number}', [ManagerStockController::class, 'ManagerViewPO'])
     ->name('manager.view.po');
 
+Route::post('/manager/stock/archive/validate-pin', [ManagerStockController::class, 'ManagerValidateStockArchivePin'])->name('manager.stock.archive.validate.pin');
+
+
 // MANAGER PROCESS MANAGEMENT
 Route::get('/manager/process_management', [ManagerProcessController::class, 'ManagerProcessManagementPage'])->name('manager.process.management.page');
 Route::post('/manager/batch/add-raw-products', [ManagerProcessController::class, 'ManagerAddBatchFetchRawProducts'])
@@ -307,6 +310,9 @@ Route::post('/manager/archive/sales/restore/{id}', [ManagerArchiveController::cl
 // MANAGER EDIT PROFILE
 Route::get('/manager/profile/update', [ManagerProfileManagement::class, 'ManagerProfileManagementPage'])->name('manager.profile.page');
 Route::post('/manager/profile/update/request', [ManagerProfileManagement::class, 'ManagerUpdateProfile'])->name('manager.profile.update.request');
+
+// MANAGER LOGS
+Route::get('/manager/logs', [ManagerLogsController::class, 'ManagerLogsPage'])->name('manager.logs.page');
 
 
 // MANAGER NEW EXPORTING GENERATING LOGS

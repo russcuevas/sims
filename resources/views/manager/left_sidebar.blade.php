@@ -72,6 +72,10 @@
                         class="nav-text">Sales
                         Report</span></a>
             </li>
+            <li><a href="{{ route('manager.logs.page') }}" aria-expanded="false"><i class="fa-solid fa-receipt"></i><span
+                        class="nav-text">Logs
+                    </span></a>
+            </li>
             {{-- <li><a href="{{ route('manager.archive.page') }}" aria-expanded="false"><i class="icon icon-card-update"></i><span
                         class="nav-text">Archive
                     </span></a>

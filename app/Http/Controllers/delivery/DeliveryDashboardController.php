@@ -32,7 +32,9 @@ class DeliveryDashboardController extends Controller
             )
             ->where('delivery_orders.status', 'pending')
             ->where('delivery_orders.is_archived', 0)
-            ->where('delivery_orders.delivered_by', $user->id);
+            ->where('delivery_orders.delivered_by', $user->id)
+            ->where('delivery_orders.approved_by_assigned', '!=', 2);
+
 
         // Filter: Search by product name (adjust field if needed)
         if ($search) {
