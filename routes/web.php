@@ -34,7 +34,9 @@ use App\Http\Controllers\manager\ManagerSalesReportController;
 use App\Http\Controllers\manager\ManagerStockController;
 use App\Http\Controllers\manager\ManagerStockInController;
 use App\Http\Controllers\manager\ManagerArchiveController;
+use App\Http\Controllers\manager\ManagerDeliveryController;
 use App\Http\Controllers\manager\ManagerEmailController;
+use App\Http\Controllers\manager\ManagerReturnItemController;
 use App\Http\Controllers\supervisor\LogsController as SupervisorLogsController;
 // SUPERVISOR CONTROLLER
 use App\Http\Controllers\supervisor\SupervisorArchiveController;
@@ -279,6 +281,22 @@ Route::post('/manager/submit-finish-products', [ManagerProcessController::class,
 Route::get('/manager/batch-product-finish/delete/{id}', [ManagerProcessController::class, 'ManagerRemoveFinishProduct'])->name('manager.batch.finish.product.remove');
 Route::post('/manager/archive-history-finish-product/{transactId}', [ManagerProcessController::class, 'ManagerArchiveHistoryFinishProduct'])->name('manager.archive.history.finish.product');
 
+// MANAGER DELIVERY PREPARING
+Route::get('/manager/delivery_management', [ManagerDeliveryController::class, 'ManagerDeliveryPage'])->name('manager.delivery.management.page');
+Route::post('/manager/delivery/add-store', [ManagerDeliveryController::class, 'ManagerDeliveryAddStore'])->name('manager.delivery.add.store');
+Route::post('/manager/delivery/add-car', [ManagerDeliveryController::class, 'ManagerAddCar'])->name('manager.delivery.add.car');
+Route::post('/manager/delivery/add-multiple-finish/', [ManagerDeliveryController::class, 'ManagerDeliverySubmitBatch'])->name('manager.delivery.submit.batch');
+Route::get('/manager/delivery/remove-product/{id}', [ManagerDeliveryController::class, 'ManagerDeliveryRemoveProduct'])
+    ->name('manager.delivery.remove.product');
+Route::post('/manager/delivery/add', [ManagerDeliveryController::class, 'ManagerDeliveryAdd'])->name('manager.delivery.add');
+Route::get('/delivery/view/{transact_id}', [ManagerDeliveryController::class, 'ManagerViewDeliveryOrder'])->name('manager.delivery.view');
+Route::post('/manager/delivery/archive/{transact_id}', [ManagerDeliveryController::class, 'ManagerArchiveDeliveryOrder'])->name('manager.delivery.archive');
+
+// MANAGER RETURN
+Route::get('/manager/return_item', [ManagerReturnItemController::class, 'ManagerReturnItemPage'])->name('manager.return.item.page');
+Route::get('/manager/return/view_returning/{transact_id}', [ManagerReturnItemController::class, 'ManagerViewReturnedOrder'])->name('manager.delivery.return.view');
+Route::post('/manager/return/update/{transact_id}', [ManagerReturnItemController::class, 'ManagerUpdateReturn'])->name('manager.return.update');
+Route::get('/manager/return/print_returning/{transact_id}', [ManagerReturnItemController::class, 'ManagerPrintReturnedOrder'])->name('manager.delivery.return.print');
 
 // MANAGER DELIVERY PENDING MANAGEMENT
 Route::get('/manager/pending_delivery', [ManagerPendingDeliveryController::class, 'ManagerPendingDeliveryPage'])->name('manager.pending.management.page');
