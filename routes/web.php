@@ -36,6 +36,7 @@ use App\Http\Controllers\manager\ManagerStockInController;
 use App\Http\Controllers\manager\ManagerArchiveController;
 use App\Http\Controllers\manager\ManagerDeliveryController;
 use App\Http\Controllers\manager\ManagerEmailController;
+use App\Http\Controllers\manager\ManagerPaymentItemController;
 use App\Http\Controllers\manager\ManagerReturnItemController;
 use App\Http\Controllers\supervisor\LogsController as SupervisorLogsController;
 // SUPERVISOR CONTROLLER
@@ -150,7 +151,7 @@ Route::post('/admin/delivery/add-multiple-finish/', [DeliveryController::class, 
 Route::get('/admin/delivery/remove-product/{id}', [DeliveryController::class, 'AdminDeliveryRemoveProduct'])
     ->name('admin.delivery.remove.product');
 Route::post('/admin/delivery/add', [DeliveryController::class, 'AdminDeliveryAdd'])->name('admin.delivery.add');
-Route::get('/delivery/view/{transact_id}', [DeliveryController::class, 'AdminViewDeliveryOrder'])->name('admin.delivery.view');
+Route::get('admin/delivery/view/{transact_id}', [DeliveryController::class, 'AdminViewDeliveryOrder'])->name('admin.delivery.view');
 Route::post('/admin/delivery/archive/{transact_id}', [DeliveryController::class, 'AdminArchiveDeliveryOrder'])->name('admin.delivery.archive');
 
 
@@ -289,8 +290,14 @@ Route::post('/manager/delivery/add-multiple-finish/', [ManagerDeliveryController
 Route::get('/manager/delivery/remove-product/{id}', [ManagerDeliveryController::class, 'ManagerDeliveryRemoveProduct'])
     ->name('manager.delivery.remove.product');
 Route::post('/manager/delivery/add', [ManagerDeliveryController::class, 'ManagerDeliveryAdd'])->name('manager.delivery.add');
-Route::get('/delivery/view/{transact_id}', [ManagerDeliveryController::class, 'ManagerViewDeliveryOrder'])->name('manager.delivery.view');
+Route::get('manager/delivery/view/{transact_id}', [ManagerDeliveryController::class, 'ManagerViewDeliveryOrder'])->name('manager.delivery.view');
 Route::post('/manager/delivery/archive/{transact_id}', [ManagerDeliveryController::class, 'ManagerArchiveDeliveryOrder'])->name('manager.delivery.archive');
+
+// MANAGER PAYMENT ITEM
+Route::get('/manager/payment', [ManagerPaymentItemController::class, 'ManagerPaymentItemPage'])->name('manager.payment.item.page');
+Route::get('/manager/payment/fetch', [ManagerPaymentItemController::class, 'fetchDeliveryOrderDetails'])->name('manager.payment.fetch');
+Route::put('/manager/payment/update-transact', [ManagerPaymentItemController::class, 'updateTransactPayment'])->name('manager.payment.updateTransact');
+Route::get('/manager/payment/print_payment/{transact_id}', [ManagerPaymentItemController::class, 'ManagerPrintPaymentOrder'])->name('manager.delivery.payment.print');
 
 // MANAGER RETURN
 Route::get('/manager/return_item', [ManagerReturnItemController::class, 'ManagerReturnItemPage'])->name('manager.return.item.page');

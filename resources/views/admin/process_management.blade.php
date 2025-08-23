@@ -447,7 +447,7 @@
                                                 <th style="width: 10%; color: #A16D28;">Details</th>
                                                 <th style="width: 15%; color: #A16D28;">Process Date</th>
                                                 <th style="width: 20%; color: #A16D28;">Processed By</th>
-                                                <th style="width: 20%; color: #A16D28;">Actions</th>
+                                                {{-- <th style="width: 20%; color: #A16D28;">Actions</th> --}}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -469,13 +469,13 @@
                                                     <td>
                                                         <input type="text" class="form-control form-control-sm" value="{{ $first->process_by }}" readonly>
                                                     </td>
-                                                    <td>
+                                                    {{-- <td>
                                                         <form action="{{ route('admin.archive.history.finish.product', ['transactId' => $transactId]) }}" method="POST" onsubmit="return confirm('Are you sure you want to archive this?')">
                                                             @csrf
                                                             <input type="hidden" name="is_archived" value="1">
                                                             <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
                                                         </form>
-                                                    </td>
+                                                    </td> --}}
                                                 </tr>
 
                                                 <!-- Modal -->

@@ -536,7 +536,7 @@
                                                 <th style="width: 10%; color: #D96F32;">Details</th>
                                                 <th style="width: 15%; color: #D96F32;">Transaction Date</th>
                                                 <th style="width: 20%; color: #D96F32;">Processed By</th>
-                                                <th style="width: 20%; color: #D96F32;">Actions</th>
+                                                {{-- <th style="width: 20%; color: #D96F32;">Actions</th> --}}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -548,12 +548,12 @@
                                                     </td>
                                                     <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
                                                     <td style="color: black">{{ $first->process_by }}</td>
-                                                    <td>
+                                                    {{-- <td>
                                                         <form method="POST" action="{{ route('admin.delivery.archive', $transactId) }}">
                                                             @csrf
                                                             <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
                                                         </form>
-                                                    </td>
+                                                    </td> --}}
                                                 </tr>
                                             @empty
                                                 <tr>

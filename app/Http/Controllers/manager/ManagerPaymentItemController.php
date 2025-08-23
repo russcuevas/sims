@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\manager;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class PaymentItemController extends Controller
+class ManagerPaymentItemController extends Controller
 {
-    public function AdminPaymentItemPage()
+    public function ManagerPaymentItemPage()
     {
 
-        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
-            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 2) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an manager to access the dashboard.');
         }
 
         // Fetch logged-in user and role
@@ -52,7 +52,7 @@ class PaymentItemController extends Controller
             ->groupBy('transact_id');
 
 
-        return view('admin.delivery_payment', compact(
+        return view('manager.delivery_payment', compact(
             'role',
             'user',
             'lowFinishedProducts',
@@ -110,7 +110,7 @@ class PaymentItemController extends Controller
             ->get()
             ->groupBy('transact_id');
 
-        return view('admin.delivery_payment', compact(
+        return view('manager.delivery_payment', compact(
             'role',
             'user',
             'lowFinishedProducts',
@@ -157,14 +157,14 @@ class PaymentItemController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.payment.item.page')
+        return redirect()->route('manager.payment.item.page')
             ->with('success', 'Payment amount updated and recorded in sales transactions.');
     }
 
-    public function AdminPrintPaymentOrder($transact_id)
+    public function ManagerPrintPaymentOrder($transact_id)
     {
-        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
-            return redirect()->route('login.page')->with('error', 'You must be logged in as an admin to access the dashboard.');
+        if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 2) {
+            return redirect()->route('login.page')->with('error', 'You must be logged in as an manager to access the dashboard.');
         }
 
         $delivery = DB::table('delivery_orders')
@@ -195,6 +195,6 @@ class PaymentItemController extends Controller
 
         $first = $delivery->first();
 
-        return view('admin.payment.delivery_order', compact('delivery', 'first'));
+        return view('manager.payment.delivery_order', compact('delivery', 'first'));
     }
 }

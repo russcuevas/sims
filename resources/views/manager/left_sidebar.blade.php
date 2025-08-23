@@ -64,7 +64,7 @@
             <li><a href="{{ route('manager.process.management.page') }}" aria-expanded="false"><i class="icon icon-app-store"></i><span
                         class="nav-text">Process Management</span></a>
             </li>
-            <li><a href="{{ route('manager.pending.management.page') }}" aria-expanded="false"><i class="fa-solid fa-truck-fast"></i><span
+            <li><a href="{{ route('manager.delivery.management.page') }}" aria-expanded="false"><i class="fa-solid fa-truck-fast"></i><span
                         class="nav-text">Delivery
                         Management</span></a>
             </li>

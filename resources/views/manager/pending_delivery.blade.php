@@ -117,7 +117,7 @@
                                         <a href="{{ route('manager.delivery.management.page') }}" class="btn btn-outline-primary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-primary" id="status_payment">Payment</a>
+                                        <a href="{{ route('manager.payment.item.page') }}" class="btn btn-outline-primary" id="status_payment">Payment</a>
                                     </div>
                                     <div class="col-auto px-1">
                                         <a href="{{ route('manager.return.item.page') }}" class="btn btn-outline-primary" id="status_return_item">Return item</a>
@@ -134,7 +134,7 @@
 
                         
                                 <div class="table-responsive">
-                                    <table class="table table-bordered text-center align-middle">
+                                    <table id="delivery-table" class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
                                                 <th style="width: 10%; color: #A16D28;">Details</th>
@@ -206,6 +206,16 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+        <script>
+        $(document).ready(function () {
+            $('#delivery-table').DataTable({
+                pageLength: 10,
+                searching: false, // remove search box
+                order: [], // disable initial ordering
+            });
+        });
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

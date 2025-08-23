@@ -91,7 +91,7 @@
                                         <a href="{{ route('manager.delivery.management.page') }}" class="btn btn-outline-primary" id="status_preparing">Preparing</a>
                                     </div>
                                     <div class="col-auto px-1">
-                                        <a href="" class="btn btn-outline-primary" id="status_payment">Payment</a>
+                                        <a href="{{ route('manager.payment.item.page') }}" class="btn btn-outline-primary" id="status_payment">Payment</a>
                                     </div>
                                     <div class="col-auto px-1">
                                         <a href="{{ route('manager.return.item.page') }}" class="btn btn-primary" id="status_to_ship">Return item</a>
@@ -175,7 +175,7 @@
                                     <p>No returned deliveries available.</p>
                                 @else
                                     <div class="table-responsive">
-                                    <table id="delivery-table" class="table table-bordered text-center align-middle">
+                                    <table id="history-table" class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
                                                 <th style="width: 10%; color: #A16D28;">Details</th>
@@ -248,6 +248,16 @@
             $('#delivery-table').DataTable({
                 pageLength: 10,
                 searching: true, // remove search box
+                order: [], // disable initial ordering
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#history-table').DataTable({
+                pageLength: 10,
+                searching: false, // remove search box
                 order: [], // disable initial ordering
             });
         });
