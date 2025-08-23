@@ -175,6 +175,8 @@ class StockInController extends Controller
         return redirect()->route('admin.stock.in.page')->with('success', 'Supplier added successfully!');
     }
 
+    // updated
+
     public function AdminAddBatchProductDetails(Request $request)
     {
         if (!Auth::guard('employees')->check() || Auth::guard('employees')->user()->position_id != 1) {
@@ -190,10 +192,13 @@ class StockInController extends Controller
         $employee_id = Auth::guard('employees')->user()->id;
         $now = now();
 
-        $poProducts = DB::table('purchase_orders')
+        // Fetch supplier_id + products
+        $poData = DB::table('purchase_orders')
             ->join('product_details', 'purchase_orders.product_id', '=', 'product_details.id')
+            ->join('suppliers', 'purchase_orders.supplier_id', '=', 'suppliers.id') // join suppliers
             ->where('purchase_orders.po_number', $request->po_number)
             ->select(
+                'purchase_orders.supplier_id',
                 'purchase_orders.product_id',
                 'purchase_orders.product_name',
                 'purchase_orders.price',
@@ -203,11 +208,13 @@ class StockInController extends Controller
             )
             ->get();
 
-        if ($poProducts->isEmpty()) {
+        if ($poData->isEmpty()) {
             return redirect()->route('admin.stock.in.page')->with('error', 'No products found for this PO number.');
         }
 
-        $productIds = $poProducts->pluck('product_id')->toArray();
+        $supplierId = $poData->first()->supplier_id; // get supplier id
+
+        $productIds = $poData->pluck('product_id')->toArray();
 
         $alreadySubmitted = DB::table('batch_product_details')
             ->where('employee_id', $employee_id)
@@ -220,8 +227,7 @@ class StockInController extends Controller
         }
 
         $insert_data = [];
-
-        foreach ($poProducts as $product) {
+        foreach ($poData as $product) {
             $insert_data[] = [
                 'employee_id'   => $employee_id,
                 'product_id'    => $product->product_id,
@@ -244,7 +250,10 @@ class StockInController extends Controller
                 'updated_at' => $now,
             ]);
 
-        return redirect()->route('admin.stock.in.page')->with('success', 'Products from PO number added successfully.');
+        // Redirect and pass selected supplier ID back to view
+        session(['selected_supplier_id' => $supplierId]);
+        return redirect()->route('admin.stock.in.page')
+            ->with('success', 'Products from PO number added successfully.');
     }
 
 
@@ -441,28 +450,28 @@ class StockInController extends Controller
         DB::table('history_raw_materials')->insert($historyData);
 
         // Merge with existing product_details if product_name + unit exists
-foreach ($productDetailsData as $data) {
-    $existing = DB::table('product_details')
-        ->where('product_name', $data['product_name'])
-        ->where('stock_unit_id', $data['stock_unit_id'])
-        ->where('category', 'raw materials')
-        ->first();
+        foreach ($productDetailsData as $data) {
+            $existing = DB::table('product_details')
+                ->where('product_name', $data['product_name'])
+                ->where('stock_unit_id', $data['stock_unit_id'])
+                ->where('category', 'raw materials')
+                ->first();
 
-    if ($existing) {
-        // Update quantity
-        DB::table('product_details')
-            ->where('id', $existing->id)
-            ->update([
-                'quantity'   => $existing->quantity + $data['quantity'],
-                'updated_at' => $now,
-            ]);
-    } else {
-        // Insert new product detail
-        DB::table('product_details')->insert($data);
-    }
-}
+            if ($existing) {
+                // Update quantity
+                DB::table('product_details')
+                    ->where('id', $existing->id)
+                    ->update([
+                        'quantity'   => $existing->quantity + $data['quantity'],
+                        'updated_at' => $now,
+                    ]);
+            } else {
+                // Insert new product detail
+                DB::table('product_details')->insert($data);
+            }
+        }
 
-// Sync batch_finish_raw_products quantity with product_details quantity
+        // Sync batch_finish_raw_products quantity with product_details quantity
         foreach ($productDetailsData as $data) {
             $productDetail = DB::table('product_details')
                 ->where('product_name', $data['product_name'])
@@ -525,6 +534,8 @@ foreach ($productDetailsData as $data) {
             'raw_materials',
             "Processed raw materials with transaction ID: {$transactId}"
         );
+
+        session()->forget('selected_supplier_id');
 
         return redirect()->route('admin.stock.in.page')->with('success', 'Raw stocks saved successfully!');
     }

@@ -21,7 +21,134 @@
     </style>
 </head>
 <body>
-<form method="POST" action="{{ route('admin.stock.submit.po') }}" onsubmit="calculateAmounts();">
+    <div id="main-wrapper">
+
+<style>
+    .header-notification .mdi-bell-outline {
+        font-size: 1.5rem;
+        position: relative;
+    }
+
+    .header-notification .badge {
+        position: absolute;
+        top: 10px;
+        right: -5px;
+        font-size: 0.8rem;
+    }
+
+    .dropdown-menu-right {
+        width: 300px;
+    }
+
+    #notifications-list {
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 10px;
+    }
+
+    .dropdown-item {
+        font-size: 0.9rem;
+    }
+
+    .notification-item {
+        padding: 8px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .notification-item span {
+        font-size: 0.85rem;
+        color: #555;
+    }
+
+</style>
+
+<div class="nav-header">
+    <div class="nav-control">
+        <div class="hamburger">
+            <span class="line"></span><span class="line"></span><span class="line"></span>
+        </div>
+    </div>
+</div>
+
+<div class="header">
+    <div class="header-content">
+        <nav class="navbar navbar-expand">
+            <div class="collapse navbar-collapse justify-content-between">
+                <div class="header-left">
+
+                </div>
+
+                <ul class="navbar-nav header-right">
+
+
+
+                    
+
+
+                    
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+
+
+<script>
+    const logoutUser = (isInactivity = false) => {
+        if (isInactivity) {
+            sessionStorage.setItem('logout_message', 'You have been automatically logged out due to inactivity.');
+            sessionStorage.setItem('logout_type', 'warning');
+        } else {
+            sessionStorage.setItem('logout_message', 'You have been logged out.');
+            sessionStorage.setItem('logout_type', 'success');
+        }
+
+        fetch("{{ route('logout.request') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: "same-origin"
+        }).then(() => {
+            window.location.href = "{{ route('login.page') }}";
+        });
+    };
+
+    let inactivityTime = function () {
+        let time;
+        const logoutAfter = 5 * 60 * 1000; 
+
+        function resetTimer() {
+            clearTimeout(time);
+            time = setTimeout(() => logoutUser(true), logoutAfter);
+        }
+
+        window.onload = resetTimer;
+        document.onmousemove = resetTimer;
+        document.onkeydown = resetTimer;
+        document.onclick = resetTimer;
+        document.onscroll = resetTimer;
+    };
+
+    inactivityTime();
+
+    document.getElementById('manual-logout-btn').addEventListener('click', function () {
+        logoutUser();
+    });
+</script>
+
+
+
+
+        
+        {{-- left sidebar --}}
+        @include('admin.left_sidebar')
+        {{-- left sidebar end --}}
+        <form style="margin-top: 100px" method="POST" action="{{ route('admin.stock.submit.po') }}" onsubmit="calculateAmounts();">
         @csrf
 
         @if ($errors->any())
@@ -145,8 +272,20 @@
 
 
     </form>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </div>
+        <!-- REQUIRED VENDORS -->
+    <script src="{{ asset('partials/vendor/global/global.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('partials/js/quixnav-init.js') }}"></script>
+    <script src="{{ asset('partials/js/custom.min.js') }}"></script>
+    <!-- JQUERY VALIDATION -->
+    <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+    <!-- Bootstrap 5 JS + Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <!-- JQUERY VALIDATION -->
+    <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script>
     $('#supplier_id').select2({
         templateResult: function (data) {

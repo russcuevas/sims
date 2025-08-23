@@ -3,150 +3,243 @@
 <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Delivery Order</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            margin: 20px;
-            line-height: 1.4;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h2 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .header p {
-            margin: 5px 0;
-            font-size: 11px;
-        }
-        .do-number {
-            text-align: center;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-        .info-section {
-            margin: 20px 0;
-        }
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        .info-item {
-            flex: 1;
-        }
-        .product-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 11px;
-        }
-        .product-table th {
-            border: 1px solid #000;
-            padding: 8px 4px;
-            text-align: center;
-            background-color: #f5f5f5;
-            font-weight: bold;
-        }
-        .product-table td {
-            border: 1px solid #000;
-            padding: 8px 4px;
-            text-align: center;
-        }
-        .totals-section {
-            margin: 20px 0;
-            display: flex;
-            justify-content: space-between;
-        }
-        .signatures-section {
-            margin: 40px 0;
-        }
-        .signature-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .signature-item {
-            flex: 1;
-            font-weight: bold;
-        }
-        .car-details {
-            margin: 15px 0;
-            font-weight: bold;
-        }
-        .notes-section {
-            margin-top: 40px;
-            font-size: 10px;
-        }
-        .notes-section strong {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 11px;
-        }
-        .notes-section ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-        .notes-section li {
-            margin-bottom: 3px;
-        }
-        .highlight {
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
+    <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #fdfdfd;
+        color: #333;
+    }
 
-    <div id="deliveryOrderContent"> 
-    <div style="text-align: right; margin:20px;">
-        <button id="backButton" onclick="window.location.href='/admin/return_item'" style="padding: 8px 20px; font-size: 14px;">Back</button>
-    </div>
+    h2, h3 {
+        color: #3d3d3d;
+    }
+
+    .header, .do-number {
+        text-align: center;
+    }
+
+    .header h2 {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .header p {
+        font-size: 12px;
+        color: #555;
+        margin: 2px 0;
+    }
+
+    .do-number {
+        font-size: 16px;
+        color: #444;
+        margin: 10px 0 20px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5px;
+    }
+
+    .info-section {
+        margin: 30px 0;
+        padding: 15px;
+        background-color: #f8f8f8;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+    }
+
+    .info-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .info-item {
+        flex: 1;
+        min-width: 200px;
+        font-size: 13px;
+        color: #333;
+    }
+
+    .product-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 13px;
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .product-table th {
+        background-color: #e0e0e0;
+        color: #333;
+        font-weight: bold;
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+
+    .product-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .qty-return {
+        width: 60px;
+        padding: 4px;
+        text-align: center;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        color: white;
+        padding: 6px 12px;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+    #backButton {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        color: #333;
+        padding: 6px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    #backButton:hover {
+        background-color: #ddd;
+    }
+
+    .signatures-section {
+        margin-top: 50px;
+        padding-top: 15px;
+        border-top: 1px solid #ccc;
+        font-size: 13px;
+    }
+
+    .signatures-section div {
+        margin-bottom: 10px;
+    }
+
+    .notes-section {
+        font-size: 11px;
+        margin-top: 40px;
+        padding: 15px;
+        background-color: #fffbe6;
+        border-left: 4px solid #ffcc00;
+    }
+
+    .notes-section ul {
+        margin: 10px 0;
+        padding-left: 20px;
+    }
+
+    .notes-section li {
+        margin-bottom: 5px;
+    }
+
+    .highlight {
+        color: #d9534f;
+        font-weight: bold;
+    }
+
+    @media print {
+        #backButton, .btn-success {
+            display: none;
+        }
+    }
+</style>
 
 
-    <div class="header" style="text-align: center; margin-bottom: 30px;">
-        <h2>{{ $first->store_name ?? 'Store Name' }}</h2>
-        <p>{{ $first->store_address ?? 'Store Address' }}</p>
-        <p>Tel: {{ $first->store_tel_no ?? 'N/A' }} Cell: {{ $first->store_cp_number ?? 'N/A' }}</p>
-        <p>Fax: {{ $first->store_fax ?? 'N/A' }} Tin: {{ $first->store_tin ?? 'N/A' }}</p>
-    </div>
-
-
-    <div class="text-center">
-        <h3>Deliver Order</h3>
-    </div>
-
-    <div class="do-number">
-        {{ $first->transact_id ?? 'SAVMGMALL-yymmdd0001' }}
-    </div>
-
-    <div class="info-section">
-        <div class="info-row">
-            <div class="info-item"><strong>Supplier Name:</strong> {{ $first->process_by ?? '(ADMIN)' }}</div>
-            <div class="info-item"><strong>Transaction Date:</strong> {{ \Carbon\Carbon::parse($first->transaction_date)->format('Y-m-d') ?? '(date)' }}</div>
-        </div>
-        <div class="info-row">
-            <div class="info-item"><strong>Branch:</strong> {{ $first->store_name }}</div>
-            @php
-                $expectedFrom = \Carbon\Carbon::parse($first->transaction_date)->addDays(6)->format('Y-m-d');
-                $expectedTo = \Carbon\Carbon::parse($first->transaction_date)->addDays(7)->format('Y-m-d');
-            @endphp
-
-            <div class="info-item">
-                <strong>Expected Delivery:</strong> {{ $expectedFrom }} to {{ $expectedTo }}
+        <div class="nav-header">
+            <div class="nav-control">
+                <div class="hamburger">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                </div>
             </div>
         </div>
-        <div class="info-row">
-            <div class="info-item"><strong>Memo:</strong> {{ $first->memo ?? 'None' }}</div>
-            <div class="info-item"><strong>Cancellation Date:</strong> {{ \Carbon\Carbon::parse($first->transaction_date)->addDays(8)->format('Y-m-d') }}</div>
+
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+
+                        </div>
+
+                        <ul class="navbar-nav header-right">
+
+
+
+                            
+
+
+                            
+                        </ul>
+                    </div>
+                </nav>
+            </div>
         </div>
-    </div>
+
+
+        {{-- left sidebar --}}
+        @include('admin.left_sidebar')
+        {{-- left sidebar end --}}
+        <div id="deliveryOrderContent" style="
+            padding: 30px 40px;
+            max-width: 1000px;
+            margin: 50px auto 100px auto;
+        ">
+        <div style="text-align: right; margin:20px;">
+            <button id="backButton" onclick="window.location.href='/admin/return_item'" style="padding: 8px 20px; font-size: 14px;">Back</button>
+        </div>
+
+
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2>{{ $first->store_name ?? 'Store Name' }}</h2>
+            <p>{{ $first->store_address ?? 'Store Address' }}</p>
+            <p>Tel: {{ $first->store_tel_no ?? 'N/A' }} Cell: {{ $first->store_cp_number ?? 'N/A' }}</p>
+            <p>Fax: {{ $first->store_fax ?? 'N/A' }} Tin: {{ $first->store_tin ?? 'N/A' }}</p>
+        </div>
+
+
+        <div class="text-center">
+            <h3>Deliver Order</h3>
+        </div>
+
+        <div class="do-number">
+            {{ $first->transact_id ?? 'SAVMGMALL-yymmdd0001' }}
+        </div>
+
+        <div class="info-section">
+            <div class="info-row">
+                <div class="info-item"><strong>Supplier Name:</strong> {{ $first->process_by ?? '(ADMIN)' }}</div>
+                <div class="info-item"><strong>Transaction Date:</strong> {{ \Carbon\Carbon::parse($first->transaction_date)->format('Y-m-d') ?? '(date)' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-item"><strong>Branch:</strong> {{ $first->store_name }}</div>
+                @php
+                    $expectedFrom = \Carbon\Carbon::parse($first->transaction_date)->addDays(6)->format('Y-m-d');
+                    $expectedTo = \Carbon\Carbon::parse($first->transaction_date)->addDays(7)->format('Y-m-d');
+                @endphp
+
+                <div class="info-item">
+                    <strong>Expected Delivery:</strong> {{ $expectedFrom }} to {{ $expectedTo }}
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-item"><strong>Memo:</strong> {{ $first->memo ?? 'None' }}</div>
+                <div class="info-item"><strong>Cancellation Date:</strong> {{ \Carbon\Carbon::parse($first->transaction_date)->addDays(8)->format('Y-m-d') }}</div>
+            </div>
+        </div>
 
     <table class="product-table">
         <thead>
@@ -235,6 +328,15 @@
         </ul>
     </div>
     </div>
+    </div>
+        <script src="{{ asset('partials/vendor/global/global.min.js') }}"></script>
+    <script src="{{ asset('partials/js/quixnav-init.js') }}"></script>
+    <script src="{{ asset('partials/js/custom.min.js') }}"></script>
+    <!-- JQUERY VALIDATION -->
+    <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
+    <!-- Bootstrap 5 JS + Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- html2pdf.js -->

@@ -235,7 +235,7 @@
                             </div>
 
                             <div class="table-responsive">
-                            <table class="table table-bordered text-center align-middle">
+                            <table id="delivery-table" class="table table-bordered text-center align-middle">
                                 <thead class="table-light fw-bold">
                                     <tr>
                                         <th style="width: 10%; color: #A16D28;">Details</th>
@@ -252,10 +252,9 @@
                                         @endphp
                                         <tr style="color: black">
                                             <td>
-<a href="{{ route('admin.delivery.payment.print', ['transact_id' => $firstOrder->transact_id]) }}" class="btn btn-outline-primary btn-sm">
-    View
-</a>
-
+                                            <a href="{{ route('admin.delivery.payment.print', ['transact_id' => $firstOrder->transact_id]) }}" class="btn btn-outline-primary btn-sm">
+                                                View
+                                            </a>
                                             </td>
                                             <td>{{ $firstOrder->transaction_date}}</td>
                                             <td>{{ $firstOrder->process_by ?? 'N/A' }}</td>
@@ -305,6 +304,15 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+                <script>
+        $(document).ready(function () {
+            $('#delivery-table').DataTable({
+                pageLength: 10,
+                searching: false, // remove search box
+                order: [], // disable initial ordering
+            });
+        });
+    </script>
     <script>
         function calculateTotals() {
             let totalAmount = 0;

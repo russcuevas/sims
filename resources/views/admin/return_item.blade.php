@@ -175,7 +175,7 @@
                                     <p>No returned deliveries available.</p>
                                 @else
                                     <div class="table-responsive">
-                                    <table class="table table-bordered text-center align-middle">
+                                    <table id="delivery-table" class="table table-bordered text-center align-middle">
                                         <thead class="table-light fw-bold">
                                             <tr>
                                                 <th style="width: 10%; color: #A16D28;">Details</th>
@@ -245,8 +245,9 @@
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script>
         $(document).ready(function () {
-            $('#completedOrders').DataTable({
+            $('#delivery-table').DataTable({
                 pageLength: 10,
+                searching: false, // remove search box
                 order: [], // disable initial ordering
             });
         });

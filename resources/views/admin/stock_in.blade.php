@@ -275,7 +275,10 @@
                                             <select id="supplier" name="supplier" class="form-control">
                                                 <option value="">Select supplier</option>
                                                 @foreach ($suppliers as $supplier)
-                                                    <option value="{{ $supplier->id }}">{{ $supplier->supplier_name }}</option>
+                                                    <option value="{{ $supplier->id }}" 
+                                                        {{ session('selected_supplier_id') == $supplier->id ? 'selected' : '' }}>
+                                                        {{ $supplier->supplier_name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
