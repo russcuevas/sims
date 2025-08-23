@@ -18,10 +18,11 @@ class ContractSeeder extends Seeder
         $now = Carbon::now();
 
         $contracts = [
-            ['contract' => '1 year', 'created_at' => $now, 'updated_at' => $now],
-            ['contract' => '2 years', 'created_at' => $now, 'updated_at' => $now],
-            ['contract' => '3 years', 'created_at' => $now, 'updated_at' => $now],
-            ['contract' => '4 years', 'created_at' => $now, 'updated_at' => $now],
+            ['contract' => 'Regular', 'created_at' => $now, 'updated_at' => $now],
+            ['contract' => 'Probationary', 'created_at' => $now, 'updated_at' => $now],
+            ['contract' => 'Seasonal', 'created_at' => $now, 'updated_at' => $now],
+            ['contract' => 'Part-time', 'created_at' => $now, 'updated_at' => $now],
+            ['contract' => 'Terminated', 'created_at' => $now, 'updated_at' => $now],
         ];
 
         DB::table('contracts')->insert($contracts);

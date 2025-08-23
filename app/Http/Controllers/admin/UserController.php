@@ -100,7 +100,7 @@ class UserController extends Controller
             'birthday' => $request->birthday,
             'position_id' => $request->role,
             'contract_id' => $request->contract,
-            'status' => 'Unlocked',
+            'status' => $request->contract == 5 ? 'Locked' : 'Unlocked',
             'email' => $request->email,
             'username' => $username,
             'password' => Hash::make($rawPassword),

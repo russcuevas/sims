@@ -455,6 +455,37 @@
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const contractSelect = document.getElementById('contract_{{ $employee->id }}');
+        const statusSelect = document.getElementById('status_{{ $employee->id }}');
+        const form = document.querySelector('#updateUserModal{{ $employee->id }} .update_users_validation');
+
+        function handleStatusLock() {
+            if (contractSelect.value === '5') {
+                statusSelect.value = 'Locked';
+                statusSelect.setAttribute('disabled', 'disabled');
+            } else {
+                statusSelect.removeAttribute('disabled');
+            }
+        }
+
+        // Initial check on load
+        handleStatusLock();
+
+        // Update on contract change
+        contractSelect.addEventListener('change', handleStatusLock);
+
+        // Re-enable status before submitting to ensure it's included in the request
+        form.addEventListener('submit', function () {
+            if (statusSelect.hasAttribute('disabled')) {
+                statusSelect.removeAttribute('disabled');
+            }
+        });
+    });
+</script>
+
+
     <script>
 function verifyPinBeforeUserUpdate(employeeId) {
     Swal.fire({
