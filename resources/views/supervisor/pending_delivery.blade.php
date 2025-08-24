@@ -137,6 +137,7 @@
                                                 <th style="width: 10%; color: #A16D28;">Details</th>
                                                 <th style="width: 15%; color: #A16D28;">Transaction Date</th>
                                                 <th style="width: 20%; color: #A16D28;">Delivered By</th>
+                                                <th style="width: 20%; color: #A16D28;">Status</th>
                                             </tr>
                                         </thead>
                                             <tbody>
@@ -150,21 +151,13 @@
                                                         </td>
                                                         <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
                                                         <td style="color: black">{{ $first->delivered_by_name ?? 'N/A' }}</td>
-                                                        {{-- <form id="form-{{ $transactId }}" method="POST" action="{{ route('supervisor.delivery.mark.status', $transactId) }}" enctype="multipart/form-data">
-                                                            @csrf
                                                         <td>
-                                                            <input type="file" name="upload_image" class="form-control form-control-sm">
+                                                            @if ($first->is_approved == 0)
+                                                                <span style="color: black;">For Approval</span>
+                                                            @else
+                                                                <span style="text-transform: capitalize; color: black;">{{ $first->status }}</span>
+                                                            @endif
                                                         </td>
-                                                        <td>
-                                                            <textarea name="upload_notes" class="form-control" placeholder="Add notes..."></textarea>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                <button type="submit" name="completed" class="btn btn-outline-primary btn-sm mr-2">Completed</button>
-                                                                <button type="button" onclick="confirmReturn('{{ $transactId }}')" class="btn btn-outline-danger btn-sm">Returned</button>
-                                                            </div>
-                                                        </td>
-                                                        </form> --}}
                                                     </tr>
                                                 @empty
                                                     <tr>

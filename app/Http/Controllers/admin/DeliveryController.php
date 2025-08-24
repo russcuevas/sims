@@ -256,6 +256,7 @@ class DeliveryController extends Controller
                         'approved_by_assigned' => $request->type_sign === 'manual' ? 1 : 3,
                         'status' => 'pending',
                         'is_archived' => 0,
+                        'is_approved' => 1,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];

@@ -10,10 +10,17 @@
     <link href="{{ asset('partials/vendor/datatables/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ asset('partials/css/style.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
     .col-form-label {
         color: black;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+        cursor: default;
+        padding-left: 2px;
+        padding-right: 5px;
+        color: black !important;
     }
     </style>
 </head>
@@ -61,7 +68,7 @@
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a style="color: #A16D28;" href="{{ route('admin.dashboard.page')}}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Approval</li>
+                            <li class="breadcrumb-item active">Delivery Management</li>
                         </ol>
                     </div>
                 </div>
@@ -72,33 +79,104 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size: 20px; color: #A16D28;">Approval</h4>
+                                <h4 class="card-title" style="font-size: 20px; color: #A16D28;">
+                                    Delivery Management
+                                </h4>
                             </div>
-                            <div class="card-body">
+
+                            
+
+                            <div class="container my-4">
+                                <!-- Search bar and actions -->
+                                <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
+                                <form method="GET" action="" class="d-flex flex-wrap justify-content-center gap-2 mb-3" id="filterSortForm">
+                                    <input type="text" name="search" value="{{ old('search', $search ?? '') }}" class="form-control w-auto" placeholder="Search product here">
+                                    <button type="submit" class="btn btn-primary mr-2">Search</button>
+
+                                    <select name="process_by" class="btn btn-outline-primary dropdown-toggle mr-2" onchange="document.getElementById('filterSortForm').submit()">
+                                        <option value="">Filter by Processor</option>
+                                        @foreach ($processors as $processor)
+                                            <option value="{{ $processor->id }}" {{ (isset($processBy) && $processBy == $processor->id) ? 'selected' : '' }}>
+                                                {{ $processor->full_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+
+                                    <select name="sort" class="btn btn-outline-primary dropdown-toggle" onchange="document.getElementById('filterSortForm').submit()">
+                                        <option value="">Sort by Date</option>
+                                        <option value="newest" {{ (isset($sort) && $sort == 'newest') ? 'selected' : '' }}>Newest First</option>
+                                        <option value="oldest" {{ (isset($sort) && $sort == 'oldest') ? 'selected' : '' }}>Oldest First</option>
+                                    </select>
+                                </form>
+
+                                </div>
+
+                                <!-- Status Buttons aligned to the right -->
+                                <div class="row mb-3 justify-content-center">
+                                    <div class="col-auto px-1">
+                                        <a href="{{ route('admin.delivery.management.page') }}" class="btn btn-outline-primary" id="status_preparing">Preparing</a>
+                                    </div>
+                                    <div class="col-auto px-1">
+                                        <a href="{{ route('admin.payment.item.page') }}" class="btn btn-outline-primary" id="status_payment">Payment</a>
+                                    </div>
+                                    <div class="col-auto px-1">
+                                        <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-primary" id="status_to_ship">Return item</a>
+                                    </div>
+                                    <div class="col-auto px-1">
+                                        <a href="{{ route('admin.approval.status.page') }}" class="btn btn-primary" id="status_approval">Approval</a>
+                                    </div>
+                                    <div class="col-auto px-1">
+                                        <a href="{{ route('admin.pending.management.page') }}" class="btn btn-outline-primary" id="status_delivered">Pending delivery</a>
+                                    </div>
+                                    <div class="col-auto px-1">
+                                        <a href="{{ route('admin.delivery.status.page') }}" class="btn btn-outline-primary" id="status_return">Delivery Status</a>
+                                    </div>
+                                </div>
+
+                    
+
+                        
                                 <div class="table-responsive">
-                                    <table id="example" class="display" style="min-width: 845px">
-                                        <thead>
+                                    <table id="pending-table" class="table table-bordered text-center align-middle">
+                                        <thead class="table-light fw-bold">
                                             <tr>
-                                                <th style="color: #A16D28;">Image</th>
-                                                <th style="color: #A16D28;">Name</th>
-                                                <th style="color: #A16D28;">Role</th>
-                                                <th style="color: #A16D28;">Contract</th>
-                                                <th style="color: #A16D28;">Email</th>
-                                                <th style="color: #A16D28;">Username</th>
-                                                <th style="color: #A16D28;">Pin</th>
-                                                <th style="color: #A16D28;">Attempt</th>
-                                                <th style="color: #A16D28;">Status</th>
-                                                <th style="color: #A16D28;">Action</th>
+                                                <th style="width: 10%; color: #A16D28;">Details</th>
+                                                <th style="width: 15%; color: #A16D28;">Transaction Date</th>
+                                                <th style="width: 20%; color: #A16D28;">Delivered By</th>
+                                                <th style="width: 20%; color: #A16D28;">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
+                                            <tbody>
+                                                @forelse($deliveryOrders as $transactId => $orders)
+                                                    @php
+                                                        $first = $orders->first();
+                                                    @endphp
+                                                    <tr>
+                                                        <td>
+                                                            <a  href="{{ route('admin.delivery.view', $transactId) }}" class="btn btn-outline-primary btn-sm">View</a>
+                                                        </td>
+                                                        <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
+                                                        <td style="color: black">{{ $first->delivered_by_name ?? 'N/A' }}</td>
+<td>
+    <form id="approve-form-{{ $transactId }}" action="{{ route('admin.delivery.approve', $transactId) }}" method="POST" style="display: inline-block;">
+        @csrf
+        <button type="button" class="btn btn-success btn-sm" onclick="confirmApprove('{{ $transactId }}')">Approve</button>
+    </form>
 
-                                            </tr>
-                                        
-                    
-                                        </tbody>
-                                    </table>                                    
+    <form id="decline-form-{{ $transactId }}" action="{{ route('admin.delivery.decline', $transactId) }}" method="POST" style="display: inline-block;">
+        @csrf
+        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDecline('{{ $transactId }}')">Decline</button>
+    </form>
+</td>
+
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted">No pending delivery.</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+
                                 </div>
                             </div>
                         </div>
@@ -106,27 +184,75 @@
                 </div>
             </div>
         </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+
+        <!--**********************************
+           Support ticket button start
+        ***********************************-->
+
+        <!--**********************************
+           Support ticket button end
+        ***********************************-->
+
+
     </div>
 
-    <!-- SCRIPTS -->
+    <!-- SCRIPT -->
     <!-- REQUIRED VENDORS -->
     <script src="{{ asset('partials/vendor/global/global.min.js') }}"></script>
-    <!-- Bootstrap 5 JS + Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-
     <script src="{{ asset('partials/js/quixnav-init.js') }}"></script>
     <script src="{{ asset('partials/js/custom.min.js') }}"></script>
-    <!-- DATATABLE PLUGINS -->
-    <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('partials/js/plugins-init/datatables.init.js') }}"></script>
-
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+    <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    function confirmApprove(transactId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to approve this delivery?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Yes, approve it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('approve-form-' + transactId).submit();
+            }
+        });
+    }
+
+    function confirmDecline(transactId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will delete the delivery record. This cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Yes, decline it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('decline-form-' + transactId).submit();
+            }
+        });
+    }
+</script>
+
+                <script>
+        $(document).ready(function () {
+            $('#pending-table').DataTable({
+                pageLength: 10,
+                searching: false, // remove search box
+                order: [], // disable initial ordering
+            });
+        });
+    </script>
     <script>
         @if(session('success'))
             toastr.success("{{ session('success') }}");
@@ -135,13 +261,39 @@
         @if(session('error'))
             toastr.error("{{ session('error') }}");
         @endif
-    
+
         @if ($errors->any())
             @foreach ($errors->all() as $error)
                 toastr.error("{{ $error }}");
             @endforeach
         @endif
     </script>
+
+<script>
+    function confirmReturn(transactId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to mark this delivery as returned?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Yes, return it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.getElementById('form-' + transactId);
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'returned';
+                hiddenInput.value = '1';
+                form.appendChild(hiddenInput);
+
+                form.submit();
+            }
+        });
+    }
+</script>
+
 
 
 </body>

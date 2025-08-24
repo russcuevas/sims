@@ -97,6 +97,9 @@
                                         <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-primary" id="status_to_ship">Return item</a>
                                     </div>
                                     <div class="col-auto px-1">
+                                        <a href="{{ route('admin.approval.status.page') }}" class="btn btn-outline-primary" id="status_approval">Approval</a>
+                                    </div>
+                                    <div class="col-auto px-1">
                                         <a href="{{ route('admin.pending.management.page') }}" class="btn btn-outline-primary" id="status_delivered">Pending delivery</a>
                                     </div>
                                     <div class="col-auto px-1">
@@ -536,7 +539,7 @@
                                                 <th style="width: 10%; color: #D96F32;">Details</th>
                                                 <th style="width: 15%; color: #D96F32;">Transaction Date</th>
                                                 <th style="width: 20%; color: #D96F32;">Processed By</th>
-                                                {{-- <th style="width: 20%; color: #D96F32;">Actions</th> --}}
+                                                <th style="width: 20%; color: #D96F32;">Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -548,12 +551,13 @@
                                                     </td>
                                                     <td style="color: black">{{ \Carbon\Carbon::parse($first->transaction_date)->format('m/d/Y') ?? 'N/A' }}</td>
                                                     <td style="color: black">{{ $first->process_by }}</td>
-                                                    {{-- <td>
-                                                        <form method="POST" action="{{ route('admin.delivery.archive', $transactId) }}">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
-                                                        </form>
-                                                    </td> --}}
+                                                    <td>
+                                                        @if ($first->is_approved == 0)
+                                                            <span style="color: black;">For Approval</span>
+                                                        @else
+                                                            <span style="text-transform: capitalize; color: black;">{{ $first->status }}</span>
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                             @empty
                                                 <tr>

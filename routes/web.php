@@ -1,6 +1,8 @@
 <?php
 
 // ADMIN CONTROLLER
+
+use App\Http\Controllers\admin\ApprovalController;
 use App\Http\Controllers\admin\ArchiveController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\DeliveryController;
@@ -164,6 +166,11 @@ Route::post('/admin/pending/marked-status/{transact_id}', [PendingDeliveryContro
 
 // ADMIN DELIVERY STATUS MANAGEMENT
 Route::get('/admin/delivery_status', [DeliveryStatusController::class, 'AdminDeliveryStatusPage'])->name('admin.delivery.status.page');
+
+// ADMIN APPROVAL STATUS MANAGEMENT
+Route::get('/admin/approval_status', [ApprovalController::class, 'AdminApprovalDeliveryPage'])->name('admin.approval.status.page');
+Route::post('/admin/delivery/approve/{transact_id}', [ApprovalController::class, 'approveDelivery'])->name('admin.delivery.approve');
+Route::post('/admin/delivery/decline/{transact_id}', [ApprovalController::class, 'declineDelivery'])->name('admin.delivery.decline');
 
 
 // ADMIN PAYMENT ITEM MANAGEMENT

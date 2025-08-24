@@ -399,7 +399,7 @@
                                             <th style="width: 15%; color: #A16D28;">Process Date</th>
                                             <th style="width: 15%; color: #A16D28;">Received Date</th>
                                             <th style="width: 30%; color: #A16D28;">Processed By</th>
-                                            <th style="width: 30%; color: #A16D28;">Actions</th>
+                                            {{-- <th style="width: 30%; color: #A16D28;">Actions</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -423,12 +423,12 @@
                                                 <td>
                                                     <input type="text" class="form-control form-control-sm" value="{{ $first->process_by }}" readonly>
                                                 </td>
-                                                <td>
+                                                {{-- <td>
                                                     <form action="{{ route('supervisor.archive.raw.stock', ['transactId' => $transactId]) }}" method="POST" style="display:inline;">
                                                         @csrf
                                                         <button type="submit" class="btn btn-outline-danger btn-sm">Archive</button>
                                                     </form>
-                                                </td>
+                                                </td> --}}
                                             </tr>
 
                                             <!-- Modal outside <tr> -->
@@ -538,9 +538,6 @@
             ordering: true,
             pageLength: 10,
             lengthMenu: [5, 10, 25, 50, 100],
-            columnDefs: [
-                { orderable: false, targets: [0, 4] } // disable sorting on Details & Actions
-            ]
         });
     });
 </script>

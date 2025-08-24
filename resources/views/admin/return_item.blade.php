@@ -96,6 +96,9 @@
                                     <div class="col-auto px-1">
                                         <a href="{{ route('admin.return.item.page') }}" class="btn btn-primary" id="status_to_ship">Return item</a>
                                     </div>
+                                                                        <div class="col-auto px-1">
+                                        <a href="{{ route('admin.approval.status.page') }}" class="btn btn-outline-primary" id="status_approval">Approval</a>
+                                    </div>
                                     <div class="col-auto px-1">
                                         <a href="{{ route('admin.pending.management.page') }}" class="btn btn-outline-primary" id="status_delivered">Pending delivery</a>
                                     </div>
@@ -243,6 +246,15 @@
     <!-- JQUERY VALIDATION -->
     <script src="{{ asset('partials/vendor/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('partials/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+        <script>
+        $(document).ready(function () {
+            $('#completedOrders').DataTable({
+                pageLength: 10,
+                searching: true, // remove search box
+                order: [], // disable initial ordering
+            });
+        });
+    </script>
     <script>
         $(document).ready(function () {
             $('#delivery-table').DataTable({

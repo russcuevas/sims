@@ -34,5 +34,6 @@ class DeliveryOrders extends Model
         'approved_by_assigned',
         'status',
         'is_archived',
+        'is_approved'
     ];
 }

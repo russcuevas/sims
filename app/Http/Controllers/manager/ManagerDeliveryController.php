@@ -253,9 +253,10 @@ class ManagerDeliveryController extends Controller
                         'amount' => $request->amount[$key],
                         'total_amount' => $request->total_amount,
                         'type_sign' => $request->type_sign,
-                        'approved_by_assigned' => 2,
+                        'approved_by_assigned' => $request->type_sign === 'manual' ? 1 : 3,
                         'status' => 'pending',
                         'is_archived' => 0,
+                        'is_approved' => 0,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];

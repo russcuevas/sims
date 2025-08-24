@@ -40,6 +40,7 @@ return new class extends Migration
             $table->integer('approved_by_assigned')->default(0);
             $table->string('status', 255)->nullable();
             $table->integer('is_archived')->default(0);
+            $table->integer('is_approved')->default(0);
             $table->timestamps();
             $table->foreign('approved_by')->references('id')->on('employees')->onDelete('set null');
             $table->foreign('delivered_by')->references('id')->on('employees')->onDelete('set null');

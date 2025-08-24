@@ -99,6 +99,9 @@
                                         <a href="{{ route('admin.return.item.page') }}" class="btn btn-outline-primary"
                                             id="status_to_ship">Return item</a>
                                     </div>
+                                                                        <div class="col-auto px-1">
+                                        <a href="{{ route('admin.approval.status.page') }}" class="btn btn-outline-primary" id="status_approval">Approval</a>
+                                    </div>
                                     <div class="col-auto px-1">
                                         <a href="{{ route('admin.pending.management.page') }}"
                                             class="btn btn-outline-primary" id="status_delivered">Pending delivery</a>
